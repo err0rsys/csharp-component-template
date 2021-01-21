@@ -1,4 +1,18 @@
-﻿using System;
+﻿// ***********************************************************************
+// Assembly         : Component
+// Author           : Artur Maciejowski
+// Created          : 16-02-2020
+//
+// Last Modified By : Artur Maciejowski
+// Last Modified On : 02-04-2020
+// ***********************************************************************
+// <copyright file="UniUtils.cs" company="DomConsult Sp. z o.o.">
+//     Copyright ©  2021 All rights reserved
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+
+using System;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
@@ -10,119 +24,364 @@ using System.Globalization;
 
 namespace DomConsult.GlobalShared.Utilities
 {
+    /// <summary>
+    /// Class TUniConstants.
+    /// </summary>
     public static class TUniConstants
     {
+        /// <summary>
+        /// The int null
+        /// </summary>
         public const int _INT_NULL = -1;
+        /// <summary>
+        /// The string null
+        /// </summary>
         public const string _STR_NULL = "";
+        /// <summary>
+        /// The date null
+        /// </summary>
         public const int _DATE_NULL = -53689; // = 31-12-1752 (ta data jest zbyt odlegla dla SQL Servera)
+        /// <summary>
+        /// The rc ok
+        /// </summary>
         public const int rcOK = 0;
+        /// <summary>
+        /// The rc error
+        /// </summary>
         public const int rcError = -1;
+        /// <summary>
+        /// The sysreg path
+        /// </summary>
         public readonly static string SYSREG_PATH = System.IO.Path.Combine(Environment.SystemDirectory, "SysReg_{63AFD5B1-49BA-11D5-9AA5-00105A72C191}.ini");
 
+        /// <summary>
+        /// The cs WMK
+        /// </summary>
         public const int csWMK = 2147480647;
+        /// <summary>
+        /// The cs WMK job error
+        /// </summary>
         public const int csWMK_JobError = csWMK + 2;
+        /// <summary>
+        /// The cs WMK error
+        /// </summary>
         public const int csWMK_Error = csWMK_JobError;
 
 
         #region DBCOM package flags
 
         // --- stałe używane przy opisie elementów paczki DBCom-a
+        /// <summary>
+        /// The cp col visible
+        /// </summary>
         public const int cpColVisible = 1; // Kolumna ma być widoczna dla klienta
+        /// <summary>
+        /// The cp object identifier
+        /// </summary>
         public const int cpObjectId = 2; // Kolumna przechowuje wartość klucza głównego
         // dla rekordu (tylko jeden kolumna w paczce)
+        /// <summary>
+        /// The cp object type identifier
+        /// </summary>
         public const int cpObjectTypeId = 4; // Kolumna przechowuje wartość określająca
         // ObjectTypeId dla bieżącego rekordu
         // (tylko jedna kolumna w paczce)
+        /// <summary>
+        /// The cp col first
+        /// </summary>
         public const int cpColFirst = 32; // Kolumna widoczna która ma być pierwszą
         // kolumną w liście prezentowanej użytkownikowi
         // (opcjonalnie)
 
+        /// <summary>
+        /// The cp date
+        /// </summary>
         public const int cpDate = 0x0100;
+        /// <summary>
+        /// The cp integer
+        /// </summary>
         public const int cpInteger = 0x0200;
+        /// <summary>
+        /// The cp float
+        /// </summary>
         public const int cpFloat = 0x0400;
+        /// <summary>
+        /// The cp string
+        /// </summary>
         public const int cpString = 0x0800;
+        /// <summary>
+        /// The cp date time
+        /// </summary>
         public const int cpDateTime = 0x1000;
+        /// <summary>
+        /// The cp boolean
+        /// </summary>
         public const int cpBoolean = 0x2000;
+        /// <summary>
+        /// The cp currency
+        /// </summary>
         public const int cpCurrency = 0x4000;
 
+        /// <summary>
+        /// The CPV integer
+        /// </summary>
         public const int cpvInteger = cpInteger + cpColVisible;
+        /// <summary>
+        /// The CPV float
+        /// </summary>
         public const int cpvFloat = cpFloat + cpColVisible;
+        /// <summary>
+        /// The CPV string
+        /// </summary>
         public const int cpvString = cpString + cpColVisible;
+        /// <summary>
+        /// The CPV date time
+        /// </summary>
         public const int cpvDateTime = cpDateTime + cpColVisible;
+        /// <summary>
+        /// The CPV boolean
+        /// </summary>
         public const int cpvBoolean = cpBoolean + cpColVisible;
+        /// <summary>
+        /// The CPV currency
+        /// </summary>
         public const int cpvCurrency = cpCurrency + cpColVisible;
 
+        /// <summary>
+        /// The cp col key
+        /// </summary>
         public const int cpColKey = cpObjectId;
+        /// <summary>
+        /// The cp col object type identifier
+        /// </summary>
         public const int cpColObjectTypeId = cpObjectTypeId;
 
         //[flags]
         // dodatkowe stale dla budowania eksploratorow
+        /// <summary>
+        /// The cp external object type identifier
+        /// </summary>
         public const uint cpExternalObjectTypeId = 0x40000000; // Kolumna z ???
+        /// <summary>
+        /// The cp tree expand flag
+        /// </summary>
         public const uint cpTreeExpandFlag = 0x80000000; // informacja czy wezel ma sie rozwijac
+        /// <summary>
+        /// The cp icon identifier
+        /// </summary>
         public const uint cpIconId = 0x40000000; // kolumna z ikona
 
         #endregion
 
         #region dbcom errors
+        /// <summary>
+        /// The DBC error ok
+        /// </summary>
         public const int DBC_errOK = 0;
+        /// <summary>
+        /// The DBC error other
+        /// </summary>
         public const int DBC_errOther = -6000;
+        /// <summary>
+        /// The DBC error create
+        /// </summary>
         public const int DBC_errCreate = -6010;
+        /// <summary>
+        /// The DBC error update record
+        /// </summary>
         public const int DBC_errUpdateRecord = -6011;
+        /// <summary>
+        /// The DBC error close
+        /// </summary>
         public const int DBC_errClose = -6012;
+        /// <summary>
+        /// The DBC error open
+        /// </summary>
         public const int DBC_errOpen = -6013;
+        /// <summary>
+        /// The DBC error edit
+        /// </summary>
         public const int DBC_errEdit = -6014;
+        /// <summary>
+        /// The DBC error no more records
+        /// </summary>
         public const int DBC_errNoMoreRecords = -6015;
+        /// <summary>
+        /// The DBC error wrong field name
+        /// </summary>
         public const int DBC_errWrongFieldName = -6016;
+        /// <summary>
+        /// The DBC error execute
+        /// </summary>
         public const int DBC_errExecute = -6017;
+        /// <summary>
+        /// The DBC error get packet
+        /// </summary>
         public const int DBC_errGetPacket = -6018;
+        /// <summary>
+        /// The DBC error transaction
+        /// </summary>
         public const int DBC_errTransaction = -6019;
+        /// <summary>
+        /// The DBC error get next record
+        /// </summary>
         public const int DBC_errGetNextRecord = -6020;
+        /// <summary>
+        /// The DBC error count
+        /// </summary>
         public const int DBC_errCount = -6021;
+        /// <summary>
+        /// The DBC error cancel
+        /// </summary>
         public const int DBC_errCancel = -6022;
+        /// <summary>
+        /// The DBC error record not found
+        /// </summary>
         public const int DBC_errRecordNotFound = -6023;
+        /// <summary>
+        /// The DBC error add new
+        /// </summary>
         public const int DBC_errAddNew = -6024;
+        /// <summary>
+        /// The DBC error create trans manager
+        /// </summary>
         public const int DBC_errCreateTransManager = -6025;
+        /// <summary>
+        /// The DBC error open transaction
+        /// </summary>
         public const int DBC_errOpenTransaction = -6026;
+        /// <summary>
+        /// The DBC error trans prepare
+        /// </summary>
         public const int DBC_errTransPrepare = -6027;
+        /// <summary>
+        /// The DBC error commit
+        /// </summary>
         public const int DBC_errCommit = -6028;
+        /// <summary>
+        /// The DBC error rollback
+        /// </summary>
         public const int DBC_errRollback = -6029;
+        /// <summary>
+        /// The DBC error trans close
+        /// </summary>
         public const int DBC_errTransClose = -6030;
+        /// <summary>
+        /// The DBC error delete
+        /// </summary>
         public const int DBC_errDelete = -6031;
+        /// <summary>
+        /// The DBC error destroy transaction
+        /// </summary>
         public const int DBC_errDestroyTransaction = -6032;
+        /// <summary>
+        /// The DBC error EOF
+        /// </summary>
         public const int DBC_errEof = -6033;
+        /// <summary>
+        /// The DBC error wrong transaction identifier
+        /// </summary>
         public const int DBC_errWrongTransactionId = -6034;
+        /// <summary>
+        /// The DBC error get WMK
+        /// </summary>
         public const int DBC_errGetWMK = -6035;
+        /// <summary>
+        /// The DBC error get error description
+        /// </summary>
         public const int DBC_errGetErrorDescription = -6036;
+        /// <summary>
+        /// The DBC error assign SQL
+        /// </summary>
         public const int DBC_errAssignSQL = -6037;
+        /// <summary>
+        /// The DBC error get fields values
+        /// </summary>
         public const int DBC_errGetFieldsValues = -6038;
+        /// <summary>
+        /// The DBC error wrong parameters
+        /// </summary>
         public const int DBC_errWrongParams = -6039;
+        /// <summary>
+        /// The DBC error wrong ADO packet
+        /// </summary>
         public const int DBC_errWrongADOPacket = -6040;
+        /// <summary>
+        /// The DBC error wrong field index
+        /// </summary>
         public const int DBC_errWrongFieldIndex = -6041;
         #endregion
 
     }
 
+    /// <summary>
+    /// Enum TCSWMK
+    /// </summary>
     public enum TCSWMK
     {
+        /// <summary>
+        /// The cs WMK
+        /// </summary>
         csWMK = 2147480647,
+        /// <summary>
+        /// The cs WMK job conversation
+        /// </summary>
         csWMK_JobConversation = 2147480648,
+        /// <summary>
+        /// The cs WMK job error
+        /// </summary>
         csWMK_JobError = 2147480649,
+        /// <summary>
+        /// The cs WMK error
+        /// </summary>
         csWMK_Error = 2147480649,
+        /// <summary>
+        /// The cs WMK with database change
+        /// </summary>
         csWMK_WithDBChange = -2147480646,
+        /// <summary>
+        /// The cs WMK skip job
+        /// </summary>
         csWMK_SkipJob = 2147480646
     }
 
+    /// <summary>
+    /// Enum TConfirmResult
+    /// </summary>
     public enum TConfirmResult
     {
+        /// <summary>
+        /// The acr yes
+        /// </summary>
         acrYes = 1,
+        /// <summary>
+        /// The acr no
+        /// </summary>
         acrNo = 2,
+        /// <summary>
+        /// The acr cancel
+        /// </summary>
         acrCancel = 3
     }
 
+    /// <summary>
+    /// Class TuniGlobalCache.
+    /// </summary>
     public static class TuniGlobalCache
     {
+        /// <summary>
+        /// The cache
+        /// </summary>
         private static ConcurrentDictionary<string, object> Cache = new ConcurrentDictionary<string, object>();
 
+        /// <summary>
+        /// Gets the system reg parameter.
+        /// </summary>
+        /// <param name="acc">The acc.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <param name="setDefault">if set to <c>true</c> [set default].</param>
+        /// <returns>System.Object.</returns>
         public static object GetSysRegParam(string acc, string key, string defaultValue = "", bool setDefault = false)
         {
             bool getOK = false;
@@ -160,6 +419,15 @@ namespace DomConsult.GlobalShared.Utilities
             return value;
         }
 
+        /// <summary>
+        /// Gets the system reg parameter.
+        /// </summary>
+        /// <param name="acc">The acc.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="value">The value.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <param name="setDefault">if set to <c>true</c> [set default].</param>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         public static bool GetSysRegParam(string acc, string key, ref object value, string defaultValue = "", bool setDefault = false)
         {
             bool getOK = false;
@@ -197,6 +465,15 @@ namespace DomConsult.GlobalShared.Utilities
             return getOK;
         }
 
+        /// <summary>
+        /// Gets the uni parameter.
+        /// </summary>
+        /// <param name="acc">The acc.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <param name="setDefault">if set to <c>true</c> [set default].</param>
+        /// <returns>System.Object.</returns>
+        /// <exception cref="Exception">AccessCode required!</exception>
         public static object GetUniParam(string acc, string key, string defaultValue = "", bool setDefault = false)
         {
             bool getOK = false;
@@ -238,6 +515,15 @@ namespace DomConsult.GlobalShared.Utilities
             return value;
         }
 
+        /// <summary>
+        /// Gets the SQL data.
+        /// </summary>
+        /// <param name="acc">The acc.</param>
+        /// <param name="sql">The SQL.</param>
+        /// <param name="data">The data.</param>
+        /// <param name="timeOut">The time out.</param>
+        /// <returns>System.Int32.</returns>
+        /// <exception cref="Exception">AccessCode required!</exception>
         public static int GetSQLData(string acc, string sql, out object[,] data, int timeOut = -1)
         {
             int result = 0;
@@ -286,28 +572,56 @@ namespace DomConsult.GlobalShared.Utilities
         }
     }
 
+    /// <summary>
+    /// Class TUserSession.
+    /// </summary>
     public class TUserSession
     {
+        /// <summary>
+        /// Gets the current language identifier.
+        /// </summary>
+        /// <param name="accessCode">The access code.</param>
+        /// <returns>System.Int32.</returns>
         public static int GetCurrentLanguageId(string accessCode)
         {
             return TStrParams.GetParamAsInteger(accessCode, "L=");
         }
 
+        /// <summary>
+        /// Gets the current user identifier.
+        /// </summary>
+        /// <param name="accessCode">The access code.</param>
+        /// <returns>System.Int32.</returns>
         public static int GetCurrentUserId(string accessCode)
         {
             return TStrParams.GetParamAsInteger(accessCode, "UID=");
         }
 
+        /// <summary>
+        /// Gets the current session identifier.
+        /// </summary>
+        /// <param name="accessCode">The access code.</param>
+        /// <returns>System.Int32.</returns>
         public static int GetCurrentSessionId(string accessCode)
         {
             return TStrParams.GetParamAsInteger(accessCode, "QID=");
         }
 
+        /// <summary>
+        /// Gets the current database identifier.
+        /// </summary>
+        /// <param name="accessCode">The access code.</param>
+        /// <returns>System.Int32.</returns>
         public static int GetCurrentDatabaseId(string accessCode)
         {
             return TStrParams.GetParamAsInteger(accessCode, "DBID=");
         }
-        
+
+        /// <summary>
+        /// Languages the identifier to culture information.
+        /// </summary>
+        /// <param name="langId">The language identifier.</param>
+        /// <returns>System.String.</returns>
         public static string LanguageIdToCultureInfo(int langId)
         {
             langId %= 100;
@@ -325,8 +639,21 @@ namespace DomConsult.GlobalShared.Utilities
         }
     }
 
+    /// <summary>
+    /// Class TStrParams.
+    /// </summary>
     public class TStrParams
     {
+        /// <summary>
+        /// Gets the parameter.
+        /// </summary>
+        /// <param name="paramStr">The parameter string.</param>
+        /// <param name="paramName">Name of the parameter.</param>
+        /// <param name="paramValue">The parameter value.</param>
+        /// <param name="delimiters">The delimiters.</param>
+        /// <param name="ignoreCase">if set to <c>true</c> [ignore case].</param>
+        /// <param name="removeFromParamStr">if set to <c>true</c> [remove from parameter string].</param>
+        /// <returns>System.Int32.</returns>
         public static int GetParam(ref string paramStr, string paramName, ref string paramValue,
             char[] delimiters, bool ignoreCase, bool removeFromParamStr)
         {
@@ -424,11 +751,26 @@ namespace DomConsult.GlobalShared.Utilities
             }
         }
 
+        /// <summary>
+        /// Gets the parameter as integer.
+        /// </summary>
+        /// <param name="paramStr">The parameter string.</param>
+        /// <param name="paramName">Name of the parameter.</param>
+        /// <returns>System.Int32.</returns>
         public static int GetParamAsInteger(string paramStr, string paramName)
         {
             return GetParamAsInteger(paramStr, paramName, new char[] { '/', ' ' }, true, TUniConstants._INT_NULL);
         }
 
+        /// <summary>
+        /// Gets the parameter as integer.
+        /// </summary>
+        /// <param name="paramStr">The parameter string.</param>
+        /// <param name="paramName">Name of the parameter.</param>
+        /// <param name="delimiters">The delimiters.</param>
+        /// <param name="ignoreCase">if set to <c>true</c> [ignore case].</param>
+        /// <param name="nullValue">The null value.</param>
+        /// <returns>System.Int32.</returns>
         public static int GetParamAsInteger(string paramStr, string paramName, char[] delimiters, bool ignoreCase, int nullValue)
         {
             string lstr = "";
@@ -444,11 +786,23 @@ namespace DomConsult.GlobalShared.Utilities
                 return nullValue;
         }
 
+        /// <summary>
+        /// Safes the SQL.
+        /// </summary>
+        /// <param name="inputSQL">The input SQL.</param>
+        /// <returns>System.String.</returns>
         public static string SafeSql(string inputSQL)
         {
             return inputSQL.Replace("'", "''");
         }
 
+        /// <summary>
+        /// Gets the application setting.
+        /// </summary>
+        /// <param name="settings">The settings.</param>
+        /// <param name="key">The key.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <returns>System.String.</returns>
         public static string GetAppSetting(NameValueCollection settings, string key, string defaultValue = "")
         {
             if (settings == null)
@@ -461,6 +815,9 @@ namespace DomConsult.GlobalShared.Utilities
         }
     }
 
+    /// <summary>
+    /// Class TSysReg.
+    /// </summary>
     public class TSysReg
     {
         /*
@@ -471,6 +828,11 @@ namespace DomConsult.GlobalShared.Utilities
          * Najbezpieczniejszą metodą jest niestety odpytanie komponentu system.registry
          * Do tego celu jest funkcja w ComUtils GetRegParam
          */
+        /// <summary>
+        /// Gets the system reg value.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        /// <returns>System.String.</returns>
         public static string GetSysRegValue(string key)
         {
             try
@@ -493,18 +855,49 @@ namespace DomConsult.GlobalShared.Utilities
         }
     }
 
+    /// <summary>
+    /// Class TUniJob.
+    /// </summary>
     public class TUniJob
     {
+        /// <summary>
+        /// Enum TJobEventCategory
+        /// </summary>
         public enum TJobEventCategory
         {
+            /// <summary>
+            /// The jec service
+            /// </summary>
             jecService,
+            /// <summary>
+            /// The jec start job
+            /// </summary>
             jecStartJob,
+            /// <summary>
+            /// The jec end job
+            /// </summary>
             jecEndJob,
+            /// <summary>
+            /// The jec information
+            /// </summary>
             jecInformation,
+            /// <summary>
+            /// The jec warning
+            /// </summary>
             jecWarning,
+            /// <summary>
+            /// The jec error
+            /// </summary>
             jecError,
         }
 
+        /// <summary>
+        /// Saves the job event.
+        /// </summary>
+        /// <param name="jobInstanceId">The job instance identifier.</param>
+        /// <param name="eventDescription">The event description.</param>
+        /// <param name="jobEventCategoryId">The job event category identifier.</param>
+        /// <returns>System.Int32.</returns>
         public static int SaveJobEvent(int jobInstanceId, string eventDescription, TJobEventCategory jobEventCategoryId)
         {
             ComWrapper comObj = null;
@@ -542,8 +935,20 @@ namespace DomConsult.GlobalShared.Utilities
         }
     }
 
+    /// <summary>
+    /// Class TWMK.
+    /// </summary>
     public static class TWMK
     {
+        /// <summary>
+        /// Adds the message.
+        /// </summary>
+        /// <param name="MTSComId">The MTS COM identifier.</param>
+        /// <param name="TextId">The text identifier.</param>
+        /// <param name="Params">The parameters.</param>
+        /// <param name="Messages">The messages.</param>
+        /// <param name="Clear">if set to <c>true</c> [clear].</param>
+        /// <returns>System.Int32.</returns>
         public static int AddMessage(int MTSComId, int TextId, object[] Params, ref object Messages, bool Clear)
         {
             try
@@ -582,9 +987,14 @@ namespace DomConsult.GlobalShared.Utilities
             }
         }
 
+        /// <summary>
+        /// Gets the messages count.
+        /// </summary>
+        /// <param name="Messages">The messages.</param>
+        /// <returns>System.Int32.</returns>
         public static int GetMessagesCount(object Messages)
         {
-            if (Messages as object[,] == null)
+            if ((Messages as object[,]) == null)
             {
                 return 0;
             }
@@ -602,6 +1012,13 @@ namespace DomConsult.GlobalShared.Utilities
             }
         }
 
+        /// <summary>
+        /// Resizes the array.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="original">The original.</param>
+        /// <param name="newCoNum">The new co number.</param>
+        /// <param name="newRoNum">The new ro number.</param>
         private static void ResizeArray<T>(ref T[,] original, int newCoNum, int newRoNum)
         {
 
@@ -616,8 +1033,17 @@ namespace DomConsult.GlobalShared.Utilities
         }
     }
 
+    /// <summary>
+    /// Class TUniCert.
+    /// </summary>
     public class TUniCert
     {
+        /// <summary>
+        /// Installs the cerificates.
+        /// </summary>
+        /// <param name="certRootPath">The cert root path.</param>
+        /// <param name="silent">if set to <c>true</c> [silent].</param>
+        /// <param name="log">The log.</param>
         public static void InstallCerificates(string certRootPath, bool silent = false, ComLogger log = null)
         {
             if (!Directory.Exists(certRootPath))
@@ -747,13 +1173,28 @@ namespace DomConsult.GlobalShared.Utilities
         }
     }
 
+    /// <summary>
+    /// Class TUniVar.
+    /// </summary>
     public class TUniVar
     {
+        /// <summary>
+        /// Variables the is null or empty.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         public static bool VarIsNullOrEmpty(object value)
         {
             return ((value == null) || (value is DBNull));
         }
 
+        /// <summary>
+        /// Variables to int.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="var_null">The variable null.</param>
+        /// <param name="def">if set to <c>true</c> [definition].</param>
+        /// <returns>System.Int32.</returns>
         public static int VarToInt(object value, int var_null = TUniConstants._INT_NULL, bool def = true)
         {
             int ivalue = var_null;
@@ -771,6 +1212,12 @@ namespace DomConsult.GlobalShared.Utilities
             }
         }
 
+        /// <summary>
+        /// Variables to string.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="var_null">The variable null.</param>
+        /// <returns>System.String.</returns>
         public static string VarToStr(object value, string var_null = TUniConstants._STR_NULL)
         {
             if (VarIsNullOrEmpty(value))
@@ -779,6 +1226,12 @@ namespace DomConsult.GlobalShared.Utilities
                 return value.ToString();
         }
 
+        /// <summary>
+        /// Variables to SQL string.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="dateFormat">The date format.</param>
+        /// <returns>System.String.</returns>
         public static string VarToSQLStr(object value, string dateFormat = "yyyyMMdd HH:mm:ss.fff")
         {
             string res = "null";
@@ -817,6 +1270,12 @@ namespace DomConsult.GlobalShared.Utilities
             return res;
         }
 
+        /// <summary>
+        /// Variables the is array.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="dimCount">The dim count.</param>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         public static bool VarIsArray(object value, int dimCount = 0)
         {
             if (VarIsNullOrEmpty(value))

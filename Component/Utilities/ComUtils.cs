@@ -1,8 +1,21 @@
-﻿/*
- * 15.11.2011 [MS]
- * In order to distinguish business logic from presentation layer 
- * GUI functions have been moved to UIUtils.cs file to UIExtension Class
- */
+﻿// ***********************************************************************
+// Assembly         : Component
+// Author           : Artur Maciejowski
+// Created          : 16-02-2020
+//
+// Last Modified By : Artur Maciejowski
+// Last Modified On : 02-04-2020
+// ***********************************************************************
+// <copyright file="ComUtils.cs" company="DomConsult Sp. z o.o.">
+//     Copyright ©  2021 All rights reserved
+// </copyright>
+// <summary>
+// 15.11.2011 Maciej Smoleński
+// In order to distinguish business logic from presentation layer 
+// GUI functions have been moved to UIUtils.cs file to UIExtension Class
+// </summary>
+// ***********************************************************************
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,81 +30,221 @@ using System.Text;
 using System.Threading;
 using System.Reflection;
 using System.Web;
+
 #if DEBUG
 using System.Diagnostics;
 #endif
 
 namespace DomConsult.GlobalShared.Utilities
 {
+    /// <summary>
+    /// Class ComUtils.
+    /// </summary>
     public static class ComUtils
     {
+        /// <summary>
+        /// Delegate WMKHandler
+        /// </summary>
+        /// <param name="WMK">The WMK.</param>
         public delegate void WMKHandler(object WMK);
 
+        /// <summary>
+        /// The is single CPU machine
+        /// </summary>
         private static readonly bool IsSingleCpuMachine = (Environment.ProcessorCount == 1);
+        /// <summary>
+        /// The DBC lock object
+        /// </summary>
         private static readonly Object dbcLockObj = new Object();
 
+        /// <summary>
+        /// Switches to thread.
+        /// </summary>
         [DllImport("kernel32", ExactSpelling = true)]
         private static extern void SwitchToThread();
 
         #region GUID constants and registry keys
+        /// <summary>
+        /// The cs dbcom unique identifier
+        /// </summary>
         public const string CS_DBCOM_GUID = "{8EC71C07-3E75-11D3-AD64-005500E39587}";
+        /// <summary>
+        /// The cs trans unique identifier
+        /// </summary>
         public const string CS_TRANS_GUID = "{6A2813F3-37B0-11D5-86E0-00105A72C161}";
+        /// <summary>
+        /// The cs locker unique identifier
+        /// </summary>
         public const string CS_LOCKER_GUID = "{11D93C4F-67A8-4A65-9522-396A71393197}";
 
+        /// <summary>
+        /// The cs system unique identifier
+        /// </summary>
         public const string CS_SYSTEM_GUID = "{FB56EAFA-743B-4E94-B711-7BB0462C2532}";
+        /// <summary>
+        /// The cs systemtrans unique identifier
+        /// </summary>
         public const string CS_SYSTEMTRANS_GUID = "{124CF1F0-AB48-454E-91A8-61BE6EB84F4E}";
+        /// <summary>
+        /// The cs systemlocker unique identifier
+        /// </summary>
         public const string CS_SYSTEMLOCKER_GUID = "{D02C49B3-95BF-46B7-9329-D49DE16182EF}";
 
+        /// <summary>
+        /// The cs reader unique identifier
+        /// </summary>
         public const string CS_READER_GUID = "{6630571A-3668-42D0-9AFD-7711382CA53B}";
 
+        /// <summary>
+        /// The cs gkex unique identifier
+        /// </summary>
         public const string CS_GKEX_GUID = "{57EBF9C7-7732-43EE-91A4-4D9D93CF5C7D}";
+        /// <summary>
+        /// The cs sysreg unique identifier
+        /// </summary>
         public const string CS_SYSREG_GUID = "{AB4079B8-75E3-11D5-9B70-00104B07B6CB}";
+        /// <summary>
+        /// The cs reg srvpath
+        /// </summary>
         public const string CS_REG_SRVPATH = "{63AFD5B1-49BA-11D5-9AA5-00105A72C191}";
+        /// <summary>
+        /// The cs reg install
+        /// </summary>
         public const string CS_REG_INSTALL = "{63AFD5B1-49BA-11D5-9AA5-00105A72C193}";
+        /// <summary>
+        /// The cs regkey root
+        /// </summary>
         public const string CS_REGKEY_ROOT = "SOFTWARE";
+        /// <summary>
+        /// The cs regkey altr
+        /// </summary>
         public const string CS_REGKEY_ALTR = "SOFTWARE\\DOMCONSULT\\GRANIT";
+        /// <summary>
+        /// The cs stdcom unique identifier
+        /// </summary>
         public const string CS_STDCOM_GUID = "{78C06189-C9A3-11D3-86BA-00105A72C191}";
+        /// <summary>
+        /// The cs stdcomw unique identifier
+        /// </summary>
         public const string CS_STDCOMW_GUID = "{15E97569-0BA4-4882-A79B-7B5D9B90F3B5}";
         #endregion
 
+        /// <summary>
+        /// The DBC class
+        /// </summary>
         public static string DBC_CLASS = CS_DBCOM_GUID;
+        /// <summary>
+        /// The DBC trans class
+        /// </summary>
         public static string DBC_TRANS_CLASS = CS_TRANS_GUID;
+        /// <summary>
+        /// The DBC locker class
+        /// </summary>
         public static string DBC_LOCKER_CLASS = CS_LOCKER_GUID;
 
+        /// <summary>
+        /// The error message sqlcommand
+        /// </summary>
         public static string ERR_MESSAGE_SQLCOMMAND = "Unexpected sql Command error.";
 
+        /// <summary>
+        /// Enum PECDataTypeFlags
+        /// </summary>
         public enum PECDataTypeFlags
         {
-            cpColVisible = 1,  // Kolumna ma być widoczna dla klienta
-            cpObjectId = 2,  // Kolumna przechowuje wartość klucza głównego
-            // dla rekordu (tylko jedna kolumna w paczce) np: '/Rok=2008/Miesiac=1/CreditId=123'
+            /// <summary>
+            /// The cp col visible
+            /// </summary>
+            cpColVisible = 1,    // Kolumna ma być widoczna dla klienta
+            /// <summary>
+            /// The cp object identifier
+            /// </summary>
+            cpObjectId = 2,      // Kolumna przechowuje wartość klucza głównego
+                                 // dla rekordu (tylko jedna kolumna w paczce) np: '/Rok=2008/Miesiac=1/CreditId=123'
+            /// <summary>
+            /// The cp object type identifier
+            /// </summary>
             cpObjectTypeId = 4,  // Kolumna przechowuje wartość określająca
-            // ObjectTypeId dla bieżącego rekordu
-            // (tylko jedna kolumna w paczce)
-            cpColFirst = 32, // Kolumna widoczna która ma być pierwszą
-            // kolumną w liście prezentowanej użytkownikowi
-            // (opcjonalnie)
+                                 // ObjectTypeId dla bieżącego rekordu
+                                 // (tylko jedna kolumna w paczce)
+            /// <summary>
+            /// The cp col first
+            /// </summary>
+            cpColFirst = 32,     // Kolumna widoczna która ma być pierwszą
+                                 // kolumną w liście prezentowanej użytkownikowi
+                                 // (opcjonalnie)
 
+            /// <summary>
+            /// The cp date
+            /// </summary>
             cpDate = 0x0100,
+            /// <summary>
+            /// The cp integer
+            /// </summary>
             cpInteger = 0x0200,
+            /// <summary>
+            /// The cp float
+            /// </summary>
             cpFloat = 0x0400,
+            /// <summary>
+            /// The cp string
+            /// </summary>
             cpString = 0x0800,
+            /// <summary>
+            /// The cp date time
+            /// </summary>
             cpDateTime = 0x1000,
+            /// <summary>
+            /// The cp boolean
+            /// </summary>
             cpBoolean = 0x2000,
+            /// <summary>
+            /// The cp currency
+            /// </summary>
             cpCurrency = 0x4000,
 
+            /// <summary>
+            /// The CPV integer
+            /// </summary>
             cpvInteger = cpInteger + cpColVisible,
+            /// <summary>
+            /// The CPV float
+            /// </summary>
             cpvFloat = cpFloat + cpColVisible,
+            /// <summary>
+            /// The CPV string
+            /// </summary>
             cpvString = cpString + cpColVisible,
+            /// <summary>
+            /// The CPV date time
+            /// </summary>
             cpvDateTime = cpDateTime + cpColVisible,
+            /// <summary>
+            /// The CPV date
+            /// </summary>
             cpvDate = cpDate + cpColVisible,
+            /// <summary>
+            /// The CPV boolean
+            /// </summary>
             cpvBoolean = cpBoolean + cpColVisible,
+            /// <summary>
+            /// The CPV currency
+            /// </summary>
             cpvCurrency = cpCurrency + cpColVisible,
 
+            /// <summary>
+            /// The cp col key
+            /// </summary>
             cpColKey = cpObjectId,
+            /// <summary>
+            /// The cp col object type identifier
+            /// </summary>
             cpColObjectTypeId = cpObjectTypeId
         }
 
+        /// <summary>
+        /// Uses the DBC system.
+        /// </summary>
         public static void UseDBCSystem()
         {
             //UWAGA: To ustawienie ma wpływ na wszystkie instancje obiektów danego komponentu.
@@ -113,6 +266,9 @@ namespace DomConsult.GlobalShared.Utilities
             }
         }
 
+        /// <summary>
+        /// Stalls the thread.
+        /// </summary>
         public static void StallThread()
         {
             if (IsSingleCpuMachine)
@@ -121,6 +277,11 @@ namespace DomConsult.GlobalShared.Utilities
                 Thread.SpinWait(1);
         }
 
+        /// <summary>
+        /// OLEs the check.
+        /// </summary>
+        /// <param name="result">The result.</param>
+        /// <exception cref="Exception">OleCheck error, result: " + result</exception>
         public static void OleCheck(int result)
         {
             if (result < 0)
@@ -129,6 +290,13 @@ namespace DomConsult.GlobalShared.Utilities
             }
         }
 
+        /// <summary>
+        /// Gets the parameter.
+        /// </summary>
+        /// <param name="paramString">The parameter string.</param>
+        /// <param name="paramName">Name of the parameter.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <returns>System.String.</returns>
         public static string GetParam(string paramString, string paramName, string defaultValue)
         {
             Dictionary<string, string> ac = decodeInputString(paramString, "/");
@@ -144,6 +312,13 @@ namespace DomConsult.GlobalShared.Utilities
             return GetRegParam(paramName, defaultValue, string.Empty);
         }
         */
+        /// <summary>
+        /// Gets the reg parameter.
+        /// </summary>
+        /// <param name="paramName">Name of the parameter.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <param name="accessCode">The access code.</param>
+        /// <returns>System.String.</returns>
         public static string GetRegParam(string paramName, string defaultValue, string accessCode)
         {
             string paramValue = defaultValue;
@@ -164,7 +339,7 @@ namespace DomConsult.GlobalShared.Utilities
             {
                 if (sysreg.Connected)
                 {
-                    //wolanie GetValue przez runmethode sysrega jest specyficzne dlatego trzeba bylo stworzyc indywidualne wolanie 
+                    //wołanie GetValue przez runmethode sysrega jest specyficzne dlatego trzeba było stworzyć indywidualne wołanie 
                     object[] rm_params = new object[] { "GETVALUE", paramName, null };
                     string errMsg = string.Empty;
                     object res = sysreg.InvokeMethod("RunMethodNet", rm_params, new bool[] { false, false, true }, ref errMsg);
@@ -187,6 +362,13 @@ namespace DomConsult.GlobalShared.Utilities
             return paramValue;
         }
 
+        /// <summary>
+        /// Gets the uni parameter.
+        /// </summary>
+        /// <param name="AccessCode">The access code.</param>
+        /// <param name="paramName">Name of the parameter.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <returns>System.String.</returns>
         public static string GetUniParam(string AccessCode, string paramName, string defaultValue)
         {
             object[,] packet = null;
@@ -207,6 +389,11 @@ namespace DomConsult.GlobalShared.Utilities
 
         }
 
+        /// <summary>
+        /// Gets the connection string.
+        /// </summary>
+        /// <param name="accessCode">The access code.</param>
+        /// <returns>System.String.</returns>
         public static string GetConnectionString(string accessCode)
         {
 
@@ -222,16 +409,32 @@ namespace DomConsult.GlobalShared.Utilities
 
         }
 
+        /// <summary>
+        /// Assigneds the specified a object.
+        /// </summary>
+        /// <param name="AObject">a object.</param>
+        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         public static bool Assigned(object AObject)
         {
             return (AObject != null);
         }
 
+        /// <summary>
+        /// Formats the array.
+        /// </summary>
+        /// <param name="array">The array.</param>
+        /// <returns>System.String.</returns>
         public static string FormatArray(ArrayList array)
         {
             return FormatArray(array, ", ");
         }
 
+        /// <summary>
+        /// Formats the array.
+        /// </summary>
+        /// <param name="array">The array.</param>
+        /// <param name="separator">The separator.</param>
+        /// <returns>System.String.</returns>
         public static string FormatArray(ArrayList array, string separator)
         {
             StringBuilder sb = new StringBuilder();
@@ -247,17 +450,35 @@ namespace DomConsult.GlobalShared.Utilities
             return sb.ToString();
         }
 
+        /// <summary>
+        /// Checks the error.
+        /// </summary>
+        /// <param name="Result">The result.</param>
+        /// <param name="ResultIfNull">The result if null.</param>
+        /// <returns>System.Int32.</returns>
         public static int CheckError(object Result, int ResultIfNull)
         {
             return TUniVar.VarToInt(Result, 0, false);
         }
 
+        /// <summary>
+        /// Checks the error with throw.
+        /// </summary>
+        /// <param name="Result">The result.</param>
+        /// <param name="message">The message.</param>
+        /// <exception cref="Exception"></exception>
         public static void CheckErrorWithThrow(object Result, string message)
         {
             if (TUniVar.VarToInt(Result, 0) < 0)
                 throw new Exception(message);
         }
 
+        /// <summary>
+        /// Gets the time out parameter value.
+        /// </summary>
+        /// <param name="TimeOut">The time out.</param>
+        /// <param name="AddSeparator">if set to <c>true</c> [add separator].</param>
+        /// <returns>System.String.</returns>
         public static string GetTimeOutParamValue(int TimeOut, bool AddSeparator)
         {
             string res = "";
@@ -272,11 +493,24 @@ namespace DomConsult.GlobalShared.Utilities
             return res;
         }
 
+        /// <summary>
+        /// Creates the COM.
+        /// </summary>
+        /// <param name="GUID">The unique identifier.</param>
+        /// <param name="AccessCode">The access code.</param>
+        /// <returns>ComWrapper.</returns>
         public static ComWrapper CreateCom(string GUID, string AccessCode)
         {
             return CreateCom(GUID, AccessCode, true);
         }
 
+        /// <summary>
+        /// Creates the COM.
+        /// </summary>
+        /// <param name="GUID">The unique identifier.</param>
+        /// <param name="AccessCode">The access code.</param>
+        /// <param name="assignAccessCode">if set to <c>true</c> [assign access code].</param>
+        /// <returns>ComWrapper.</returns>
         public static ComWrapper CreateCom(string GUID, string AccessCode, bool assignAccessCode)
         {
 
@@ -310,6 +544,12 @@ namespace DomConsult.GlobalShared.Utilities
 
         }
 
+        /// <summary>
+        /// Creates the COM in standard COM.
+        /// </summary>
+        /// <param name="comName">Name of the COM.</param>
+        /// <param name="accessCode">The access code.</param>
+        /// <returns>ComWrapper.</returns>
         public static ComWrapper CreateComInStandardCom(string comName, string accessCode)
         {
             if (ComWrapper.APPLICATION)
@@ -322,6 +562,16 @@ namespace DomConsult.GlobalShared.Utilities
             }
         }
 
+        /// <summary>
+        /// Creates the COM in standard COM.
+        /// </summary>
+        /// <param name="comName">Name of the COM.</param>
+        /// <param name="accessCode">The access code.</param>
+        /// <param name="ServerName">Name of the server.</param>
+        /// <returns>ComWrapper.</returns>
+        /// <exception cref="Exception">Error creating OLE Object \"StandardCom\"</exception>
+        /// <exception cref="Exception"></exception>
+        /// <exception cref="Exception"></exception>
         public static ComWrapper CreateComInStandardCom(string comName, string accessCode, string ServerName)
         {
             /*
@@ -375,8 +625,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// <param name="classId">CLSID tworzonego COMa</param>
         /// <param name="AccessCode">AccessCode jaki zostanie do niego przypisany</param>
         /// <param name="ServerName">Nazwa serwera komponentow, gdzie jest zainstalowany komponent. Jesli zostanie podana pusta nazwa
-        /// nazwa zostanie pobrana z AccessCode'a
-        /// </param>
+        /// nazwa zostanie pobrana z AccessCode'a</param>
         /// <returns>Utworzony obiekt COM</returns>
         public static ComWrapper CreateRemoteCom(Guid classId, string AccessCode, string ServerName)
         {
@@ -386,7 +635,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// <summary>
         /// Funkcja tworzy zdalnie obiekt COM
         /// </summary>
-        /// <param name="classId">CLSID tworzonego COMa</param>
+        /// <param name="ClassID">The class identifier.</param>
         /// <param name="AccessCode">AccessCode jaki zostanie do niego przypisany</param>
         /// <param name="ServerName">Nazwa serwera komponentow, gdzie jest zainstalowany komponent. Jesli zostanie podana pusta nazwa to zostanie pobrana z AccessCode'a</param>
         /// <param name="assignAccessCode">Flaga okreslajaca czy ma byc przypisany AccessCode - przydatne podczas tunelowania wywolac przez inne komponenty</param>
@@ -419,6 +668,13 @@ namespace DomConsult.GlobalShared.Utilities
 
         }
 
+        /// <summary>
+        /// Runs the method.
+        /// </summary>
+        /// <param name="ComWrapper">The COM wrapper.</param>
+        /// <param name="MethodName">Name of the method.</param>
+        /// <param name="Params">The parameters.</param>
+        /// <returns>System.Int32.</returns>
         public static int RunMethod(ComWrapper ComWrapper, string MethodName, ref object[] Params)
         {
             string ErrorMessage = "";
@@ -435,6 +691,13 @@ namespace DomConsult.GlobalShared.Utilities
 
         }
 
+        /// <summary>
+        /// Runs the method net.
+        /// </summary>
+        /// <param name="ComWrapper">The COM wrapper.</param>
+        /// <param name="MethodName">Name of the method.</param>
+        /// <param name="Params">The parameters.</param>
+        /// <returns>System.Int32.</returns>
         public static int RunMethodNet(ComWrapper ComWrapper, string MethodName, ref object[] Params)
         {
             string ErrorMessage = "";
@@ -451,6 +714,16 @@ namespace DomConsult.GlobalShared.Utilities
 
         }
 
+        /// <summary>
+        /// Gets the packet.
+        /// </summary>
+        /// <param name="AccessCode">The access code.</param>
+        /// <param name="SQL">The SQL.</param>
+        /// <param name="TransId">The trans identifier.</param>
+        /// <param name="Timeout">The timeout.</param>
+        /// <param name="Packet">The packet.</param>
+        /// <param name="hWMK">The h WMK.</param>
+        /// <returns>System.Int32.</returns>
         public static int GetPacket(string AccessCode, string SQL, int TransId, int Timeout, out object[,] Packet, WMKHandler hWMK = null)
         {
             if (ComWrapper.APPLICATION)
@@ -463,6 +736,17 @@ namespace DomConsult.GlobalShared.Utilities
             }
         }
 
+        /// <summary>
+        /// Gets the packet.
+        /// </summary>
+        /// <param name="AccessCode">The access code.</param>
+        /// <param name="ServerName">Name of the server.</param>
+        /// <param name="SQL">The SQL.</param>
+        /// <param name="TransId">The trans identifier.</param>
+        /// <param name="Timeout">The timeout.</param>
+        /// <param name="Packet">The packet.</param>
+        /// <param name="hWMK">The h WMK.</param>
+        /// <returns>System.Int32.</returns>
         public static int GetPacket(string AccessCode, string ServerName, string SQL, int TransId, int Timeout, out object[,] Packet, WMKHandler hWMK = null)
         {
             int res = -1;
@@ -486,11 +770,28 @@ namespace DomConsult.GlobalShared.Utilities
             return res;
         }
 
+        /// <summary>
+        /// Gets the packet.
+        /// </summary>
+        /// <param name="dbCom">The database COM.</param>
+        /// <param name="SQL">The SQL.</param>
+        /// <param name="Timeout">The timeout.</param>
+        /// <param name="Packet">The packet.</param>
+        /// <returns>System.Int32.</returns>
         public static int GetPacket(ComWrapper dbCom, string SQL, int Timeout, out object[,] Packet)
         {
             return GetPacket(dbCom, SQL, dbCom.TransactionObject.Id, Timeout, out Packet);
         }
 
+        /// <summary>
+        /// Gets the packet.
+        /// </summary>
+        /// <param name="dbCom">The database COM.</param>
+        /// <param name="SQL">The SQL.</param>
+        /// <param name="TransId">The trans identifier.</param>
+        /// <param name="Timeout">The timeout.</param>
+        /// <param name="Packet">The packet.</param>
+        /// <returns>System.Int32.</returns>
         public static int GetPacket(ComWrapper dbCom, string SQL, int TransId, int Timeout, out object[,] Packet)
         {
             object res = null;
@@ -532,12 +833,31 @@ namespace DomConsult.GlobalShared.Utilities
 
             return CheckError(res, -1);
         }
-                
+
+        /// <summary>
+        /// Executes the command.
+        /// </summary>
+        /// <param name="AccessCode">The access code.</param>
+        /// <param name="SQL">The SQL.</param>
+        /// <param name="TransId">The trans identifier.</param>
+        /// <param name="Timeout">The timeout.</param>
+        /// <param name="hWMK">The h WMK.</param>
+        /// <returns>System.Int32.</returns>
         public static int ExecuteCommand(string AccessCode, string SQL, int TransId, int Timeout, WMKHandler hWMK = null)
         {
             return ExecuteCommand(AccessCode, SQL, TransId, Timeout, false, hWMK);
         }
 
+        /// <summary>
+        /// Executes the command.
+        /// </summary>
+        /// <param name="AccessCode">The access code.</param>
+        /// <param name="SQL">The SQL.</param>
+        /// <param name="TransId">The trans identifier.</param>
+        /// <param name="Timeout">The timeout.</param>
+        /// <param name="NoRigtsSQL">if set to <c>true</c> [no rigts SQL].</param>
+        /// <param name="hWMK">The h WMK.</param>
+        /// <returns>System.Int32.</returns>
         public static int ExecuteCommand(string AccessCode, string SQL, int TransId, int Timeout, bool NoRigtsSQL, WMKHandler hWMK = null)
         {
             int res = -1;
@@ -560,11 +880,26 @@ namespace DomConsult.GlobalShared.Utilities
             return res;
         }
 
+        /// <summary>
+        /// Executes the command.
+        /// </summary>
+        /// <param name="DBComInstance">The database COM instance.</param>
+        /// <param name="SQL">The SQL.</param>
+        /// <param name="TransId">The trans identifier.</param>
+        /// <param name="Timeout">The timeout.</param>
+        /// <returns>System.Int32.</returns>
         public static int ExecuteCommand(ComWrapper DBComInstance, string SQL, int TransId, int Timeout)
         {
             return ExecuteCommand(DBComInstance, SQL, TransId, Timeout, false);
         }
 
+        /// <summary>
+        /// Executes the command.
+        /// </summary>
+        /// <param name="DBComInstance">The database COM instance.</param>
+        /// <param name="SQL">The SQL.</param>
+        /// <param name="timeout">The timeout.</param>
+        /// <returns>System.Int32.</returns>
         public static int ExecuteCommand(ComWrapper DBComInstance, string SQL, int timeout)
         {
             if (DBComInstance.TransactionObject == null)
@@ -577,6 +912,15 @@ namespace DomConsult.GlobalShared.Utilities
             }
         }
 
+        /// <summary>
+        /// Executes the command.
+        /// </summary>
+        /// <param name="DBComInstance">The database COM instance.</param>
+        /// <param name="SQL">The SQL.</param>
+        /// <param name="TransId">The trans identifier.</param>
+        /// <param name="Timeout">The timeout.</param>
+        /// <param name="NoRigtsSQL">if set to <c>true</c> [no rigts SQL].</param>
+        /// <returns>System.Int32.</returns>
         public static int ExecuteCommand(ComWrapper DBComInstance, string SQL, int TransId, int Timeout, bool NoRigtsSQL)
         {
             object res = -1;
@@ -604,6 +948,15 @@ namespace DomConsult.GlobalShared.Utilities
             return CheckError(res, -1);
         }
 
+        /// <summary>
+        /// Databases the lock.
+        /// </summary>
+        /// <param name="AccessCode">The access code.</param>
+        /// <param name="TableName">Name of the table.</param>
+        /// <param name="RecordId">The record identifier.</param>
+        /// <param name="BaseId">The base identifier.</param>
+        /// <param name="TableId">The table identifier.</param>
+        /// <returns>System.Int32.</returns>
         public static int DBLock(string AccessCode, string TableName, string RecordId, out int BaseId, out int TableId)
         {
 
@@ -634,6 +987,15 @@ namespace DomConsult.GlobalShared.Utilities
             return res;
         }
 
+        /// <summary>
+        /// Databases the unlock.
+        /// </summary>
+        /// <param name="AccessCode">The access code.</param>
+        /// <param name="TableName">Name of the table.</param>
+        /// <param name="RecordId">The record identifier.</param>
+        /// <param name="BaseId">The base identifier.</param>
+        /// <param name="TableId">The table identifier.</param>
+        /// <returns>System.Int32.</returns>
         public static int DBUnlock(string AccessCode, string TableName, string RecordId, int BaseId, int TableId)
         {
 
@@ -667,6 +1029,11 @@ namespace DomConsult.GlobalShared.Utilities
         }
 
 
+        /// <summary>
+        /// Begins the transaction.
+        /// </summary>
+        /// <param name="comObj">The COM object.</param>
+        /// <returns>System.Int32.</returns>
         public static int BeginTransaction(ref ComWrapper comObj)
         {
             int res = -1;
@@ -694,6 +1061,11 @@ namespace DomConsult.GlobalShared.Utilities
             return res;
         }
 
+        /// <summary>
+        /// Commits the transaction.
+        /// </summary>
+        /// <param name="comObj">The COM object.</param>
+        /// <returns>System.Int32.</returns>
         public static int CommitTransaction(ref ComWrapper comObj)
         {
 
@@ -722,6 +1094,11 @@ namespace DomConsult.GlobalShared.Utilities
         }
 
         //public static int RollbackTransaction(ref Transaction ATransaction)
+        /// <summary>
+        /// Rollbacks the transaction.
+        /// </summary>
+        /// <param name="comObj">The COM object.</param>
+        /// <returns>System.Int32.</returns>
         public static int RollbackTransaction(ref ComWrapper comObj)
         {
 
@@ -750,6 +1127,16 @@ namespace DomConsult.GlobalShared.Utilities
 
         }
 
+        /// <summary>
+        /// Opens the resultset.
+        /// </summary>
+        /// <param name="AccessCode">The access code.</param>
+        /// <param name="SQL">The SQL.</param>
+        /// <param name="PKName">Name of the pk.</param>
+        /// <param name="TransId">The trans identifier.</param>
+        /// <param name="Timeout">The timeout.</param>
+        /// <param name="ComWrapper">The COM wrapper.</param>
+        /// <returns>System.Int32.</returns>
         public static int OpenResultset(string AccessCode, string SQL, string PKName, int TransId, int Timeout, out ComWrapper ComWrapper)
         {
 
@@ -777,6 +1164,12 @@ namespace DomConsult.GlobalShared.Utilities
 
         }
 
+        /// <summary>
+        /// Records the edit.
+        /// </summary>
+        /// <param name="ComWrapper">The COM wrapper.</param>
+        /// <param name="LockedByUserId">The locked by user identifier.</param>
+        /// <returns>System.Int32.</returns>
         public static int RecordEdit(ref ComWrapper ComWrapper, out int LockedByUserId)
         {
 
@@ -793,6 +1186,14 @@ namespace DomConsult.GlobalShared.Utilities
 
         }
 
+        /// <summary>
+        /// Records the update.
+        /// </summary>
+        /// <param name="ComWrapper">The COM wrapper.</param>
+        /// <param name="Fields">The fields.</param>
+        /// <param name="Values">The values.</param>
+        /// <param name="PKName">Name of the pk.</param>
+        /// <returns>System.Int32.</returns>
         public static int RecordUpdate(ref ComWrapper ComWrapper, object Fields, object Values, string PKName)
         {
 
@@ -816,6 +1217,14 @@ namespace DomConsult.GlobalShared.Utilities
 
         }
 
+        /// <summary>
+        /// Records the new.
+        /// </summary>
+        /// <param name="ComWrapper">The COM wrapper.</param>
+        /// <param name="Fields">The fields.</param>
+        /// <param name="Values">The values.</param>
+        /// <param name="PKName">Name of the pk.</param>
+        /// <returns>System.Int32.</returns>
         public static int RecordNew(ref ComWrapper ComWrapper, object Fields, object Values, string PKName)
         {
 
@@ -839,11 +1248,23 @@ namespace DomConsult.GlobalShared.Utilities
 
         }
 
+        /// <summary>
+        /// Records the new.
+        /// </summary>
+        /// <param name="ComWrapper">The COM wrapper.</param>
+        /// <param name="Fields">The fields.</param>
+        /// <param name="Values">The values.</param>
+        /// <returns>System.Int32.</returns>
         public static int RecordNew(ref ComWrapper ComWrapper, object Fields, object Values)
         {
             return RecordNew(ref ComWrapper, Fields, Values, string.Empty);
         }
 
+        /// <summary>
+        /// Records the cancel.
+        /// </summary>
+        /// <param name="ComWrapper">The COM wrapper.</param>
+        /// <returns>System.Int32.</returns>
         public static int RecordCancel(ref ComWrapper ComWrapper)
         {
 
@@ -855,6 +1276,11 @@ namespace DomConsult.GlobalShared.Utilities
 
         /*MS 09.06.2016 zmienilem te funkcje bo to nie jest zdrowe zachowanie aby parametr przekazywany
          przez wskaźnik był w niej w wątpliwy sposób niszczony. Należy używać klauzuli using do tego!!*/
+        /// <summary>
+        /// Records the close.
+        /// </summary>
+        /// <param name="ComWrapper">The COM wrapper.</param>
+        /// <returns>System.Int32.</returns>
         public static int RecordClose(ComWrapper ComWrapper)
         {
             ComWrapper.InvokeMethod("Close", null, null);
@@ -862,11 +1288,24 @@ namespace DomConsult.GlobalShared.Utilities
 
         }
 
+        /// <summary>
+        /// Decodes the input string.
+        /// </summary>
+        /// <param name="s">The s.</param>
+        /// <param name="delimiter">The delimiter.</param>
+        /// <returns>Dictionary&lt;System.String, System.String&gt;.</returns>
         public static Dictionary<string, string> decodeInputString(string s, string delimiter)
         {
             return decodeInputString(s, delimiter, false);
         }
 
+        /// <summary>
+        /// Decodes the input string.
+        /// </summary>
+        /// <param name="s">The s.</param>
+        /// <param name="delimiter">The delimiter.</param>
+        /// <param name="listFromDuplicates">if set to <c>true</c> [list from duplicates].</param>
+        /// <returns>Dictionary&lt;System.String, System.String&gt;.</returns>
         public static Dictionary<string, string> decodeInputString(string s, string delimiter, bool listFromDuplicates)
         {
             if (String.IsNullOrEmpty(s))
@@ -912,6 +1351,12 @@ namespace DomConsult.GlobalShared.Utilities
             }
         }
 
+        /// <summary>
+        /// Gets the property value.
+        /// </summary>
+        /// <param name="instance">The instance.</param>
+        /// <param name="path">The path.</param>
+        /// <returns>System.Object.</returns>
         public static object GetPropertyValue(object instance, string path)
         {
             if (string.IsNullOrEmpty(path))
@@ -933,6 +1378,11 @@ namespace DomConsult.GlobalShared.Utilities
             return instance;
         }
 
+        /// <summary>
+        /// Replaces the action parameters.
+        /// </summary>
+        /// <param name="SQL">The SQL.</param>
+        /// <param name="ActionParsed">The action parsed.</param>
         public static void ReplaceActionParams(ref string SQL, Dictionary<string, string> ActionParsed)
         {
             string paramName;
@@ -950,6 +1400,13 @@ namespace DomConsult.GlobalShared.Utilities
             }
         }
 
+        /// <summary>
+        /// Databases the COM parse SQL.
+        /// </summary>
+        /// <param name="AccessCode">The access code.</param>
+        /// <param name="SQL">The SQL.</param>
+        /// <param name="ParseData">The parse data.</param>
+        /// <returns>System.Int32.</returns>
         public static int DBComParseSQL(string AccessCode, ref string SQL, ref object ParseData)
         {
             int res = -1;
@@ -974,6 +1431,11 @@ namespace DomConsult.GlobalShared.Utilities
             return res;
         }
 
+        /// <summary>
+        /// Hashes the string.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>System.String.</returns>
         public static string HashString(string value)
         {
             StringBuilder hashedString = new StringBuilder();
@@ -989,6 +1451,11 @@ namespace DomConsult.GlobalShared.Utilities
             return hashedString.ToString();
         }
 
+        /// <summary>
+        /// Determines whether [is valid URL] [the specified URL].
+        /// </summary>
+        /// <param name="url">The URL.</param>
+        /// <returns><c>true</c> if [is valid URL] [the specified URL]; otherwise, <c>false</c>.</returns>
         public static bool isValidURL(string url)
         {
 
@@ -1005,6 +1472,11 @@ namespace DomConsult.GlobalShared.Utilities
             return true;
         }
 
+        /// <summary>
+        /// Gets the name of the current database.
+        /// </summary>
+        /// <param name="AccessCode">The access code.</param>
+        /// <returns>System.String.</returns>
         public static string GetCurrentDatabaseName(string AccessCode)
         {
             object[,] packet = null;
@@ -1024,6 +1496,11 @@ namespace DomConsult.GlobalShared.Utilities
                 return "???";
         }
 
+        /// <summary>
+        /// Gets the name of the current user.
+        /// </summary>
+        /// <param name="AccessCode">The access code.</param>
+        /// <returns>System.String.</returns>
         public static string GetCurrentUserName(string AccessCode)
         {
             object[,] packet = null;
@@ -1043,6 +1520,11 @@ namespace DomConsult.GlobalShared.Utilities
                 return "???";
         }
 
+        /// <summary>
+        /// Gets the culture by language identifier.
+        /// </summary>
+        /// <param name="LangId">The language identifier.</param>
+        /// <returns>CultureInfo.</returns>
         public static CultureInfo GetCultureByLangId(int LangId)
         {
             LangId %= 100;
@@ -1059,6 +1541,10 @@ namespace DomConsult.GlobalShared.Utilities
             }
         }
 
+        /// <summary>
+        /// Gets the system up time.
+        /// </summary>
+        /// <returns>TimeSpan.</returns>
         public static TimeSpan GetSystemUpTime()
         {
             try
@@ -1077,11 +1563,22 @@ namespace DomConsult.GlobalShared.Utilities
             }
         }
 
+        /// <summary>
+        /// Nexts the available filename.
+        /// </summary>
+        /// <param name="path">The path.</param>
+        /// <returns>System.String.</returns>
         public static string NextAvailableFilename(string path)
         {
             return NextAvailableFilename(path, " ({0})");
         }
 
+        /// <summary>
+        /// Nexts the available filename.
+        /// </summary>
+        /// <param name="path">The path.</param>
+        /// <param name="numberPattern">The number pattern.</param>
+        /// <returns>System.String.</returns>
         public static string NextAvailableFilename(string path, string numberPattern)
         {
             if (!File.Exists(path))
@@ -1093,6 +1590,12 @@ namespace DomConsult.GlobalShared.Utilities
             return GetNextFilename(path + numberPattern);
         }
 
+        /// <summary>
+        /// Gets the next filename.
+        /// </summary>
+        /// <param name="pattern">The pattern.</param>
+        /// <returns>System.String.</returns>
+        /// <exception cref="ArgumentException">The pattern must include an index place-holder - pattern</exception>
         private static string GetNextFilename(string pattern)
         {
             string tmp = string.Format(pattern, 1);
@@ -1122,6 +1625,12 @@ namespace DomConsult.GlobalShared.Utilities
             return string.Format(pattern, max);
         }
 
+        /// <summary>
+        /// Gets the temporary file path with ext.
+        /// </summary>
+        /// <param name="prefix">The prefix.</param>
+        /// <param name="extension">The extension.</param>
+        /// <returns>System.String.</returns>
         public static string GetTempFilePathWithExt(string prefix, string extension)
         {
             var path = Path.GetTempPath();
@@ -1129,6 +1638,12 @@ namespace DomConsult.GlobalShared.Utilities
             return Path.Combine(path, Path.ChangeExtension(fileName, extension));
         }
 
+        /// <summary>
+        /// Creates the list.
+        /// </summary>
+        /// <param name="items">The items.</param>
+        /// <param name="delimiter">The delimiter.</param>
+        /// <returns>System.String.</returns>
         public static string CreateList(StringCollection items, String delimiter)
         {
             if (items == null)
@@ -1143,6 +1658,10 @@ namespace DomConsult.GlobalShared.Utilities
             return itemsArray.ToDelimitedString(x => Convert.ToString(x), delimiter);
         }
 
+        /// <summary>
+        /// Generates the passphrase.
+        /// </summary>
+        /// <returns>System.String.</returns>
         public static string GeneratePassphrase()
         {
             DateTime td = new DateTime();
@@ -1154,6 +1673,18 @@ namespace DomConsult.GlobalShared.Utilities
                 td.ToString("MMMM", CultureInfo.InvariantCulture).Substring(0, 1).ToUpper();
         }
 
+        /// <summary>
+        /// Tries the login client.
+        /// </summary>
+        /// <param name="login">The login.</param>
+        /// <param name="password">The password.</param>
+        /// <param name="dBId">The d b identifier.</param>
+        /// <param name="langId">The language identifier.</param>
+        /// <param name="applicationName">Name of the application.</param>
+        /// <param name="extractAC">if set to <c>true</c> [extract ac].</param>
+        /// <param name="serverName">Name of the server.</param>
+        /// <param name="accessCode">The access code.</param>
+        /// <returns>System.Int32.</returns>
         public static int TryLoginClient(string login, string password, int dBId, int langId,
             string applicationName, bool extractAC, string serverName, out string accessCode)
         {
@@ -1214,6 +1745,11 @@ namespace DomConsult.GlobalShared.Utilities
             return res;
         }
 
+        /// <summary>
+        /// Decodes the URL string.
+        /// </summary>
+        /// <param name="url">The URL.</param>
+        /// <returns>System.String.</returns>
         public static string DecodeUrlString(string url)
         {
             string newUrl = url;
@@ -1229,8 +1765,8 @@ namespace DomConsult.GlobalShared.Utilities
         /// <summary>
         /// UrlEncodes a string without the requirement for System.Web
         /// </summary>
-        /// <param name="String"></param>
-        /// <returns></returns>
+        /// <param name="text">The text.</param>
+        /// <returns>System.String.</returns>
         // [Obsolete("Use System.Uri.EscapeDataString instead")]
         public static string UrlEncode(string text)
         {
@@ -1274,6 +1810,12 @@ namespace DomConsult.GlobalShared.Utilities
             return UrlDecode(urlEncoded.Substring(lnStart, Index2 - lnStart));
         }
 
+        /// <summary>
+        /// Gets the double.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="defaultValue">The default value.</param>
+        /// <returns>System.Double.</returns>
         public static double GetDouble(string value, double defaultValue)
         {
             double result;
@@ -1308,6 +1850,12 @@ namespace DomConsult.GlobalShared.Utilities
             return result;
         }
 
+        /// <summary>
+        /// Gets the PKG headers.
+        /// </summary>
+        /// <param name="pkg">The PKG.</param>
+        /// <param name="hdrNameCaseSensitive">if set to <c>true</c> [HDR name case sensitive].</param>
+        /// <returns>Dictionary&lt;System.String, System.Int32&gt;.</returns>
         public static Dictionary<string, int> GetPkgHeaders(ref object[,] pkg, bool hdrNameCaseSensitive)
         {
             if (pkg == null) return null;
@@ -1325,6 +1873,11 @@ namespace DomConsult.GlobalShared.Utilities
             return _dict;
         }
 
+        /// <summary>
+        /// Strings to int array.
+        /// </summary>
+        /// <param name="myNumbers">My numbers.</param>
+        /// <returns>System.Int32[].</returns>
         public static int[] StringToIntArray(string myNumbers)
         {
             List<int> myIntegers = new List<int>();
@@ -1343,12 +1896,24 @@ namespace DomConsult.GlobalShared.Utilities
     /// </summary>
     public static class Extensions
     {
+        /// <summary>
+        /// Determines whether [is word character] [the specified c].
+        /// </summary>
+        /// <param name="c">The c.</param>
+        /// <returns><c>true</c> if [is word character] [the specified c]; otherwise, <c>false</c>.</returns>
         public static bool IsWordChar(char c)
         {
             return Char.IsLetterOrDigit(c) || c == '_' || c == '@';
         }
 
         #region String extension methods
+        /// <summary>
+        /// Determines whether this instance contains the object.
+        /// </summary>
+        /// <param name="source">The source.</param>
+        /// <param name="toCheck">To check.</param>
+        /// <param name="comp">The comp.</param>
+        /// <returns><c>true</c> if [contains] [the specified to check]; otherwise, <c>false</c>.</returns>
         public static bool Contains(this string source, string toCheck, StringComparison comp)
         {
             if (string.IsNullOrEmpty(toCheck) || string.IsNullOrEmpty(source))
@@ -1357,6 +1922,11 @@ namespace DomConsult.GlobalShared.Utilities
             return source.IndexOf(toCheck, comp) >= 0;
         }
 
+        /// <summary>
+        /// Reverses the specified input.
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <returns>System.String.</returns>
         public static string Reverse(this string input)
         {
             char[] inputarray = input.ToCharArray();
@@ -1364,6 +1934,14 @@ namespace DomConsult.GlobalShared.Utilities
             return new string(inputarray);
         }
 
+        /// <summary>
+        /// Replaces the whole words.
+        /// </summary>
+        /// <param name="s">The s.</param>
+        /// <param name="oldWord">The old word.</param>
+        /// <param name="newWord">The new word.</param>
+        /// <param name="comparisonOption">The comparison option.</param>
+        /// <returns>System.String.</returns>
         public static string ReplaceWholeWords(this string s, string oldWord, string newWord, StringComparison comparisonOption)
         {
             if (s == null)
@@ -1398,6 +1976,14 @@ namespace DomConsult.GlobalShared.Utilities
             }
         }
 
+        /// <summary>
+        /// Replaces the string.
+        /// </summary>
+        /// <param name="original">The original.</param>
+        /// <param name="pattern">The pattern.</param>
+        /// <param name="replacement">The replacement.</param>
+        /// <param name="comparisonType">Type of the comparison.</param>
+        /// <returns>System.String.</returns>
         static public string ReplaceString(this string original, string pattern, string replacement, StringComparison comparisonType)
         {
             if (original == null)
@@ -1430,10 +2016,16 @@ namespace DomConsult.GlobalShared.Utilities
 
             return result.ToString();
         }
-#endregion
+        #endregion
 
-#region ForEach extensions
+        #region ForEach extensions
 
+        /// <summary>
+        /// Fors the each.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source">The source.</param>
+        /// <param name="action">The action.</param>
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
         {
             foreach (T element in source)
@@ -1442,6 +2034,13 @@ namespace DomConsult.GlobalShared.Utilities
             }
         }
 
+        /// <summary>
+        /// Linqs for each.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source">The source.</param>
+        /// <param name="action">The action.</param>
+        /// <returns>IEnumerable&lt;T&gt;.</returns>
         public static IEnumerable<T> LINQForEach<T>(this IEnumerable<T> source, Action<T> action)
         {
             foreach (T element in source)
@@ -1451,6 +2050,12 @@ namespace DomConsult.GlobalShared.Utilities
             }
         }
 
+        /// <summary>
+        /// Indexeds for each.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source">The source.</param>
+        /// <param name="action">The action.</param>
         public static void IndexedForEach<T>(this IEnumerable<T> source, Action<T, int> action)
         {
             int i = 0;
@@ -1460,14 +2065,28 @@ namespace DomConsult.GlobalShared.Utilities
                 i++;
             }
         }
-#endregion
+        #endregion
 
-#region Helper functions
+        #region Helper functions
+        /// <summary>
+        /// Returns the last element.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source">The source.</param>
+        /// <returns>T.</returns>
         public static T ReturnLastElement<T>(this T[] source)
         {
             return source[source.Length - 1];
         }
 
+        /// <summary>
+        /// Converts to delimitedstring.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source">The source.</param>
+        /// <param name="converter">The converter.</param>
+        /// <param name="separator">The separator.</param>
+        /// <returns>System.String.</returns>
         public static string ToDelimitedString<T>(
            this IEnumerable<T> source, Func<T, string> converter, string separator)
         {

@@ -1,3 +1,17 @@
+// ***********************************************************************
+// Assembly         : Component
+// Author           : Artur Maciejowski
+// Created          : 16-02-2020
+//
+// Last Modified By : Artur Maciejowski
+// Last Modified On : 28-10-2020
+// ***********************************************************************
+// <copyright file="ComponentMain.cs" company="DomConsult Sp. z o.o.">
+//     Copyright ©  2021 All rights reserved
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +23,24 @@ using System.Diagnostics;
 
 namespace Component
 {
+    /// <summary>
+    /// Class Manager.
+    /// Implements the <see cref="Component.ManagerBase" />
+    /// </summary>
+    /// <seealso cref="Component.ManagerBase" />
     public class Manager : ManagerBase
     {
+        /// <summary>
+        /// Assigns the access code (method body).
+        /// </summary>
         public override void AssignAccessCodeBody()
         {
             MtsComId = 999;
         }
 
+        /// <summary>
+        /// Assigns the start up parameters (method body).
+        /// </summary>
         public override void AssignStartUpParameterBody()
         {
             Record.TableName = "Table";
@@ -26,6 +51,9 @@ namespace Component
             BDW.AddModifyOther(TBDOthers.coDisabledFunction, 0);
         }
 
+        /// <summary>
+        /// Processes the input parameters.
+        /// </summary>
         public override void ProcessInputParams()
         {
             try
@@ -40,11 +68,14 @@ namespace Component
             }
         }
 
+        /// <summary>
+        /// Initializes the main form (method body).
+        /// </summary>
         public override void InitializeFormBody()
         {
             try
             {
-                // set up controls first time
+                // set up controls for the first time
             }
             catch (Exception ex)
             {
@@ -54,11 +85,16 @@ namespace Component
             }
         }
 
+        /// <summary>
+        /// Gets the value (method body).
+        /// </summary>
+        /// <param name="fieldName">Name of the field.</param>
+        /// <param name="fieldValue">The field value.</param>
         public override void GetValueBody(string fieldName, ref object fieldValue)
         {
             try
             {
-                // set parameters or panel count
+                // set parameters or the panel count
             }
             catch (Exception ex)
             {
@@ -68,6 +104,12 @@ namespace Component
             }
         }
 
+        /// <summary>
+        /// Actualizes the controls (method body).
+        /// </summary>
+        /// <param name="formState">State of the form.</param>
+        /// <param name="fieldName">Name of the field.</param>
+        /// <param name="fieldValue">The field value.</param>
         public override void ActualizeControlsBody(TFormState formState, string fieldName, object fieldValue)
         {
             try
@@ -82,6 +124,11 @@ namespace Component
             }
         }
 
+        /// <summary>
+        /// Buttons the pressed (method body).
+        /// </summary>
+        /// <param name="formState">State of the form.</param>
+        /// <param name="fieldName">Name of the field.</param>
         public override void ButtonPressedBody(TFormState formState, string fieldName)
         {
             try
@@ -96,11 +143,15 @@ namespace Component
             }
         }
 
+        /// <summary>
+        /// Creates new record (method body).
+        /// </summary>
+        /// <param name="formState">State of the form.</param>
         public override void NewRecordBody(TFormState formState)
         {
             try
             {
-                // set field values
+                // set the field values
 
                 BDW.AddModifyField("Field1", "some value");
 
@@ -113,6 +164,10 @@ namespace Component
             }
         }
 
+        /// <summary>
+        /// Views the record (method body).
+        /// </summary>
+        /// <param name="formState">State of the form.</param>
         public override void ViewRecordBody(TFormState formState)
         {
             try
@@ -127,6 +182,12 @@ namespace Component
             }
         }
 
+        /// <summary>
+        /// Checks before delete (method body).
+        /// </summary>
+        /// <param name="formState">State of the form.</param>
+        /// <param name="errorDescription">The error description.</param>
+        /// <returns>System.Int32.</returns>
         public override int CheckBeforeDeleteBody(TFormState formState, string errorDescription)
         {
             int errorCount = 0;
@@ -155,6 +216,10 @@ namespace Component
             }
         }
 
+        /// <summary>
+        /// Deletes the record (method body).
+        /// </summary>
+        /// <param name="formState">State of the form.</param>
         public override void DeleteRecordBody(TFormState formState)
         {
             try
@@ -169,11 +234,24 @@ namespace Component
             }
         }
 
+        /// <summary>
+        /// Supports the SQL (method body).
+        /// </summary>
+        /// <param name="methodName">Name of the method.</param>
+        /// <param name="param">The parameter.</param>
+        /// <param name="sqlArray">The SQL array.</param>
+        /// <returns>System.Int32.</returns>
         public override int SupportSQLBody(string methodName, object param, ref object sqlArray)
         {
             return 0;
         }
 
+        /// <summary>
+        /// Runs the method (method body).
+        /// </summary>
+        /// <param name="methodName">Name of the method.</param>
+        /// <param name="param">The parameter.</param>
+        /// <returns>System.Int32.</returns>
         public override int RunMethodBody(string methodName, ref object param)
         {
             return 0;

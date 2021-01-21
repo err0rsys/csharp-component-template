@@ -1,4 +1,18 @@
-﻿using System;
+﻿// ***********************************************************************
+// Assembly         : Component
+// Author           : Artur Maciejowski
+// Created          : 16-02-2020
+//
+// Last Modified By : Artur Maciejowski
+// Last Modified On : 28-10-2020
+// ***********************************************************************
+// <copyright file="ComponentBase.cs" company="DomConsult Sp. z o.o.">
+//     Copyright ©  2021 All rights reserved
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,26 +34,71 @@ namespace Component
 
     public abstract class ManagerBase : ServicedComponent, IManager
 #else
+    /// <summary>
+    /// Class ManagerBase.
+    /// Implements the <see cref="Component.IManager" />
+    /// </summary>
+    /// <seealso cref="Component.IManager" />
     public abstract class ManagerBase : IManager
 #endif
     {
+        /// <summary>
+        /// The start form state
+        /// </summary>
         private int StartFormState;
+        /// <summary>
+        /// The form initialized
+        /// </summary>
         private bool FormInitialized;
 
+        /// <summary>
+        /// Gets or sets the form identifier.
+        /// </summary>
+        /// <value>The form identifier.</value>
         public int FormId { get; set; }
+        /// <summary>
+        /// Gets or sets the object type identifier.
+        /// </summary>
+        /// <value>The object type identifier.</value>
         public int ObjectTypeId { get; set; }
-        public object WMK { get; set; }
+        /// <summary>
+        /// Gets or sets the ex transaction identifier.
+        /// </summary>
+        /// <value>The ex transaction identifier.</value>
         public int ExTransactionId { get; set; }
+        /// <summary>
+        /// Gets or sets the silent flag.
+        /// </summary>
+        /// <value>The silent flag.</value>
         public int Silent { get; set; }
+        /// <summary>
+        /// Gets or sets the WMK.
+        /// </summary>
+        /// <value>The WMK.</value>
+        public object WMK { get; set; }
 
+        /// <summary>
+        /// The error variable (private)
+        /// </summary>
         private Err _err;
+        /// <summary>
+        /// Gets the error.
+        /// </summary>
+        /// <value>The error variable.</value>
         public Err Err
         {
             get { return _err; }
         }
 
+        /// <summary>
+        /// The access code
+        /// </summary>
         private string _accessCode;
 
+        /// <summary>
+        /// Gets or sets the access code.
+        /// </summary>
+        /// <value>The access code.</value>
         public string AccessCode
         {
             get { return _accessCode; }
@@ -51,7 +110,14 @@ namespace Component
             }
         }
 
+        /// <summary>
+        /// The MTS COM identifier (private)
+        /// </summary>
         private int _mtsComId;
+        /// <summary>
+        /// Gets or sets the MTS COM identifier.
+        /// </summary>
+        /// <value>The MTS COM identifier.</value>
         public int MtsComId
         {
             get
@@ -70,7 +136,14 @@ namespace Component
             }
         }
 
+        /// <summary>
+        /// The language
+        /// </summary>
         private Language _language;
+        /// <summary>
+        /// Gets or sets the language.
+        /// </summary>
+        /// <value>The language.</value>
         public Language Language
         {
             get
@@ -84,8 +157,15 @@ namespace Component
             set { _language = value; }
         }
 
+        /// <summary>
+        /// The base detail wrapper (BDW)
+        /// </summary>
         private BDWrapper _bdw;
 
+        /// <summary>
+        /// Gets or sets the BDW.
+        /// </summary>
+        /// <value>The BDW.</value>
         public BDWrapper BDW
         {
             get
@@ -100,7 +180,14 @@ namespace Component
             set { _bdw = value; }
         }
 
+        /// <summary>
+        /// The COM wrapper
+        /// </summary>
         private ComWrapper _comWrapper;
+        /// <summary>
+        /// Gets or sets the COM wrapper.
+        /// </summary>
+        /// <value>The COM wrapper.</value>
         public ComWrapper ComWrapper
         {
             get
@@ -114,7 +201,14 @@ namespace Component
             set { _comWrapper = value; }
         }
 
+        /// <summary>
+        /// The record
+        /// </summary>
         private Record _record;
+        /// <summary>
+        /// Gets or sets the record.
+        /// </summary>
+        /// <value>The record.</value>
         public Record Record
         {
             get
@@ -128,6 +222,11 @@ namespace Component
             set { _record = value; }
         }
 
+        /// <summary>
+        /// Assigns the access code.
+        /// </summary>
+        /// <param name="accessCode">The access code.</param>
+        /// <returns>System.Int32.</returns>
         public int AssignAccessCode(object accessCode)
         {
             try
@@ -150,11 +249,21 @@ namespace Component
             }
         }
 
+        /// <summary>
+        /// Assigns the access code (method body).
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
         public virtual void AssignAccessCodeBody()
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Assigns the start up parameters.
+        /// </summary>
+        /// <param name="param">The parameter.</param>
+        /// <param name="others">The others.</param>
+        /// <returns>System.Int32.</returns>
         public int AssignStartUpParameter(object param, ref object others)
         {
             int result = 0;
@@ -207,16 +316,27 @@ namespace Component
             return result;
         }
 
+        /// <summary>
+        /// Assigns the start up parameters (method body).
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
         public virtual void AssignStartUpParameterBody()
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Processes the input parameters.
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
         public virtual void ProcessInputParams()
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Initializes the form.
+        /// </summary>
         public void InitializeForm()
         {
             try
@@ -233,11 +353,21 @@ namespace Component
             }
         }
 
+        /// <summary>
+        /// Initializes the form (method body).
+        /// </summary>
+        /// <exception cref="NotImplementedException"></exception>
         public virtual void InitializeFormBody()
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Gets the value.
+        /// </summary>
+        /// <param name="fieldName">Name of the field.</param>
+        /// <param name="fieldValue">The field value.</param>
+        /// <returns>System.Int32.</returns>
         public int GetValue(object fieldName, ref object fieldValue)
         {
             int result = 0;
@@ -265,6 +395,12 @@ namespace Component
             return result;
         }
 
+        /// <summary>
+        /// Gets the value (method body).
+        /// </summary>
+        /// <param name="fieldName">Name of the field.</param>
+        /// <param name="fieldValue">The field value.</param>
+        /// <exception cref="NotImplementedException"></exception>
         public virtual void GetValueBody(string fieldName, ref object fieldValue)
         {
             throw new NotImplementedException();
@@ -273,6 +409,11 @@ namespace Component
         /// <summary>
         /// Base class main loop
         /// </summary>
+        /// <param name="formState">State of the form.</param>
+        /// <param name="fields">The fields.</param>
+        /// <param name="messages">The messages.</param>
+        /// <param name="others">The others.</param>
+        /// <returns>System.Int32.</returns>
         public int SetGetValues(ref object formState, ref object fields, ref object messages, ref object others)
         {
             int result = 0;
@@ -356,6 +497,11 @@ namespace Component
             return result;
         }
 
+        /// <summary>
+        /// Actualizes the controls.
+        /// </summary>
+        /// <param name="formState">State of the form.</param>
+        /// <returns>System.Int32.</returns>
         public int ActualizeControls(TFormState formState)
         {
             try
@@ -387,11 +533,23 @@ namespace Component
             }
         }
 
+        /// <summary>
+        /// Actualizes the controls (method body).
+        /// </summary>
+        /// <param name="formState">State of the form.</param>
+        /// <param name="fieldName">Name of the field.</param>
+        /// <param name="fieldValue">The field value.</param>
+        /// <exception cref="NotImplementedException"></exception>
         public virtual void ActualizeControlsBody(TFormState formState, string fieldName, object fieldValue)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Buttons the pressed.
+        /// </summary>
+        /// <param name="formState">State of the form.</param>
+        /// <returns>System.Int32.</returns>
         public virtual int ButtonPressed(TFormState formState)
         {
             try
@@ -417,11 +575,22 @@ namespace Component
             }
         }
 
+        /// <summary>
+        /// Buttons the pressed (method body).
+        /// </summary>
+        /// <param name="formState">State of the form.</param>
+        /// <param name="fieldName">Name of the field.</param>
+        /// <exception cref="NotImplementedException"></exception>
         public virtual void ButtonPressedBody(TFormState formState, string fieldName)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Creates new record.
+        /// </summary>
+        /// <param name="formState">State of the form.</param>
+        /// <returns>System.Int32.</returns>
         public virtual int NewRecord(TFormState formState)
         {
             try
@@ -445,11 +614,21 @@ namespace Component
             }
         }
 
+        /// <summary>
+        /// Creates new record (method body).
+        /// </summary>
+        /// <param name="formState">State of the form.</param>
+        /// <exception cref="NotImplementedException"></exception>
         public virtual void NewRecordBody(TFormState formState)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Checks the before delete.
+        /// </summary>
+        /// <param name="formState">State of the form.</param>
+        /// <returns>System.Int32.</returns>
         public int CheckBeforeDelete(TFormState formState)
         {
             int result = 0;
@@ -507,11 +686,22 @@ namespace Component
             }
         }
 
+        /// <summary>
+        /// Checks the before delete (method body).
+        /// </summary>
+        /// <param name="formState">State of the form.</param>
+        /// <param name="errorDescription">The error description.</param>
+        /// <returns>System.Int32.</returns>
         public virtual int CheckBeforeDeleteBody(TFormState formState, string errorDescription)
         {
             return 0;
         }
 
+        /// <summary>
+        /// Deletes the record.
+        /// </summary>
+        /// <param name="formState">State of the form.</param>
+        /// <returns>System.Int32.</returns>
         public int DeleteRecord(TFormState formState)
         {
             try
@@ -541,11 +731,21 @@ namespace Component
             }
         }
 
+        /// <summary>
+        /// Deletes the record (method body).
+        /// </summary>
+        /// <param name="formState">State of the form.</param>
+        /// <exception cref="NotImplementedException"></exception>
         public virtual void DeleteRecordBody(TFormState formState)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Views the record.
+        /// </summary>
+        /// <param name="formState">State of the form.</param>
+        /// <returns>System.Int32.</returns>
         public int ViewRecord(TFormState formState)
         {
             try
@@ -584,16 +784,31 @@ namespace Component
             }
         }
 
+        /// <summary>
+        /// Views the record (method body).
+        /// </summary>
+        /// <param name="formState">State of the form.</param>
+        /// <exception cref="NotImplementedException"></exception>
         public virtual void ViewRecordBody(TFormState formState)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Saves the record.
+        /// </summary>
+        /// <param name="formState">State of the form.</param>
+        /// <returns>System.Int32.</returns>
         public virtual int SaveRecord(TFormState formState)
         {
             return 0;
         }
 
+        /// <summary>
+        /// Cancels the record.
+        /// </summary>
+        /// <param name="formState">State of the form.</param>
+        /// <returns>System.Int32.</returns>
         public virtual int CancelRecord(TFormState formState)
         {
             try
@@ -617,11 +832,21 @@ namespace Component
             }
         }
 
+        /// <summary>
+        /// Cancels the record (method body).
+        /// </summary>
+        /// <param name="formState">State of the form.</param>
+        /// <exception cref="NotImplementedException"></exception>
         public virtual void CancelRecordBody(TFormState formState)
         {
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Edits the record.
+        /// </summary>
+        /// <param name="formState">State of the form.</param>
+        /// <returns>System.Int32.</returns>
         public virtual int EditRecord(TFormState formState)
         {
             ViewRecord(formState);
@@ -629,6 +854,10 @@ namespace Component
             return LockRecord();
         }
 
+        /// <summary>
+        /// Locks the record.
+        /// </summary>
+        /// <returns>System.Int32.</returns>
         private int LockRecord()
         {
             int result = 0;
@@ -669,6 +898,13 @@ namespace Component
             }
         }
 
+        /// <summary>
+        /// Supports the SQL (builds the query).
+        /// </summary>
+        /// <param name="methodName">Name of the method.</param>
+        /// <param name="param">The parameter.</param>
+        /// <param name="sqlArray">The SQL array.</param>
+        /// <returns>System.Int32.</returns>
         public int SupportSQL(object methodName, object param, ref object sqlArray)
         {
             int result = 0;
@@ -686,23 +922,46 @@ namespace Component
             }
         }
 
+        /// <summary>
+        /// Supports the SQL (method body).
+        /// </summary>
+        /// <param name="methodName">Name of the method.</param>
+        /// <param name="param">The parameter.</param>
+        /// <param name="sqlArray">The SQL array.</param>
+        /// <returns>System.Int32.</returns>
         public virtual int SupportSQLBody(string methodName, object param, ref object sqlArray)
         {
             return 0;
         }
 
+        /// <summary>
+        /// Assigns the WMK result.
+        /// </summary>
+        /// <param name="wmkResult">The WMK result.</param>
+        /// <returns>System.Int32.</returns>
         public virtual int AssignWMKResult(object wmkResult)
         {
             BDW.AddModifyOther(TBDOthers.coConfirmationResult, wmkResult);
             return 0;
         }
 
-        public int GetLastErrorDescription(ref object error)
+        /// <summary>
+        /// Gets the last error description.
+        /// </summary>
+        /// <param name="error">The error.</param>
+        /// <returns>System.Int32.</returns>
+        public virtual int GetLastErrorDescription(ref object error)
         {
             error = WMK;
             return 0;
         }
 
+        /// <summary>
+        /// Runs the method.
+        /// </summary>
+        /// <param name="methodName">Name of the method.</param>
+        /// <param name="param">The parameter.</param>
+        /// <returns>System.Int32.</returns>
         public int RunMethod(object methodName, ref object param)
         {
             int result = 0;
@@ -720,11 +979,22 @@ namespace Component
             }
         }
 
+        /// <summary>
+        /// Runs the method (method body).
+        /// </summary>
+        /// <param name="methodName">Name of the method.</param>
+        /// <param name="param">The parameter.</param>
+        /// <returns>System.Int32.</returns>
         public virtual int RunMethodBody(string methodName, ref object param)
         {
             return 0;
         }
 
+        /// <summary>
+        /// Checks the state of the transaction.
+        /// </summary>
+        /// <param name="result">The result.</param>
+        /// <returns>System.Int32.</returns>
         private int CheckTransactionState(int result)
         {
             return 0;

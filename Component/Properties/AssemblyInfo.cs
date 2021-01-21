@@ -7,11 +7,11 @@ using System.EnterpriseServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Component")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Component template")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("DomConsult Sp. z o.o.")]
 [assembly: AssemblyProduct("Component")]
-[assembly: AssemblyCopyright("Copyright ©  2020")]
+[assembly: AssemblyCopyright("Copyright ©  2021 All rights reserved")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -33,8 +33,8 @@ using System.EnterpriseServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("20.1.16.1")]
-[assembly: AssemblyFileVersion("20.1.16.1")]
+[assembly: AssemblyVersion("21.1.21.1")]
+[assembly: AssemblyFileVersion("21.1.21.1")]
 [assembly: ApplicationAccessControl(
         AccessChecksLevel = AccessChecksLevelOption.ApplicationComponent,
         Authentication = AuthenticationOption.Packet,
