@@ -13,13 +13,14 @@
 // ***********************************************************************
 
 using System;
+using System.Linq;
+using System.Runtime.Serialization;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Globalization;
-using System.Text.RegularExpressions;
 
 namespace DomConsult.GlobalShared.Utilities
 {
@@ -65,6 +66,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// The cs WMK error
         /// </summary>
         public const int csWMK_Error = csWMK_JobError;
+
 
         #region DBCOM package flags
 
@@ -472,7 +474,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// <param name="setDefault">if set to <c>true</c> [set default].</param>
         /// <returns>System.Object.</returns>
         /// <exception cref="Exception">AccessCode required!</exception>
-        public static object GetUniParam(string acc, string key, string defaultValue = "")
+        public static object GetUniParam(string acc, string key, string defaultValue = "", bool setDefault = false)
         {
             bool getOK = false;
             object value = null;
@@ -498,8 +500,13 @@ namespace DomConsult.GlobalShared.Utilities
 
                 if (svalue.Length != 0)
                     value = svalue;
-                else
+                else if (setDefault)
+                {
                     value = defaultValue;
+                    svalue = defaultValue;
+                }
+                else
+                    svalue = defaultValue;
 
                 if (!exists)
                     Cache.TryAdd(keyC, value);
@@ -562,22 +569,6 @@ namespace DomConsult.GlobalShared.Utilities
             }
 
             return result;
-        }
-
-        public static string GetMLText(int comId, int langId, int textId, string defaultValue = "")
-        {
-            string keyC = string.Concat("comtext/M={1}/L={0}/T={2}", comId, langId, textId).ToUpper();
-            bool getOK = Cache.TryGetValue(keyC, out object value);
-
-            if (!getOK)
-            {
-                value = ComUtils.GetText(comId, langId, textId);
-
-                if (value != null)
-                    Cache.TryAdd(keyC, value);
-            }
-
-            return TUniVar.VarToStr(value, defaultValue);
         }
     }
 
@@ -795,76 +786,6 @@ namespace DomConsult.GlobalShared.Utilities
                 return nullValue;
         }
 
-        public static int GetParamsAsDic(ref string paramStr, out Dictionary<string, object> paramsDic)
-        {
-            paramsDic = new Dictionary<string, object>();
-            string tmpStr = paramStr;
-
-            //Założenie jest takie, że znaki "/=" nie występują w wartościach
-            paramStr = "";
-            while (tmpStr.Contains("/"))
-            {
-                var start = tmpStr.IndexOf("/");
-                if (start > 0)
-                {
-                    paramStr += tmpStr.Substring(0, start);
-                    tmpStr = tmpStr.Substring(start);
-                    start = 0;
-                }
-
-                var len = tmpStr.IndexOf("=");
-                if (len < 0)
-                {
-                    paramStr += tmpStr;
-                    break;
-                }
-
-                var paramName = tmpStr.Substring(start, len);
-                var paramValue = string.Empty;
-                TStrParams.GetParam(ref tmpStr, paramName, ref paramValue, new char[] { '/', '=' }, true, true);
-
-                paramsDic.Add(paramName, paramValue);
-            }
-
-            return paramsDic.Count;
-        }
-
-        public static int GetParamsAsArr(ref string paramStr, out object[,] paramsArr)
-        {
-            paramsArr = null;
-            TStrParams.GetParamsAsDic(ref paramStr, out Dictionary<string, object> paramsDic);
-
-            int result = 0;
-            if ((paramsDic?.Count ?? 0) > 0)
-            {
-                paramsArr = new object[paramsDic.Count, 2];
-                foreach (var elem in paramsDic)
-                {
-                    paramsArr[result, 0] = elem.Key;
-                    paramsArr[result, 1] = elem.Value;
-                    result++;
-                }
-            }
-
-            return result;
-        }
-
-        public static int GetParamsArrAsDic(object[,] paramsArr, out Dictionary<string, object> paramsDic)
-        {
-            paramsDic = new Dictionary<string, object>();
-            int result = 0;
-
-            for (int i = 0; i < paramsArr.GetLength(0); i++)
-            {
-                if (paramsArr[i, 0] != null)
-                {
-                    paramsDic.Add(((string)paramsArr[i, 0]), paramsArr[i, 1]);
-                }
-            }
-
-            return result;
-        }
-
         /// <summary>
         /// Safes the SQL.
         /// </summary>
@@ -1044,44 +965,6 @@ namespace DomConsult.GlobalShared.Utilities
 
                 int index = 0;
                 if (Clear || (_msg == null))
-                {
-                    _msg = new object[3, 1];
-                }
-                else
-                {
-                    index = _msg.GetLength(1);
-                    ResizeArray(ref _msg, index + 1, _msg.GetLength(0));
-                }
-
-                _msg[0, index] = MTSComId;
-                _msg[1, index] = TextId;
-                _msg[2, index] = Params;
-
-                Messages = _msg;
-                return 0;
-            }
-            catch
-            {
-                return -1;
-            }
-        }
-
-        public static int AddMessage(ref object Messages, int MTSComId, int TextId, params object[] Params)
-        {
-            try
-            {
-                object[,] _msg = null;
-                if (Messages is object[,])
-                {
-                    _msg = Messages as object[,];
-                }
-                else if (Messages != null) //przypadek jesli message nie jest macieza
-                {
-                    return -2;
-                }
-
-                int index = 0;
-                if (_msg == null)
                 {
                     _msg = new object[3, 1];
                 }
@@ -1305,11 +1188,6 @@ namespace DomConsult.GlobalShared.Utilities
             return ((value == null) || (value is DBNull));
         }
 
-        public static bool VarIsNullOrEmptyOrDefault(object value, object defValue)
-        {
-            return ((value == null) || (value is DBNull) || value.Equals(defValue));
-        }
-
         /// <summary>
         /// Variables to int.
         /// </summary>
@@ -1340,21 +1218,12 @@ namespace DomConsult.GlobalShared.Utilities
         /// <param name="value">The value.</param>
         /// <param name="var_null">The variable null.</param>
         /// <returns>System.String.</returns>
-        public static string VarToStr(object value, string var_null = TUniConstants._STR_NULL, int len = TUniConstants._INT_NULL)
+        public static string VarToStr(object value, string var_null = TUniConstants._STR_NULL)
         {
-            string res;
-
             if (VarIsNullOrEmpty(value))
                 return var_null;
             else
-                res = value.ToString();
-
-            if ((len > 0) && (len < res.Length))
-            {
-                res = res.Substring(0, len);
-            }
-
-            return res;
+                return value.ToString();
         }
 
         /// <summary>
@@ -1394,34 +1263,11 @@ namespace DomConsult.GlobalShared.Utilities
                         res = (bool)value ? "1" : "0";
                         break;
                     default:
-                        res = string.Concat("'", (value.ToString()).Replace("'", "''"), "'"); ;
+                        res = string.Concat("'", ((string)value).Replace("'", "''"), "'"); ;
                         break;
                 }
             }
             return res;
-        }
-
-        public static DateTime VarToDateTime(object value, DateTime? var_null = null)
-        {
-            if (VarIsNullOrEmpty(value))
-            {
-                if (var_null.HasValue)
-                    return var_null.Value;
-                else
-                    return DateTime.MinValue;
-            }
-            else
-                return (DateTime)value;
-        }
-
-        public static DateTime? VarToDateTimeN(object value)
-        {
-            if (VarIsNullOrEmpty(value))
-            {
-                return null;
-            }
-            else
-                return (DateTime)value;
         }
 
         /// <summary>
@@ -1445,42 +1291,6 @@ namespace DomConsult.GlobalShared.Utilities
                 else
                     return (arr.Rank == dimCount);
             }
-        }
-    }
-
-    public class TUniTools
-    {
-        public static string ResolvePath(string acc, string path)
-        {
-            var regExp = new Regex("%(.)+%");
-            var matches = regExp.Matches(path);
-            foreach (var match in matches)
-            {
-                string key = match.ToString().Replace("%","");
-                string value = (string)TuniGlobalCache.GetUniParam(acc, key);
-                path = path.Replace(string.Concat("%", key, "%"), value);
-            }
-
-            if (path.Length > 2)
-            {
-                string start = "";
-                if (path.StartsWith(@"\\"))
-                {
-                    start = @"\\";
-                    path = path.Substring(2);
-                }
-                else if(path.StartsWith(@"//"))
-                {
-                    start = @"//";
-                    path = path.Substring(2);
-                }
-
-                path = path.Replace(@"\\",@"\");
-                path = path.Replace(@"//", @"/");
-                path = string.Concat(start, path);
-            }
-
-            return path;
         }
     }
 }

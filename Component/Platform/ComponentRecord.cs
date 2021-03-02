@@ -12,14 +12,9 @@
 // <summary></summary>
 // ***********************************************************************
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DomConsult.GlobalShared.Utilities;
 
-namespace Component
+namespace DomConsult.Platform
 {
     /// <summary>
     /// Class Record. This class cannot be inherited.
@@ -50,5 +45,13 @@ namespace Component
         /// The COM object
         /// </summary>
         public ComWrapper ComObj;
+        /// <summary>
+        /// QueryData
+        /// </summary>
+        public object[,] Data;
+        /// <summary>
+        /// Data array size
+        /// </summary>
+        public int DataSize;
     }
 }

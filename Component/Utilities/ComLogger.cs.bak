@@ -24,12 +24,15 @@ namespace DomConsult.GlobalShared.Utilities
     /// </summary>
     public class ComLogger
     {
-        public static bool ComRemoteMode = false;
+        /// <summary>
+        /// The application
+        /// </summary>
+        public static bool APPLICATION = false;
 
         /// <summary>
         /// The this lock
         /// </summary>
-        private readonly object thisLock = new object();
+        private object thisLock = new object();
         /// <summary>
         /// Gets or sets the log file prefix.
         /// </summary>
@@ -45,27 +48,11 @@ namespace DomConsult.GlobalShared.Utilities
         /// </summary>
         /// <value>The log dir.</value>
         public string LogDir { get; set; }
-
-        private string _logFileName = "";
-
         /// <summary>
         /// Gets or sets the name of the log file.
         /// </summary>
         /// <value>The name of the log file.</value>
-        public string LogFileName
-        { 
-            get
-            {
-                if (_logFileName.Length == 0)
-                    _logFileName = string.Format("{0}_{1}.log", LogFilePrefix, DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff"));
-                return _logFileName;
-            }
-
-            set
-            {
-                _logFileName = value;
-            }
-        }
+        public string LogFileName { get; set; }
         /// <summary>
         /// Gets or sets a value indicating whether [add date to log].
         /// </summary>
@@ -75,11 +62,11 @@ namespace DomConsult.GlobalShared.Utilities
         /// <summary>
         /// The m debug
         /// </summary>
-        private readonly List<string> m_debug = new List<string>();
+        private List<string> m_debug = new List<string>();
         /// <summary>
         /// The m stop watch
         /// </summary>
-        private readonly Stopwatch m_StopWatch = new Stopwatch();
+        private Stopwatch m_StopWatch = new Stopwatch();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ComLogger"/> class.
@@ -110,6 +97,8 @@ namespace DomConsult.GlobalShared.Utilities
             {
                 LogFilePrefix = logFilePrefix;
             }
+
+            LogFileName = string.Format("{0}_{1}.log", LogFilePrefix, DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff"));   
         }
 
         /// <summary>
@@ -253,7 +242,7 @@ namespace DomConsult.GlobalShared.Utilities
                         try
                         {
                             string key = "";
-                            if (ComRemoteMode)
+                            if (APPLICATION)
                             {
                                 key = @"LogDirectoryForApp";
                                 //LogDir = ComUtils.GetRegParam("LogDirectoryForApp", tempPath, "LOGON");
@@ -273,6 +262,13 @@ namespace DomConsult.GlobalShared.Utilities
                             LogDir = tempPath;
                             Add("Error occured while getting logdir", ex);
                         }
+
+                    }
+
+                    if (string.IsNullOrEmpty(LogFileName))
+                    {
+                        LogFileName = string.Format("{0}_{1}.log", LogFilePrefix, DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff"));
+                    
                     }
 
                     string logFilePath = System.IO.Path.Combine(LogDir, LogFileName);
@@ -281,12 +277,9 @@ namespace DomConsult.GlobalShared.Utilities
                         System.IO.File.AppendAllText(logFilePath, PrintDebug());
                     }
                 }
-
                 m_debug.Clear();
-                LogFileName = "";
             }
             catch { }
         }
     }
-
 }

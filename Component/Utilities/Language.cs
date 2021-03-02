@@ -13,10 +13,8 @@
 // ***********************************************************************
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Runtime.InteropServices;
+using DomConsult.Platform.Extensions;
 
 namespace DomConsult.GlobalShared.Utilities
 {
@@ -28,19 +26,19 @@ namespace DomConsult.GlobalShared.Utilities
         /// <summary>
         /// The MTS COM identifier
         /// </summary>
-        private int MTSComId;
+        private readonly int MTSComId;
         /// <summary>
         /// The language identifier
         /// </summary>
-        private int LangId;
+        private readonly int LangId;
         /// <summary>
         /// The language reference
         /// </summary>
-        private int LangRef;
+        private readonly int LangRef;
         /// <summary>
         /// The language manager
         /// </summary>
-        private dynamic LangManager;
+        private readonly dynamic LangManager;
         /// <summary>
         /// Initializes a new instance of the <see cref="Language"/> class.
         /// </summary>
@@ -53,7 +51,7 @@ namespace DomConsult.GlobalShared.Utilities
             LangManager = Activator.CreateInstance(LangComType);
             BDWrapper Par = new BDWrapper();
             Par.LoadParams(accessCode.ToString());
-            LangId = (int)Par.Params("L");
+            LangId = Par.Params["L"].AsInt();
             LangRef = LangManager.SetCom(mtsComId);
         }
 

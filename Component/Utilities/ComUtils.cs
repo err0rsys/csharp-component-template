@@ -10,7 +10,7 @@
 //     Copyright ©  2021 All rights reserved
 // </copyright>
 // <summary>
-// 15.11.2011 Maciej Smoleński
+// 15.11.2011 Maciej Smoleński, Michał Piotrowski
 // In order to distinguish business logic from presentation layer 
 // GUI functions have been moved to UIUtils.cs file to UIExtension Class
 // </summary>
@@ -30,6 +30,7 @@ using System.Text;
 using System.Threading;
 using System.Reflection;
 using System.Web;
+using System.ComponentModel;
 
 #if DEBUG
 using System.Diagnostics;
@@ -290,6 +291,26 @@ namespace DomConsult.GlobalShared.Utilities
             }
         }
 
+public static object GetText(int comId, int langId, int textId)
+        {
+            object paramValue=null;
+            ComWrapper langManager;
+
+            langManager = ComUtils.CreateComFromProgID("Language.Manager", "LOGON");
+
+            using (langManager)
+            {
+                if (langManager.Connected)
+                {
+                    object[] method_params = new object[] { comId, langId, textId };
+                    string errMsg = string.Empty;
+                    paramValue = langManager.InvokeMethod("GetText", method_params, new bool[] { false, false, false }, ref errMsg);
+                }
+            }
+
+            return paramValue;
+        }
+
         /// <summary>
         /// Gets the parameter.
         /// </summary>
@@ -324,7 +345,7 @@ namespace DomConsult.GlobalShared.Utilities
             string paramValue = defaultValue;
             ComWrapper sysreg;
 
-            if (ComWrapper.APPLICATION)
+            if (ComWrapper.ComRemoteMode)
             {
                 sysreg = ComUtils.CreateComInStandardCom("Sysreg.Registry", accessCode, string.Empty);
             }
@@ -493,6 +514,11 @@ namespace DomConsult.GlobalShared.Utilities
             return res;
         }
 
+        public static ComWrapper CreateComFromProgID(string progID, string AccessCode)
+        {
+            return CreateComFromProgID(progID, AccessCode, true);
+        }
+
         /// <summary>
         /// Creates the COM.
         /// </summary>
@@ -544,6 +570,38 @@ namespace DomConsult.GlobalShared.Utilities
 
         }
 
+public static ComWrapper CreateComFromProgID(string progID, string AccessCode, bool assignAccessCode)
+        {
+
+            ComWrapper ComWrapper = new ComWrapper();
+
+            ComWrapper.AccessCode = AccessCode;
+
+            /*
+             * MS 03.12.2015 
+             * Z jakiegoś powodu wołanie Connect(string className) zwraca błąd:
+             * Invalid class string Exception from HRESULT: 0x800401F3 (CO_E_CLASSSTRING))
+             * Ma to związek z tworzeniem typu poprzez wywołanie Type.GetTypeFromProgID(className, true);
+             * Wyjątek nie jest zgłaszany jeśli typ jest tworzony przez Type.GetTypeFromCLSID stąd też ten fix z podaniem Guid-a.
+             */
+            if (ComWrapper.Connect(progID))
+            {
+                if (assignAccessCode)
+                {
+                    object[] arguments = new object[1];
+                    arguments[0] = AccessCode;
+                    object res = ComWrapper.InvokeMethod("AssignAccessCode", arguments, new bool[] { false });
+                    if (CheckError(res, -1) >= 0)
+                        return ComWrapper;
+                }
+                else
+                {
+                    return ComWrapper;
+                }
+            }
+            return null;
+        }
+
         /// <summary>
         /// Creates the COM in standard COM.
         /// </summary>
@@ -552,7 +610,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// <returns>ComWrapper.</returns>
         public static ComWrapper CreateComInStandardCom(string comName, string accessCode)
         {
-            if (ComWrapper.APPLICATION)
+            if (ComWrapper.ComRemoteMode)
             {
                 return CreateComInStandardCom(comName, accessCode, GetParam(accessCode, "CSN", string.Empty));
             }
@@ -581,7 +639,7 @@ namespace DomConsult.GlobalShared.Utilities
              */
             ComWrapper stdCom;
 
-            if (ComWrapper.APPLICATION)
+            if (ComWrapper.ComRemoteMode)
             {
                 stdCom = CreateRemoteCom(new Guid(CS_STDCOMW_GUID), accessCode, ServerName, false);
             }
@@ -726,7 +784,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// <returns>System.Int32.</returns>
         public static int GetPacket(string AccessCode, string SQL, int TransId, int Timeout, out object[,] Packet, WMKHandler hWMK = null)
         {
-            if (ComWrapper.APPLICATION)
+            if (ComWrapper.ComRemoteMode)
             {
                 return GetPacket(AccessCode, GetParam(AccessCode, "CSN", string.Empty), SQL, TransId, Timeout, out Packet, hWMK);
             }
@@ -948,15 +1006,109 @@ namespace DomConsult.GlobalShared.Utilities
             return CheckError(res, -1);
         }
 
-        /// <summary>
-        /// Databases the lock.
-        /// </summary>
-        /// <param name="AccessCode">The access code.</param>
-        /// <param name="TableName">Name of the table.</param>
-        /// <param name="RecordId">The record identifier.</param>
-        /// <param name="BaseId">The base identifier.</param>
-        /// <param name="TableId">The table identifier.</param>
-        /// <returns>System.Int32.</returns>
+        public static int DBLock(ComWrapper locker, object[,] lockInfo, int transId = -1)
+        {
+            //ComWrapper comWrapper = new ComWrapper()
+            //comWrapper.ConnectRemote(new Guid(DBC_LOCKER_CLASS), ComWrapper.ServerName)
+
+            if (!TUniVar.VarIsArray(lockInfo))
+                throw new InvalidEnumArgumentException("Wrong parameter value 'lockInfo'!");
+            else if (locker == null)
+                throw new InvalidEnumArgumentException("Empty parameter value 'locker'!");
+            else if (!locker.GUID.Equals(DBC_LOCKER_CLASS))
+                throw new InvalidEnumArgumentException("Wrong parameter value 'locker'!");
+            else if (!locker.Connected)
+                throw new InvalidEnumArgumentException("Wrong parameter value 'locker'! Not Connected.");
+
+            //LockA(TransactionId: Integer; var LockInfo, Options: OleVariant): Integer; safecall;
+            object[] arguments = new object[3];
+            arguments[0] = transId;
+            arguments[1] = lockInfo;
+            int res = CheckError(locker.InvokeMethod("LockA", arguments, new bool[] { false, true, true }), -1);
+
+            return res;
+        }
+
+        public static int DBLock(ComWrapper locker, string TableName, string RecordId, int transId = -1)
+        {
+            //ComWrapper comWrapper = new ComWrapper()
+            //comWrapper.ConnectRemote(new Guid(DBC_LOCKER_CLASS), ComWrapper.ServerName)
+
+            if (locker == null)
+                throw new InvalidEnumArgumentException("Empty parameter value 'locker'!");
+            else if (!locker.GUID.Equals(DBC_LOCKER_CLASS))
+                throw new InvalidEnumArgumentException("Wrong parameter value 'locker'!");
+            else if (!locker.Connected)
+                throw new InvalidEnumArgumentException("Wrong parameter value 'locker'! Not Connected.");
+
+            object[,] lockInfo = new object[,]
+                {
+                    { "TableName", "RecordId", "OwnerState" },
+                    { TableName, RecordId, 0 },
+                    { PECDataTypeFlags.cpString, PECDataTypeFlags.cpInteger, PECDataTypeFlags.cpInteger }
+                };
+
+            //LockA(TransactionId: Integer; var LockInfo, Options: OleVariant): Integer; safecall;
+            object[] arguments = new object[3];
+            arguments[0] = transId;
+            arguments[1] = lockInfo;
+            CheckError(locker.InvokeMethod("LockA", arguments, new bool[] { false, true, true }), -1);
+
+            return TUniVar.VarToInt(arguments[2]);
+        }
+
+        public static int DBUnlock(ComWrapper locker, object[,] lockInfo, int transId = -1)
+        {
+            //ComWrapper comWrapper = new ComWrapper()
+            //comWrapper.ConnectRemote(new Guid(DBC_LOCKER_CLASS), ComWrapper.ServerName)
+
+            if (!TUniVar.VarIsArray(lockInfo))
+                throw new InvalidEnumArgumentException("Wrong parameter value 'lockInfo'!");
+            else if (locker == null)
+                throw new InvalidEnumArgumentException("Empty parameter value 'locker'!");
+            else if (!locker.GUID.Equals(DBC_LOCKER_CLASS))
+                throw new InvalidEnumArgumentException("Wrong parameter value 'locker'!");
+            else if (!locker.Connected)
+                throw new InvalidEnumArgumentException("Wrong parameter value 'locker'! Not Connected.");
+
+            //LockA(TransactionId: Integer; var LockInfo, Options: OleVariant): Integer; safecall;
+            object[] arguments = new object[3];
+            arguments[0] = transId;
+            arguments[1] = lockInfo;
+            int res = CheckError(locker.InvokeMethod("UnLockA", arguments, new bool[] { false, true, true }), -1);
+
+            return res;
+        }
+
+        public static int DBUnlock(ComWrapper locker, string TableName, string RecordId, int transId = -1)
+        {
+            //ComWrapper comWrapper = new ComWrapper()
+            //comWrapper.ConnectRemote(new Guid(DBC_LOCKER_CLASS), ComWrapper.ServerName)
+
+            if (locker == null)
+                throw new InvalidEnumArgumentException("Empty parameter value 'locker'!");
+            else if (!locker.GUID.Equals(DBC_LOCKER_CLASS))
+                throw new InvalidEnumArgumentException("Wrong parameter value 'locker'!");
+            else if (!locker.Connected)
+                throw new InvalidEnumArgumentException("Wrong parameter value 'locker'! Not Connected.");
+
+            object[,] lockInfo = new object[,]
+                {
+                    { "TableName", "RecordId", "OwnerState" },
+                    { TableName, RecordId, 0 },
+                    { PECDataTypeFlags.cpString, PECDataTypeFlags.cpInteger, PECDataTypeFlags.cpInteger }
+                };
+
+            //LockA(TransactionId: Integer; var LockInfo, Options: OleVariant): Integer; safecall;
+            object[] arguments = new object[3];
+            arguments[0] = transId;
+            arguments[1] = lockInfo;
+            CheckError(locker.InvokeMethod("UnLockA", arguments, new bool[] { false, true, true }), -1);
+
+            return TUniVar.VarToInt(arguments[2]);
+        }
+
+        [Obsolete("DBLock(string AccessCode, ...) is deprecated, please use DBLock(ComWrapper locker, ...) instead.")]
         public static int DBLock(string AccessCode, string TableName, string RecordId, out int BaseId, out int TableId)
         {
 
@@ -987,15 +1139,7 @@ namespace DomConsult.GlobalShared.Utilities
             return res;
         }
 
-        /// <summary>
-        /// Databases the unlock.
-        /// </summary>
-        /// <param name="AccessCode">The access code.</param>
-        /// <param name="TableName">Name of the table.</param>
-        /// <param name="RecordId">The record identifier.</param>
-        /// <param name="BaseId">The base identifier.</param>
-        /// <param name="TableId">The table identifier.</param>
-        /// <returns>System.Int32.</returns>
+        [Obsolete("DBUnlock(string AccessCode, ...) is deprecated, please use DBUnlock(ComWrapper locker, ...) instead or destroy 'locker' wrapper.")]
         public static int DBUnlock(string AccessCode, string TableName, string RecordId, int BaseId, int TableId)
         {
 
@@ -1165,6 +1309,27 @@ namespace DomConsult.GlobalShared.Utilities
         }
 
         /// <summary>
+        /// Get Fields values of current record in DBCOm Packet format
+        /// </summary>
+        /// <param name="ComWrapper"></param>
+        /// <param name="packet"></param>
+        /// <returns></returns>
+        public static int RecordPacket(ref ComWrapper ComWrapper, out object[,] packet)
+        {
+            packet = null;
+
+            object[] arguments = new object[1];
+            object res = ComWrapper.InvokeMethod("FieldValuePacket", arguments, new bool[] { true });
+
+            if (CheckError(res, -1) >= 0)
+            {
+                packet = arguments[0] as object[,];
+            }
+
+            return TUniVar.VarToInt(res);
+        }
+
+        /// <summary>
         /// Records the edit.
         /// </summary>
         /// <param name="ComWrapper">The COM wrapper.</param>
@@ -1261,17 +1426,24 @@ namespace DomConsult.GlobalShared.Utilities
         }
 
         /// <summary>
-        /// Records the cancel.
+        /// Cancel editing of current record.
         /// </summary>
-        /// <param name="ComWrapper">The COM wrapper.</param>
+        /// <param name="comWrapper">The COM wrapper.</param>
         /// <returns>System.Int32.</returns>
-        public static int RecordCancel(ref ComWrapper ComWrapper)
+        public static int RecordCancel(ref ComWrapper comWrapper)
         {
-
-            object res = ComWrapper.InvokeMethod("Cancel", null, null);
-
+            object res = comWrapper.InvokeMethod("Cancel", null, null);
             return CheckError(res, -1);
+        }
 
+        /// <summary>
+        /// Delete current record.
+        /// </summary>
+        /// <returns>System.Int32.</returns>
+        public static int RecordDelete(ref ComWrapper comWrapper)
+        {
+            object res = comWrapper.InvokeMethod("Delete", null, null);
+            return CheckError(res, -1);
         }
 
         /*MS 09.06.2016 zmienilem te funkcje bo to nie jest zdrowe zachowanie aby parametr przekazywany
@@ -1285,7 +1457,6 @@ namespace DomConsult.GlobalShared.Utilities
         {
             ComWrapper.InvokeMethod("Close", null, null);
             return 0;
-
         }
 
         /// <summary>

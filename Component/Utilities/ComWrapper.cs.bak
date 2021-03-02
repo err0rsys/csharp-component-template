@@ -29,7 +29,10 @@ namespace DomConsult.GlobalShared.Utilities
     /// <seealso cref="System.IDisposable" />
     public class ComWrapper : IDisposable
     {
-        public static bool ComRemoteMode = false;
+        /// <summary>
+        /// The application
+        /// </summary>
+        public static bool APPLICATION = false;
 
         /// <summary>
         /// The COM object
@@ -151,17 +154,9 @@ namespace DomConsult.GlobalShared.Utilities
         public string ServerName
         {
             get {
-                return ComRemoteMode ? m_serverName : "localhost";
+                return APPLICATION ? m_serverName : "localhost";
             }
             set { m_serverName = value; }
-        }
-
-        public string ServerNameAC
-        {
-            get
-            {
-                return m_serverName;
-            }
         }
 
         /// <summary>
@@ -417,41 +412,6 @@ namespace DomConsult.GlobalShared.Utilities
             }
         }
 
-        public bool Connect(string progID, Guid COMPartition)
-        {
-            try
-            {
-                if (comType != null || comObject != null)
-                    Disconnect();
-
-                string moniker;
-
-                comType = Type.GetTypeFromProgID(progID, "127.0.0.1", true);
-                Guid classID = comType.GUID;
-
-                if (COMPartition == Guid.Empty)
-                {
-                    moniker = string.Format("new:{0}", classID.ToString("B"));
-                }
-                else
-                {
-                    moniker = string.Format("partition:{0}/new:{1}", COMPartition.ToString("B"), classID.ToString("B"));
-                }
-
-                comObject = Marshal.BindToMoniker(moniker);
-                m_GUID = classID.ToString();
-                comType = Type.GetTypeFromCLSID(classID, "127.0.0.1", true); //Tylko localhost
-                Connected = true;
-                return true;
-            }
-            catch (COMException ex)
-            {
-                m_GUID = "";
-                System.Diagnostics.Debug.WriteLine("ComWrapper.Connect error: ", ex.Message);
-                throw;
-            }
-        }
-
         /// <summary>
         /// Connects the specified class identifier.
         /// </summary>
@@ -489,35 +449,6 @@ namespace DomConsult.GlobalShared.Utilities
                 m_GUID = "";
                 System.Diagnostics.Debug.WriteLine("ComWrapper.Connect error: ", ex.Message);
                 throw;
-            }
-        }
-
-        public bool ConnectRemote(string progID, string serverNameOrIP)
-        {
-            if (string.Equals(serverNameOrIP, "127.0.0.1") || string.Equals(serverNameOrIP, "localhost"))
-            {
-                return Connect(progID, Guid.Empty);
-            }
-            else
-            {
-                try
-                {
-                    if (comType != null || comObject != null)
-                        Disconnect();
-                    //comType = Type.GetTypeFromCLSID(classID, serverNameOrIP, true);
-                    //m_GUID = classID.ToString();
-                    comType = Type.GetTypeFromProgID(progID, serverNameOrIP, true);
-                    m_GUID = comType.GUID.ToString();
-                    comObject = Activator.CreateInstance(comType);
-                    Connected = true;
-                    return true;
-                }
-                catch (COMException ex)
-                {
-                    m_GUID = "";
-                    System.Diagnostics.Debug.WriteLine("ComWrapper.ConnectRemote error: " + ex.Message);
-                    throw;
-                }
             }
         }
 
@@ -623,7 +554,7 @@ namespace DomConsult.GlobalShared.Utilities
                 {
                     modifier[i] = argsByRef[i];
                 }
-                return comType.InvokeMember(methodName, BindingFlags.InvokeMethod | BindingFlags.IgnoreCase, null, comObject, arguments, new ParameterModifier[] { modifier }, null, null);
+                return comType.InvokeMember(methodName, BindingFlags.InvokeMethod, null, comObject, arguments, new ParameterModifier[] { modifier }, null, null);
             }
             else
             {

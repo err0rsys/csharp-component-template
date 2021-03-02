@@ -5,12 +5,16 @@ VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Component", "Component\Component.csproj", "{ADEB71B0-1FC6-4287-83BF-F91E0B989BFE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComponentTest", "ComponentTest\ComponentTest.csproj", "{535C5E58-B6AD-407E-AC2B-3E68B97D35F7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86
 		Release|Any CPU = Release|Any CPU
 		Release|x86 = Release|x86
+		Test|Any CPU = Test|Any CPU
+		Test|x86 = Test|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{ADEB71B0-1FC6-4287-83BF-F91E0B989BFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -21,6 +25,22 @@ Global
 		{ADEB71B0-1FC6-4287-83BF-F91E0B989BFE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{ADEB71B0-1FC6-4287-83BF-F91E0B989BFE}.Release|x86.ActiveCfg = Release|Any CPU
 		{ADEB71B0-1FC6-4287-83BF-F91E0B989BFE}.Release|x86.Build.0 = Release|Any CPU
+		{ADEB71B0-1FC6-4287-83BF-F91E0B989BFE}.Test|Any CPU.ActiveCfg = Test|Any CPU
+		{ADEB71B0-1FC6-4287-83BF-F91E0B989BFE}.Test|Any CPU.Build.0 = Test|Any CPU
+		{ADEB71B0-1FC6-4287-83BF-F91E0B989BFE}.Test|x86.ActiveCfg = Test|Any CPU
+		{ADEB71B0-1FC6-4287-83BF-F91E0B989BFE}.Test|x86.Build.0 = Test|Any CPU
+		{535C5E58-B6AD-407E-AC2B-3E68B97D35F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{535C5E58-B6AD-407E-AC2B-3E68B97D35F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{535C5E58-B6AD-407E-AC2B-3E68B97D35F7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{535C5E58-B6AD-407E-AC2B-3E68B97D35F7}.Debug|x86.Build.0 = Debug|Any CPU
+		{535C5E58-B6AD-407E-AC2B-3E68B97D35F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{535C5E58-B6AD-407E-AC2B-3E68B97D35F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{535C5E58-B6AD-407E-AC2B-3E68B97D35F7}.Release|x86.ActiveCfg = Release|Any CPU
+		{535C5E58-B6AD-407E-AC2B-3E68B97D35F7}.Release|x86.Build.0 = Release|Any CPU
+		{535C5E58-B6AD-407E-AC2B-3E68B97D35F7}.Test|Any CPU.ActiveCfg = Test|Any CPU
+		{535C5E58-B6AD-407E-AC2B-3E68B97D35F7}.Test|Any CPU.Build.0 = Test|Any CPU
+		{535C5E58-B6AD-407E-AC2B-3E68B97D35F7}.Test|x86.ActiveCfg = Debug|Any CPU
+		{535C5E58-B6AD-407E-AC2B-3E68B97D35F7}.Test|x86.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

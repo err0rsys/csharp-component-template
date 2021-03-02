@@ -15,21 +15,15 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Component
+namespace DomConsult.Components.Interfaces
 {
     /// <summary>
     /// Interface IManager
     /// </summary>
     [ComVisible(true), Guid("CAF8BD41-EA4C-4C49-9782-BAC86CA5B5F9")]
     [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-    public interface IManager
+    public interface IManager //: IDCPlatform - using inheritance methods are invisible in COM+ console and our application :-(
     {
-        /// <summary>
-        /// Assigns the access code.
-        /// </summary>
-        /// <param name="accessCode">The access code.</param>
-        /// <returns>System.Int32.</returns>
-        int AssignAccessCode(object accessCode);
         /// <summary>
         /// Assigns the start up parameter.
         /// </summary>
@@ -81,5 +75,13 @@ namespace Component
         /// <param name="error">The error.</param>
         /// <returns>System.Int32.</returns>
         int GetLastErrorDescription(ref object error);
+
+
+        #region IDCPlatform - Should be done by inheritance but how?
+        int AssignAccessCode(object AccessCode);
+        int CheckTransaction();
+        int Transaction_Commit();
+        int Transaction_Rollback();
+        #endregion
     }
 }

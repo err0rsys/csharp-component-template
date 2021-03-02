@@ -128,12 +128,12 @@ namespace DomConsult.GlobalShared.Utilities
         /// Gets or sets the error code.
         /// </summary>
         /// <value>The error code.</value>
-        private int ErrCode { get; set; }
+        public int ErrCode { get; set; }
         /// <summary>
         /// Gets or sets the state of the form.
         /// </summary>
         /// <value>The state of the form.</value>
-        private TFormState FormState { get; set; }
+        public TFormState FormState { get; set; }
         /// <summary>
         /// Gets or sets a value indicating whether [send others].
         /// </summary>
@@ -245,7 +245,7 @@ namespace DomConsult.GlobalShared.Utilities
 
             if (reRaise)
             {
-                throw new Exception(ex.Message);
+                throw new Exception(ex.Message, ex);
             }
         }
 
@@ -277,21 +277,23 @@ namespace DomConsult.GlobalShared.Utilities
         /// Messages the raise.
         /// </summary>
         /// <param name="textId">The text identifier.</param>
-        /// <exception cref="DomConsult.GlobalShared.Utilities.MessageException">null</exception>
-        public void MessageRaise(int textId)
+        /// <param name="Params">The optional parameters.</param>
+        /// <exception cref="DomConsult.GlobalShared.Utilities.MessageException"></exception>
+        public void MessageRaise(int textId, object[] Params = null)
         {
-            throw new MessageException(MTSComId, textId, null);
+            throw new MessageException(MTSComId, textId, Params);
         }
 
         /// <summary>
         /// Messages the raise.
         /// </summary>
+        /// <param name="mtsComId">The COM dictionary identifier.</param>
         /// <param name="textId">The text identifier.</param>
-        /// <param name="Params">The parameters.</param>
-        /// <exception cref="DomConsult.GlobalShared.Utilities.MessageException"></exception>
-        public void MessageRaise(int textId, object[] Params)
+        /// <param name="Params">The optional parameters.</param>
+        /// <exception cref="DomConsult.GlobalShared.Utilities.MessageException">null</exception>
+        public void MessageRaise(int mtsComId, int textId, object[] Params = null)
         {
-            throw new MessageException(MTSComId, textId, Params);
+            throw new MessageException(mtsComId, textId, Params);
         }
 
         /// <summary>
