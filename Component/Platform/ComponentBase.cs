@@ -33,35 +33,49 @@ namespace DomConsult.Platform
         /// </summary>
         public static int MtsComDicShared_ID  = 2000000;
         /// <summary>
-        /// Text: Wykonanie operacji nie jest możliwe. Funkcjonalność jest wyłączona.
-        /// Type: Informacja, Buttons:OK, Result: Informacja
+        /// Wykonanie operacji nie jest możliwe. Funkcjonalność jest wyłączona.
         /// </summary>
+        /// <remarks>
+        /// Type:Informacja, Buttons:OK, Result: Informacja
+        /// </remarks>
         public static int MSG_P00007_ID = 7;
         public static string MSG_P00007 = "Wykonanie operacji nie jest możliwe. Funkcjonalność jest wyłączona.";
+
         /// <summary>
-        /// Text: Dane nie mogą zostać zapisane. Wystąliły błędy walidacji:%s
-        /// Type: Błąd, Buttons:OK, Result: Błąd
+        /// Dane nie mogą zostać zapisane. Wystąliły błędy walidacji: %s
         /// </summary>
+        /// <remarks>
+        /// Type:Błąd, Buttons:OK, Result: Błąd
+        /// </remarks>
         public static int MSG_P00008_ID = 8;
         public static string MSG_P00008 = "Dane nie mogą zostać zapisane. Wystąliły błędy walidacji:" + Environment.NewLine +
                      "%s";
+
         /// <summary>
-        /// Text: Czy zapisać wprowadzone zmiany?
-        /// Type: Potwierdzenie, Buttons:OKCANCEL, Result: Powtórzenie
+        /// Czy zapisać wprowadzone zmiany?
         /// </summary>
+        /// <remarks>
+        /// Type:Potwierdzenie, Buttons:OKCANCEL, Result: Powtórzenie
+        /// </remarks>
         public static int MSG_P00009_ID = 9;
         public static string MSG_P00009 = "Czy zapisać wprowadzone zmiany?";
+
         /// <summary>
-        /// Text: Nie można usunąć rekordu. Wystąpiły błędy walidacji:%s
-        /// Type: Błąd, Buttons:OK, Result: Błąd
+        /// Nie można usunąć rekordu. Wystąpiły błędy walidacji: %s
         /// </summary>
+        /// <remarks>
+        /// Type:Błąd, Buttons:OK, Result: Błąd
+        /// </remarks>
         public static int MSG_P00010_ID = 10;
         public static string MSG_P00010 = "Nie można usunąć rekordu. Wystąpiły błędy walidacji:" + Environment.NewLine +
                      "%s";
+
         /// <summary>
-        /// Text: Czy na pewno usunąć rekord?
-        /// Type: Potwierdzenie, Buttons:OKCANCEL, Result: Powtórzenie
+        /// Czy na pewno usunąć rekord?
         /// </summary>
+        /// <remarks>
+        /// Type:Potwierdzenie, Buttons:OKCANCEL, Result: Powtórzenie
+        /// </remarks>
         public static int MSG_P00011_ID = 11;
         public static string MSG_P00011 = "Czy na pewno usunąć rekord?";
     }
