@@ -10,7 +10,7 @@ using System.IO;
 
 namespace DomConsult.ComponentTest
 {
-    public class DevelSectet
+    public class DevelSecret
     {
         public Dictionary<string, string> ACC { get; set; } = new Dictionary<string, string>();
     }
@@ -18,7 +18,7 @@ namespace DomConsult.ComponentTest
     [TestClass]
     public class ComUnitTest
     {
-        private DevelSectet secret;
+        private DevelSecret secret;
         private string UseACC = "ACC_1";
         //private ComWrapper comObject = null;
         private dynamic comObject;
@@ -30,7 +30,7 @@ namespace DomConsult.ComponentTest
             string secretPath = Path.Combine(appDataFolder, "devel_secret.json");
 
             var jsonsecreet =  File.ReadAllText(secretPath);
-            secret = JsonConvert.DeserializeObject<DevelSectet>(jsonsecreet);
+            secret = JsonConvert.DeserializeObject<DevelSecret>(jsonsecreet);
             Assert.IsTrue(secret != null);
             Assert.IsTrue(secret.ACC.ContainsKey(UseACC));
             Debug.WriteLine(secret.ACC[UseACC]);
