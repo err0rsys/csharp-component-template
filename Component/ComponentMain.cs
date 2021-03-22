@@ -47,6 +47,8 @@ namespace DomConsult.Components
         /// </summary>
         protected override void OnInitialize()
         {
+            //INFO : Initialize class but remember that Accesscode was not assigned yet.
+            // You can also initialize class in OnAssignAccessCode wich is called once after AssignAccessCode.
         }
 
         /// <summary>
@@ -104,8 +106,7 @@ FROM uniExample m WHERE m.uniExampleId = {0}";
                 else
                 {
                     NewFormState = TFormState.cfsCloseBD;
-                    //TODO: OnAssignStartUpParameter - [MP] Komunikat!
-                    Err.MessageRaise(0);
+                    Err.MessageRaise(ManagerBaseDef.DIC_P2000000_ID, ManagerBaseDef.MSG_P00201_ID, new object[] { "", ""});
                 }
             }
             else
