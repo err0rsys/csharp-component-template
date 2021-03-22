@@ -1313,7 +1313,7 @@ namespace DomConsult.Platform
 
                 if (disposing)
                 {
-                    Language.Destroy();
+                    Language.Dispose();
                 }
 
                 // INFO: free unmanaged resources (unmanaged objects) and override finalizer
