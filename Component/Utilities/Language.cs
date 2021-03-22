@@ -31,14 +31,14 @@ namespace DomConsult.GlobalShared.Utilities
         /// The language identifier
         /// </summary>
         private readonly int LangId;
-        /// <summary>
-        /// The language reference
-        /// </summary>
-        private readonly int LangRef;
+        
+        /*
         /// <summary>
         /// The language manager
         /// </summary>
         private readonly dynamic LangManager;
+        */
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Language"/> class.
         /// </summary>
@@ -47,14 +47,15 @@ namespace DomConsult.GlobalShared.Utilities
         public Language(int mtsComId, object accessCode)
         {
             MTSComId = mtsComId;
-            
+
             //Type LangComType = Type.GetTypeFromProgID("Language.Manager", true);
             //LangManager = Activator.CreateInstance(LangComType);
-            
+
             BDWrapper Par = new BDWrapper();
             Par.LoadParams(accessCode.ToString());
             LangId = Par.Params["L"].AsInt();
-            LangRef = LangManager.SetCom(mtsComId);
+
+            //LangManager.SetCom(mtsComId);
         }
 
         /// <summary>
