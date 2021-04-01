@@ -8,12 +8,12 @@ namespace DomConsult.Platform
 {
     public static class ManagerBaseDef
     {
-        //sp_devGenerateMTSCOMDIC @MTSCOMID=2000000, @DICPREFIX='P', @TEXTIDIN='7,8,9,10,11', @LANG='C#'
+        //sp_devGenerateMTSCOMDIC @MTSCOMID=2000000, @DICPREFIX='P', @TEXTIDIN='7,8,9,10,11,201', @LANG='C#'
 
         /// <summary>
         /// Platformowy s³ownik z uniwersalnymi wielojêzycznymi komunikatami i tekstami.
         /// </summary>
-        public static int MtsComDicShared_ID = 2000000;
+        public static int DIC_P2000000_ID = 2000000;
         /// <summary>
         /// Text: Wykonanie operacji nie jest mo¿liwe. Funkcjonalnoœæ jest wy³¹czona.
         /// Type: Informacja, Buttons:OK, Result: Informacja
@@ -46,5 +46,14 @@ namespace DomConsult.Platform
         /// </summary>
         public static int MSG_P00011_ID = 11;
         public static string MSG_P00011 = "Czy na pewno usun¹æ rekord?";
+
+        /// <summary>
+        /// %sB³êdny wynik zapytania. Brak danych.%s
+        /// </summary>
+        /// <remarks>
+        /// Type:B³¹d, Buttons:OK, Result: B³¹d
+        /// </remarks>
+        public static int MSG_P00201_ID = 201;
+        public static string MSG_P00201 = "%sB³êdny wynik zapytania. Brak danych.%s";
     }
 }
