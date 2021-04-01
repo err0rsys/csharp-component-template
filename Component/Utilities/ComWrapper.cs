@@ -1,18 +1,4 @@
-﻿// ***********************************************************************
-// Assembly         : Component
-// Author           : Artur Maciejowski
-// Created          : 16-02-2020
-//
-// Last Modified By : Artur Maciejowski
-// Last Modified On : 02-04-2020
-// ***********************************************************************
-// <copyright file="ComWrapper.cs" company="DomConsult Sp. z o.o.">
-//     Copyright ©  2021 All rights reserved
-// </copyright>
-// <summary></summary>
-// ***********************************************************************
-
-using System;
+﻿using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.IO;
@@ -27,7 +13,7 @@ namespace DomConsult.GlobalShared.Utilities
     /// Implements the <see cref="System.IDisposable" />
     /// </summary>
     /// <seealso cref="System.IDisposable" />
-    public class ComWrapper : IDisposable
+    public sealed class ComWrapper : IDisposable
     {
         public static bool ComRemoteMode = false;
 
@@ -113,11 +99,6 @@ namespace DomConsult.GlobalShared.Utilities
         /// The m is admin
         /// </summary>
         private bool m_isAdmin = false;
-        //private int transactionId;
-        /// <summary>
-        /// The m transaction
-        /// </summary>
-        private Transaction m_transaction;
         /// <summary>
         /// The m unique identifier
         /// </summary>
@@ -141,7 +122,7 @@ namespace DomConsult.GlobalShared.Utilities
         public string AccessCode
         {
             get { return m_accessCode; }
-            set { setAccessCode(value); }
+            set { SetAccessCode(value); }
         }
 
         /// <summary>
@@ -174,7 +155,6 @@ namespace DomConsult.GlobalShared.Utilities
             {
                 if (m_serverAppPath.Length == 0)
                 {
-
                     RegistryKey RegKey = Registry.CurrentUser.OpenSubKey(ComUtils.CS_REGKEY_ROOT);
 
                     // searching for alternative registry key
@@ -189,7 +169,6 @@ namespace DomConsult.GlobalShared.Utilities
                     {
                         RegKey.Close();
                     }
-
                 }
                 return m_serverAppPath;
             }
@@ -210,8 +189,10 @@ namespace DomConsult.GlobalShared.Utilities
                         AccessCode, "LOG_PATH", String.Empty);
 
                     if (m_serverLogPath.Length == 0)
+                    {
                         m_serverLogPath = ComUtils.GetRegParam(
                             "LogDirectory", String.Empty, AccessCode);
+                    }
 
                     if (m_serverLogPath.Length > 0)
                     {
@@ -219,14 +200,18 @@ namespace DomConsult.GlobalShared.Utilities
                             AccessCode, "LOG_ERRORS", String.Empty);
 
                         if (subDir.Length == 0)
+                        {
                             subDir = ComUtils.GetParam(
                                 AccessCode, "LOG_ALL", String.Empty);
+                        }
 
                         if (subDir.Length > 0)
                             m_serverLogPath = Path.Combine(m_serverLogPath, subDir);
                     }
                     else
+                    {
                         m_serverLogPath = Path.GetTempPath();
+                    }
 
                     if (!Directory.Exists(m_serverLogPath))
                         Directory.CreateDirectory(m_serverLogPath);
@@ -310,11 +295,11 @@ namespace DomConsult.GlobalShared.Utilities
         /// Sets the access code.
         /// </summary>
         /// <param name="AccessCode">The access code.</param>
-        private void setAccessCode(string AccessCode)
+        private void SetAccessCode(string AccessCode)
         {
             m_accessCode = AccessCode;
 
-            Dictionary<string, string> ac = ComUtils.decodeInputString(AccessCode, "/");
+            Dictionary<string, string> ac = ComUtils.DecodeInputString(AccessCode, "/");
 
             if (ac.ContainsKey("QID"))
                 m_sessionId = Convert.ToInt32(ac["QID"]);
@@ -357,11 +342,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// Gets or sets the transaction object.
         /// </summary>
         /// <value>The transaction object.</value>
-        public Transaction TransactionObject
-        {
-            get { return m_transaction; }
-            set { m_transaction = value; }
-        }
+        public Transaction TransactionObject { get; set; }
 
         /// <summary>
         /// Assigns the access code.
@@ -482,7 +463,6 @@ namespace DomConsult.GlobalShared.Utilities
                 comType = Type.GetTypeFromCLSID(classID, "127.0.0.1", true); //Tylko localhost
                 Connected = true;
                 return true;
-
             }
             catch (COMException ex)
             {
@@ -645,7 +625,7 @@ namespace DomConsult.GlobalShared.Utilities
                 return res;
 
             object result = null;
-            string _method = "GetLastErrorDescription";
+            const string _method = "GetLastErrorDescription";
             object[] _arguments = new object[1];
             _arguments[0] = wmk;
 

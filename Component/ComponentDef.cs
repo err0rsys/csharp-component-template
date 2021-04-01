@@ -1,17 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DomConsult.Components
+﻿namespace DomConsult.Components
 {
     public static class ComponentDef
     {
         public static string MtsComName = "Component.Manager"; //STEP: put ProgId here
-        public static int MtsComID = 2000412; //STEP: Register COM and put valid registration ID here
+        public static int MtsComID = 2000412; //STEP: register COM and put valid registration ID here
 
-        public static int FRM_EXAMPLE1_ID = 2002083;
+        //Forms selection based on FormType parameter
+        public static int FRM_EXAMPLE1_ID = 2002083; //STEP: put default form id here
+        public static int FRM_EXAMPLE2_ID = -1; // optional form
+        public static int FRM_EXAMPLE3_ID = -1; // optional form
 
         //Default COM dictionary ID
         public static int MtsComDicA_ID = MtsComID; //STEP: put different default COM dictionary ID if differ from MtsComID

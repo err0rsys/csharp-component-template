@@ -1,22 +1,4 @@
-﻿// ***********************************************************************
-// Assembly         : Component
-// Author           : Artur Maciejowski
-// Created          : 16-02-2020
-//
-// Last Modified By : Artur Maciejowski
-// Last Modified On : 24-02-2020
-// ***********************************************************************
-// <copyright file="ErrUtils.cs" company="DomConsult Sp. z o.o.">
-//     Copyright ©  2021 All rights reserved
-// </copyright>
-// <summary></summary>
-// ***********************************************************************
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 using System.Runtime.Serialization;
 
 namespace DomConsult.GlobalShared.Utilities
@@ -174,7 +156,6 @@ namespace DomConsult.GlobalShared.Utilities
                 }
                 catch
                 {
-
                     return -1;
                 }
             }
@@ -427,7 +408,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// <returns>System.Int32.</returns>
         public int AddMsgFatal(Exception ex, string methodName)
         {
-            int result = 0;
+            int result;
             try
             {
                 if (ex.Message.Length > 0)
@@ -475,7 +456,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// </summary>
         /// <param name="res">The resource.</param>
         /// <exception cref="Exception"></exception>
-        public void Check(int res)
+        public static void Check(int res)
         {
             if (res < 0)
                 throw new Exception();

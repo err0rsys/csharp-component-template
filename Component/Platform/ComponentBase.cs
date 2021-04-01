@@ -1,73 +1,18 @@
-﻿// ***********************************************************************
-// Assembly         : Component
-// Author           : Artur Maciejowski
-// Created          : 16-02-2020
-//
-// Last Modified By : Artur Maciejowski
-// Last Modified On : 28-10-2020
-// ***********************************************************************
-// <copyright file="ComponentBase.cs" company="DomConsult Sp. z o.o.">
-//     Copyright ©  2021 All rights reserved
-// </copyright>
-// <summary></summary>
-// ***********************************************************************
-
-//TODO: ManagerBaseDef - [MP] Language manager vs. Cache
+﻿//TODO: ManagerBaseDef - [MP] Language manager vs. Cache
 //TODO: ManagerBaseDef - [MP] FormId, FormCaption, ObjectTypeId, MainObjectId, : czy set-ery tych właściwości nie powinny robić BDW.AddModifyOther?
+//                       [AM] mogą, będzie trochę czytelniej
 //TODO: ManagerBaseDef - [MP] Trace.TraceXXX - używanie Trace jest raczej złym pomysłem. Trzeba przejść na Logger-a i ewentualnie coś co rzuca info na consolę.
+//                       [AM] jakoś nie widzę w tym nic złego, Logger? Hmmm, to już nie moje klocki.
 
 using System;
 using System.Diagnostics;
 using DomConsult.Platform.Extensions;
 using DomConsult.GlobalShared.Utilities;
-using DomConsult.Components.Interfaces;
 
 namespace DomConsult.Platform
 {
-    public static class ManagerBaseDef
-    {
-        //sp_devGenerateMTSCOMDIC @MTSCOMID=2000000, @DICPREFIX='P', @TEXTIDIN='7,8,9,10,11', @LANG='C#'
-
-        /// <summary>
-        /// Platformowy słownik z uniwersalnymi wielojęzycznymi komunikatami i tekstami.
-        /// </summary>
-        public static int MtsComDicShared_ID  = 2000000;
-        /// <summary>
-        /// Text: Wykonanie operacji nie jest możliwe. Funkcjonalność jest wyłączona.
-        /// Type: Informacja, Buttons:OK, Result: Informacja
-        /// </summary>
-        public static int MSG_P00007_ID = 7;
-        public static string MSG_P00007 = "Wykonanie operacji nie jest możliwe. Funkcjonalność jest wyłączona.";
-        /// <summary>
-        /// Text: Dane nie mogą zostać zapisane. Wystąliły błędy walidacji:%s
-        /// Type: Błąd, Buttons:OK, Result: Błąd
-        /// </summary>
-        public static int MSG_P00008_ID = 8;
-        public static string MSG_P00008 = "Dane nie mogą zostać zapisane. Wystąliły błędy walidacji:" + Environment.NewLine +
-                     "%s";
-        /// <summary>
-        /// Text: Czy zapisać wprowadzone zmiany?
-        /// Type: Potwierdzenie, Buttons:OKCANCEL, Result: Powtórzenie
-        /// </summary>
-        public static int MSG_P00009_ID = 9;
-        public static string MSG_P00009 = "Czy zapisać wprowadzone zmiany?";
-        /// <summary>
-        /// Text: Nie można usunąć rekordu. Wystąpiły błędy walidacji:%s
-        /// Type: Błąd, Buttons:OK, Result: Błąd
-        /// </summary>
-        public static int MSG_P00010_ID = 10;
-        public static string MSG_P00010 = "Nie można usunąć rekordu. Wystąpiły błędy walidacji:" + Environment.NewLine +
-                     "%s";
-        /// <summary>
-        /// Text: Czy na pewno usunąć rekord?
-        /// Type: Potwierdzenie, Buttons:OKCANCEL, Result: Powtórzenie
-        /// </summary>
-        public static int MSG_P00011_ID = 11;
-        public static string MSG_P00011 = "Czy na pewno usunąć rekord?";
-    }
-
     /// <summary>
-    /// Class implements simplified scheme of formular/statement/job management. 
+    /// Class implements simplified scheme of formular/statement/job management.
     /// Programmer implements all OnXXX methods accoording to the buisness logic.
     /// </summary>
     /// <seealso cref="ComponentPlatform" />
@@ -77,10 +22,12 @@ namespace DomConsult.Platform
         /// Real form state (cfsView, cfsEdit, cfsNew) - without substates.
         /// </summary>
         public TFormState UserFormState { get; set; } = TFormState.cfsNone;
+
         /// <summary>
         /// Internal NewFormState
         /// </summary>
         private TFormState _newFormState = TFormState.cfsNone;
+
         /// <summary>
         /// The form state that is required by the component.
         /// </summary>
@@ -103,40 +50,55 @@ namespace DomConsult.Platform
                 }
             }
         }
+
         /// <summary>
         /// Indicates if form initialization method was already called.
         /// </summary>
         public bool FormInitialized { get; set; }  = false;
+
         /// <summary>
         /// Gets or sets the form identifier.
         /// </summary>
         /// <value>The form identifier.</value>
         public int FormId { get; set; } = -1;
+
+        /// <summary>
+        /// Gets or sets the form type.
+        /// Can be used to select form
+        /// </summary>
+        /// <value>The formtype flag.</value>
+        public int FormType { get; set; } = 1;
+
         /// <summary>
         /// Gets or sets the form caption.
         /// </summary>
         /// <value>Form caption.</value>
         public object FormCaption { get; set; }
+
         /// <summary>
         /// Gets or sets the object type identifier.
         /// </summary>
         /// <value>The object type identifier.</value>
         public int ObjectTypeId { get; set; } = -1;
+
         /// <summary>
         /// Gets or sets the main object identifier used as an input parameters for actions
         /// from form context menu or specially configurated buttons.
         /// </summary>
         /// <value>Main object identifier.</value>
         public string MainObjectId { get; set; } = "";
+
         /// <summary>
         /// Gets or sets the silent flag.
         /// </summary>
         /// <value>The silent flag.</value>
         public int Silent { get; set; } = 0;
+
         /// <summary>
         /// The error variable (private)
         /// </summary>
         private Err _err;
+
         /// <summary>
         /// Gets the error.
         /// </summary>
@@ -145,10 +107,12 @@ namespace DomConsult.Platform
         {
             get { return _err; }
         }
+
         /// <summary>
         /// The MTS COM identifier (private)
         /// </summary>
         private int _mtsComId;
+
         /// <summary>
         /// Gets or sets the MTS COM identifier.
         /// </summary>
@@ -170,10 +134,12 @@ namespace DomConsult.Platform
                 }
             }
         }
+
         /// <summary>
         /// The language
         /// </summary>
         private Language _language;
+
         /// <summary>
         /// Gets or sets the language.
         /// </summary>
@@ -190,10 +156,12 @@ namespace DomConsult.Platform
             }
             set { _language = value; }
         }
+
         /// <summary>
         /// The base detail wrapper (BDW)
         /// </summary>
         private BDWrapper _bdw;
+
         /// <summary>
         /// Gets or sets the BDW.
         /// </summary>
@@ -211,10 +179,12 @@ namespace DomConsult.Platform
 
             set { _bdw = value; }
         }
+
         /// <summary>
         /// The record
         /// </summary>
         private Record _record;
+
         /// <summary>
         /// Gets or sets the record.
         /// Record identify current record context.
@@ -232,6 +202,7 @@ namespace DomConsult.Platform
             }
             set { _record = value; }
         }
+
         /// <summary>
         /// Get or sets default TimeOut
         /// </summary>
@@ -285,8 +256,6 @@ namespace DomConsult.Platform
             int result = 0;
             try
             {
-                BDW.AddModifyOther(TBDOthers.coAddAllFieldValuesToArray, 1);
-
                 if (TUniVar.VarIsArray(param))
                 {
                     Record.ObjectId = string.Empty;
@@ -298,24 +267,24 @@ namespace DomConsult.Platform
                     BDW.LoadParams(Record.ObjectId);
                 }
 
+                if (BDW.ParamExists("_FormType"))
+                    FormType = BDW.Params["_FormType"].AsInt();
+
                 if (BDW.ParamExists("_Silent"))
                     Silent = BDW.Params["_Silent"].AsInt();
 
                 if (BDW.ParamExists("_TransactionId"))
                     ExTransactionId = BDW.Params["_TransactionId"].AsInt();
 
-                OnAssignStartUpParameter();
-
-                //if (BDW.ParamExists(Record.KeyName))
-                //    Record.Id = BDW.Params[Record.KeyName].AsInt();
+                OnProcessInputParams();
 
                 if (!BDW.OtherExists(TBDOthers.coObjectTypeId))
                     BDW.AddModifyOther(TBDOthers.coObjectTypeId, ObjectTypeId);
-               
+
                 if (!TUniVar.VarIsNullOrEmpty(FormCaption))
                     BDW.AddModifyOther(TBDOthers.coFormCaption, FormCaption);
 
-                OnProcessInputParams();
+                OnAssignStartUpParameter();
             }
             catch (MessageException mex)
             {
@@ -332,7 +301,7 @@ namespace DomConsult.Platform
             finally
             {
                 // always set formId and objectId
-                // WARNING : thera are forms that have an id smaller then 0!!!
+                // WARNING : there are forms that have an id smaller then 0!!!
 
                 if (!BDW.OtherExists(TBDOthers.coFormId) && ((FormId > 0) || (FormId < -1)))
                     BDW.AddModifyOther(TBDOthers.coFormId, FormId);
@@ -463,7 +432,7 @@ namespace DomConsult.Platform
                         UserFormState = fs;
                         break;
                 }
-                
+
                 BDW.LoadFields(fields, false);
                 BDW.LoadOthers(others);
 
@@ -579,7 +548,7 @@ namespace DomConsult.Platform
 
                 //There are also events based on TBDOthers different then coActiveControlFieldName & coActiveControlValue
                 OnActualizeControls(fieldName, fieldValue);
-                
+
                 return 0;
             }
             catch (MessageException) { throw; }
@@ -646,6 +615,7 @@ namespace DomConsult.Platform
         public int NewRecord()
         {
             //TODO: NewRecord - [MP] Co powinno się wydarzyć jeżeli tu wystąpi błąd?
+            //                  [AM] Chodzi o coś specjalnego?
 
             try
             {
@@ -683,7 +653,7 @@ namespace DomConsult.Platform
 
                 return result;
             }
-            catch (MessageException) { throw; } 
+            catch (MessageException) { throw; }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
@@ -807,7 +777,7 @@ namespace DomConsult.Platform
                     finally
                     {
                         com.Dispose();
-                    }                  
+                    }
                 }
 
                 Record.Id = -1;
@@ -877,7 +847,7 @@ namespace DomConsult.Platform
                 }
 
                 OnViewRecord();
-                
+
                 if (!fromEdit)
                 {
                     ComUtils.RecordClose(Record.ComObj);
@@ -1034,7 +1004,7 @@ namespace DomConsult.Platform
 
                     Record.ComObj.Dispose();
                     Record.ComObj = null;
-                }              
+                }
 
                 return result;
             }
@@ -1195,14 +1165,13 @@ namespace DomConsult.Platform
             int result;
             try
             {
-                result = OnRunMethod(TUniVar.VarToStr(methodName), ref param);
-                return result;
+                return OnRunMethod(TUniVar.VarToStr(methodName), ref param);
             }
             catch (MessageException mex)
             {
                 Trace.TraceInformation(mex.Message);
                 Err.HandleMessage(mex);
-                
+
                 if (Err.ErrCode != 0)
                     result = Err.ErrCode;
                 else
@@ -1224,7 +1193,7 @@ namespace DomConsult.Platform
                 CheckTransactionState(result);
             }
             catch { }
-            
+
             return result;
         }
 
@@ -1242,25 +1211,45 @@ namespace DomConsult.Platform
         /// <summary>
         /// Checks the state of the transaction.
         /// </summary>
-        /// <param name="result">The result.</param>
-        /// <returns>System.Int32.</returns>
-        private int CheckTransactionState(int result)
+        /// <param name="result">The result to check.</param>
+        private void CheckTransactionState(int result)
         {
             //TODO: CheckTransactionState - [MP] Na podstawie czego ta metoda powinna działać: Result czy TransactionStatus?
+            //                              [AM] Na podstawie jednego i drugiego
             //TODO: CheckTransactionState - [MP] Gdzie i jak ta metoda powinna być wołana uwzględniając konwersacje z użytkownikiem?
+            //                              [AM] SupportSQL, RunMethod
 
-            if (TransactionStatus == TTransactionStatus.ctsCommitEnabled)
-                Transaction_Commit();
-            else if (TransactionStatus == TTransactionStatus.ctsRollbackRequired)
-                Transaction_Rollback();
-
-            return result;
+            if (ExTransactionId > 0) // external transaction
+            {
+                TransactionStatus = TTransactionStatus.ctsCommitIgnore;
+            }
+            else
+            {
+                if (TUniTools.ErrorDetected(result)) // internal transaction
+                {
+                    Transaction_Rollback();          // error notification
+                }
+                else
+                {
+                    switch (TransactionStatus)
+                    {
+                        case TTransactionStatus.ctsRollbackRequired:
+                            Transaction_Rollback();
+                            break;
+                        case TTransactionStatus.ctsCommitEnabled:
+                            Transaction_Commit();
+                            break;
+                        case TTransactionStatus.ctsCommitIgnore:
+                            break; // nothing to do
+                    }
+                }
+            }
         }
 
         /// <summary>
         /// Konstruktor
         /// </summary>
-        public ManagerBase() : base()
+        protected ManagerBase() : base()
         {
             OnInitialize();
         }

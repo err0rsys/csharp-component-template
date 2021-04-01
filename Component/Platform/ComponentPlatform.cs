@@ -6,7 +6,6 @@ using DomConsult.GlobalShared.Utilities;
 
 namespace DomConsult.Platform
 {
-
     public static class ComponentPlatformDef
     {
         public static int ERR_MISSING_TRANSACTION = -3;
@@ -50,7 +49,7 @@ namespace DomConsult.Platform
         /// </summary>
         /// <value>The access code.</value>
         public string AccessCode
-        { 
+        {
             get
             {
                 return _accessCode;
@@ -97,7 +96,6 @@ namespace DomConsult.Platform
         public int TransactionId
         {
             get {
-
                 if (ExTransactionId > 0)
                 {
                     return ExTransactionId;
@@ -124,12 +122,12 @@ namespace DomConsult.Platform
                         Marshal.FinalReleaseComObject(_TransactionManager);
                         _TransactionManager = null;
                     }
-                };
+                }
 
                 return _TransactionId;
             }
         }
-        
+
         /// <summary>
         /// Assign access code
         /// </summary>
@@ -175,7 +173,7 @@ namespace DomConsult.Platform
                     {
                         _TransactionManager.AppName("COMD:" + MtsComName);
                     }
-                    catch { };
+                    catch { }
 
                     _ = _TransactionManager.CommitTransaction;
                 }
@@ -184,7 +182,7 @@ namespace DomConsult.Platform
                 Marshal.FinalReleaseComObject(_TransactionManager);
                 _TransactionManager = null;
                 res = ComponentPlatformDef.ERR_MISSING_TRANSACTION;
-            };
+            }
 
             _TransactionId = ComponentPlatformDef.ERR_MISSING_TRANSACTION;
 
@@ -207,7 +205,7 @@ namespace DomConsult.Platform
                 Marshal.FinalReleaseComObject(_TransactionManager);
                 _TransactionManager = null;
                 res = ComponentPlatformDef.ERR_MISSING_TRANSACTION;
-            };
+            }
 
             _TransactionId = ComponentPlatformDef.ERR_MISSING_TRANSACTION;
 

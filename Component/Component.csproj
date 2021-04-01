@@ -33,6 +33,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <RegisterForComInterop>false</RegisterForComInterop>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -41,7 +42,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
@@ -64,6 +65,7 @@
     <Compile Include="ComponentDef.cs" />
     <Compile Include="Platform\ComponentBase.cs" />
     <Compile Include="ComponentMain.cs" />
+    <Compile Include="Platform\ComponentBaseDef.cs" />
     <Compile Include="Platform\ComponentPlatform.cs" />
     <Compile Include="Interfaces\IManager.cs" />
     <Compile Include="Platform\Extensions\PlatformExtenstions.cs" />

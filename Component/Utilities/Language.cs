@@ -1,18 +1,4 @@
-﻿// ***********************************************************************
-// Assembly         : Component
-// Author           : Artur Maciejowski
-// Created          : 16-02-2020
-//
-// Last Modified By : Artur Maciejowski
-// Last Modified On : 16-02-2020
-// ***********************************************************************
-// <copyright file="Language.cs" company="DomConsult Sp. z o.o.">
-//     Copyright ©  2021 All rights reserved
-// </copyright>
-// <summary></summary>
-// ***********************************************************************
-
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 using DomConsult.Platform.Extensions;
 

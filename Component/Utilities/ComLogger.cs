@@ -1,18 +1,4 @@
-﻿// ***********************************************************************
-// Assembly         : Component
-// Author           : Artur Maciejowski
-// Created          : 16-02-2020
-//
-// Last Modified By : Artur Maciejowski
-// Last Modified On : 02-04-2020
-// ***********************************************************************
-// <copyright file="ComLogger.cs" company="DomConsult Sp. z o.o.">
-//     Copyright ©  2021 All rights reserved
-// </copyright>
-// <summary></summary>
-// ***********************************************************************
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -53,7 +39,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// </summary>
         /// <value>The name of the log file.</value>
         public string LogFileName
-        { 
+        {
             get
             {
                 if (_logFileName.Length == 0)
@@ -155,7 +141,7 @@ namespace DomConsult.GlobalShared.Utilities
             try
             {
                 m_StopWatch.Stop();
-                
+
                 if (AddDateToLog)
                     m_debug.Add(DateTime.Now.ToString());
 
@@ -190,10 +176,10 @@ namespace DomConsult.GlobalShared.Utilities
             {
                 m_StopWatch.Stop();
                 string _msg = string.Format(message, args);
-                
+
                 if (AddDateToLog)
                     m_debug.Add(DateTime.Now.ToString());
-                
+
                 m_debug.Add(string.Format("ElapsedTime[ms]:{0} - {1}", m_StopWatch.ElapsedMilliseconds, _msg));
                 m_StopWatch.Start();
             }
@@ -220,7 +206,7 @@ namespace DomConsult.GlobalShared.Utilities
             try
             {
                 m_StopWatch.Stop();
-                
+
                 if (AddDateToLog)
                     m_debug.Add(DateTime.Now.ToString());
 
@@ -255,13 +241,13 @@ namespace DomConsult.GlobalShared.Utilities
                             string key = "";
                             if (ComRemoteMode)
                             {
-                                key = @"LogDirectoryForApp";
+                                key = "LogDirectoryForApp";
                                 //LogDir = ComUtils.GetRegParam("LogDirectoryForApp", tempPath, "LOGON");
 
                             }
                             else
                             {
-                                key = @"LogDirectory";
+                                key = "LogDirectory";
                                 //LogDir = ComUtils.GetRegParam("LogDirectory", tempPath, "LOGON");
                             }
 
@@ -288,5 +274,4 @@ namespace DomConsult.GlobalShared.Utilities
             catch { }
         }
     }
-
 }

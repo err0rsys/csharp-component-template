@@ -18,11 +18,11 @@ namespace DomConsult.ComponentTest
     [TestClass]
     public class ComUnitTest
     {
-        private DevelSectet secret;
-        private string UseACC = "ACC_1";
+        private readonly DevelSectet secret;
+        private readonly string UseACC = "ACC_1";
         //private ComWrapper comObject = null;
-        private dynamic comObject;
-        private Manager comClass = null;
+        private readonly dynamic comObject;
+        private readonly Manager comClass = null;
 
         public ComUnitTest()
         {

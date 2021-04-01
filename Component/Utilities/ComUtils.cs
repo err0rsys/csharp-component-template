@@ -1,22 +1,4 @@
-﻿// ***********************************************************************
-// Assembly         : Component
-// Author           : Artur Maciejowski
-// Created          : 16-02-2020
-//
-// Last Modified By : Artur Maciejowski
-// Last Modified On : 02-04-2020
-// ***********************************************************************
-// <copyright file="ComUtils.cs" company="DomConsult Sp. z o.o.">
-//     Copyright ©  2021 All rights reserved
-// </copyright>
-// <summary>
-// 15.11.2011 Maciej Smoleński, Michał Piotrowski
-// In order to distinguish business logic from presentation layer 
-// GUI functions have been moved to UIUtils.cs file to UIExtension Class
-// </summary>
-// ***********************************************************************
-
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -29,7 +11,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using System.Reflection;
-using System.Web;
 using System.ComponentModel;
 
 #if DEBUG
@@ -294,9 +275,8 @@ namespace DomConsult.GlobalShared.Utilities
 public static object GetText(int comId, int langId, int textId)
         {
             object paramValue=null;
-            ComWrapper langManager;
 
-            langManager = ComUtils.CreateComFromProgID("Language.Manager", "LOGON");
+            ComWrapper langManager = ComUtils.CreateComFromProgID("Language.Manager", "LOGON");
 
             using (langManager)
             {
@@ -320,12 +300,12 @@ public static object GetText(int comId, int langId, int textId)
         /// <returns>System.String.</returns>
         public static string GetParam(string paramString, string paramName, string defaultValue)
         {
-            Dictionary<string, string> ac = decodeInputString(paramString, "/");
+            Dictionary<string, string> ac = DecodeInputString(paramString, "/");
 
             if (ac.ContainsKey(paramName))
-                return (Convert.ToString(ac[paramName]));
+                return Convert.ToString(ac[paramName]);
             else
-                return (defaultValue);
+                return defaultValue;
         }
         /* MS 27.11.2015 Metody GetRegParam nie wolno wywoływać bez AccessCode-a !!
         public static string GetRegParam(string paramName, string defaultValue)
@@ -392,7 +372,6 @@ public static object GetText(int comId, int langId, int textId)
         /// <returns>System.String.</returns>
         public static string GetUniParam(string AccessCode, string paramName, string defaultValue)
         {
-            object[,] packet = null;
             int res = GetPacket(
                 AccessCode,
                 string.Format("SELECT paramValue " +
@@ -401,13 +380,12 @@ public static object GetText(int comId, int langId, int textId)
                               paramName),
                 -1,
                 -1,
-                out packet);
+                out object[,] packet);
 
             if (res > 0)
                 return packet[1, 0].ToString();
             else
                 return defaultValue;
-
         }
 
         /// <summary>
@@ -417,7 +395,6 @@ public static object GetText(int comId, int langId, int textId)
         /// <returns>System.String.</returns>
         public static string GetConnectionString(string accessCode)
         {
-
             using (ComWrapper dbc = ComUtils.CreateRemoteCom(new Guid(DBC_CLASS), accessCode, string.Empty, true))
             {
                 object[] _params = new object[2];
@@ -427,7 +404,6 @@ public static object GetText(int comId, int langId, int textId)
                 OleCheck(res);
                 return Convert.ToString(_params[1]);
             }
-
         }
 
         /// <summary>
@@ -437,7 +413,7 @@ public static object GetText(int comId, int langId, int textId)
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         public static bool Assigned(object AObject)
         {
-            return (AObject != null);
+            return AObject != null;
         }
 
         /// <summary>
@@ -477,9 +453,9 @@ public static object GetText(int comId, int langId, int textId)
         /// <param name="Result">The result.</param>
         /// <param name="ResultIfNull">The result if null.</param>
         /// <returns>System.Int32.</returns>
-        public static int CheckError(object Result, int ResultIfNull)
+        public static int CheckError(object Result, int ResultIfNull = 0)
         {
-            return TUniVar.VarToInt(Result, 0, false);
+            return TUniVar.VarToInt(Result, ResultIfNull, false);
         }
 
         /// <summary>
@@ -539,10 +515,10 @@ public static object GetText(int comId, int langId, int textId)
         /// <returns>ComWrapper.</returns>
         public static ComWrapper CreateCom(string GUID, string AccessCode, bool assignAccessCode)
         {
-
-            ComWrapper ComWrapper = new ComWrapper();
-
-            ComWrapper.AccessCode = AccessCode;
+            ComWrapper ComWrapper = new ComWrapper
+            {
+                AccessCode = AccessCode
+            };
 
             /*
              * MS 03.12.2015 
@@ -567,15 +543,14 @@ public static object GetText(int comId, int langId, int textId)
                 }
             }
             return null;
-
         }
 
 public static ComWrapper CreateComFromProgID(string progID, string AccessCode, bool assignAccessCode)
         {
-
-            ComWrapper ComWrapper = new ComWrapper();
-
-            ComWrapper.AccessCode = AccessCode;
+            ComWrapper ComWrapper = new ComWrapper
+            {
+                AccessCode = AccessCode
+            };
 
             /*
              * MS 03.12.2015 
@@ -646,7 +621,7 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
             else
             {
                 stdCom = CreateRemoteCom(new Guid(CS_STDCOM_GUID), accessCode, ServerName, false);
-            };
+            }
 
             if (stdCom == null)
             {
@@ -675,7 +650,6 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         {
             return CreateRemoteCom(classId, AccessCode, string.Empty, true);
         }
-
 
         /// <summary>
         /// Funkcja tworzy zdalnie obiekt COM
@@ -723,7 +697,6 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
                 }
             }
             return null;
-
         }
 
         /// <summary>
@@ -746,7 +719,6 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
                 Params[2] = "RunMethod call error: " + ErrorMessage;
             }
             return result;
-
         }
 
         /// <summary>
@@ -769,7 +741,6 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
                 Params[2] = "RunMethod call error: " + ErrorMessage;
             }
             return result;
-
         }
 
         /// <summary>
@@ -919,7 +890,6 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         public static int ExecuteCommand(string AccessCode, string SQL, int TransId, int Timeout, bool NoRigtsSQL, WMKHandler hWMK = null)
         {
             int res = -1;
-            object[] arguments = new object[1];
 
             using (ComWrapper comWrapper = CreateRemoteCom(new Guid(DBC_CLASS), AccessCode, string.Empty))
             {
@@ -1111,7 +1081,6 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         [Obsolete("DBLock(string AccessCode, ...) is deprecated, please use DBLock(ComWrapper locker, ...) instead.")]
         public static int DBLock(string AccessCode, string TableName, string RecordId, out int BaseId, out int TableId)
         {
-
             BaseId = -1;
             TableId = -1;
 
@@ -1142,7 +1111,6 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         [Obsolete("DBUnlock(string AccessCode, ...) is deprecated, please use DBUnlock(ComWrapper locker, ...) instead or destroy 'locker' wrapper.")]
         public static int DBUnlock(string AccessCode, string TableName, string RecordId, int BaseId, int TableId)
         {
-
             BaseId = -1;
             TableId = -1;
 
@@ -1172,7 +1140,6 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
             return res;
         }
 
-
         /// <summary>
         /// Begins the transaction.
         /// </summary>
@@ -1196,9 +1163,11 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
 
                 if (res >= 0)
                 {
-                    comObj.TransactionObject = new ComWrapper.Transaction();
-                    comObj.TransactionObject.Id = res;
-                    comObj.TransactionObject.ComWrapper = ComWrapper;
+                    comObj.TransactionObject = new ComWrapper.Transaction
+                    {
+                        Id = res,
+                        ComWrapper = ComWrapper
+                    };
                 }
             }
 
@@ -1212,7 +1181,6 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <returns>System.Int32.</returns>
         public static int CommitTransaction(ref ComWrapper comObj)
         {
-
             int res = -1;
 
             if (Assigned(comObj.TransactionObject))
@@ -1245,7 +1213,6 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <returns>System.Int32.</returns>
         public static int RollbackTransaction(ref ComWrapper comObj)
         {
-
             int res = -1;
 
             if (Assigned(comObj.TransactionObject))
@@ -1268,7 +1235,6 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
             }
 
             return res;
-
         }
 
         /// <summary>
@@ -1283,7 +1249,6 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <returns>System.Int32.</returns>
         public static int OpenResultset(string AccessCode, string SQL, string PKName, int TransId, int Timeout, out ComWrapper ComWrapper)
         {
-
             ComWrapper = CreateRemoteCom(new Guid(DBC_CLASS), AccessCode, string.Empty);
             if (Assigned(ComWrapper))
             {
@@ -1294,10 +1259,14 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
                 if (CheckError(res, -1) >= 0)
                 {
                     if (TransId == -1)
+                    {
                         arguments[0] = "PrimaryKey=" + PKName + GetTimeOutParamValue(Timeout, true);
+                    }
                     else
+                    {
                         arguments[0] = String.Format("PrimaryKey=" + PKName + "&Transaction={0}", TransId) +
-                            GetTimeOutParamValue(Timeout, true);
+                           GetTimeOutParamValue(Timeout, true);
+                    }
 
                     res = ComWrapper.InvokeMethod("OpenA", arguments, new bool[] { false });
 
@@ -1305,7 +1274,6 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
                 }
             }
             return 0;
-
         }
 
         /// <summary>
@@ -1337,7 +1305,6 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <returns>System.Int32.</returns>
         public static int RecordEdit(ref ComWrapper ComWrapper, out int LockedByUserId)
         {
-
             LockedByUserId = -1;
 
             object[] arguments = new object[1];
@@ -1348,7 +1315,6 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
                 LockedByUserId = Convert.ToInt32(arguments[0]);
             }
             return 0;
-
         }
 
         /// <summary>
@@ -1361,7 +1327,6 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <returns>System.Int32.</returns>
         public static int RecordUpdate(ref ComWrapper ComWrapper, object Fields, object Values, string PKName)
         {
-
             object FieldValue = 0;
 
             object[] arguments = new object[2];
@@ -1371,7 +1336,7 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
 
             if (CheckError(res, -1) >= 0)
             {
-                if (PKName != String.Empty)
+                if (!string.IsNullOrEmpty(PKName))
                 {
                     arguments = new object[1];
                     arguments[0] = PKName;
@@ -1379,7 +1344,6 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
                 }
             }
             return CheckError(FieldValue, -1);
-
         }
 
         /// <summary>
@@ -1392,7 +1356,6 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <returns>System.Int32.</returns>
         public static int RecordNew(ref ComWrapper ComWrapper, object Fields, object Values, string PKName)
         {
-
             object FieldValue = 0;
 
             object[] arguments = new object[2];
@@ -1402,7 +1365,7 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
 
             if (CheckError(res, -1) >= 0)
             {
-                if (PKName != String.Empty)
+                if (!string.IsNullOrEmpty(PKName))
                 {
                     arguments = new object[1];
                     arguments[0] = PKName;
@@ -1410,7 +1373,6 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
                 }
             }
             return CheckError(FieldValue, -1);
-
         }
 
         /// <summary>
@@ -1465,9 +1427,9 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <param name="s">The s.</param>
         /// <param name="delimiter">The delimiter.</param>
         /// <returns>Dictionary&lt;System.String, System.String&gt;.</returns>
-        public static Dictionary<string, string> decodeInputString(string s, string delimiter)
+        public static Dictionary<string, string> DecodeInputString(string s, string delimiter)
         {
-            return decodeInputString(s, delimiter, false);
+            return DecodeInputString(s, delimiter, false);
         }
 
         /// <summary>
@@ -1477,7 +1439,7 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <param name="delimiter">The delimiter.</param>
         /// <param name="listFromDuplicates">if set to <c>true</c> [list from duplicates].</param>
         /// <returns>Dictionary&lt;System.String, System.String&gt;.</returns>
-        public static Dictionary<string, string> decodeInputString(string s, string delimiter, bool listFromDuplicates)
+        public static Dictionary<string, string> DecodeInputString(string s, string delimiter, bool listFromDuplicates)
         {
             if (String.IsNullOrEmpty(s))
             {
@@ -1516,7 +1478,9 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
                             dic[inputparam] = inputvalue;
                     }
                     else
+                    {
                         dic.Add(inputparam, inputvalue);
+                    }
                 }
                 return dic;
             }
@@ -1627,9 +1591,8 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// </summary>
         /// <param name="url">The URL.</param>
         /// <returns><c>true</c> if [is valid URL] [the specified URL]; otherwise, <c>false</c>.</returns>
-        public static bool isValidURL(string url)
+        public static bool IsValidURL(string url)
         {
-
             WebRequest webRequest = WebRequest.Create(url);
             WebResponse webResponse;
             try
@@ -1650,7 +1613,6 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <returns>System.String.</returns>
         public static string GetCurrentDatabaseName(string AccessCode)
         {
-            object[,] packet = null;
             int res = GetPacket(
                 AccessCode,
                 string.Format("SELECT ISNULL(Nazwa + ' (' + Opis + ')','???') " +
@@ -1659,7 +1621,7 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
                               GetParam(AccessCode, "DBID", "-1")),
                 -1,
                 -1,
-                out packet);
+                out object[,] packet);
 
             if (res > 0)
                 return packet[1, 0].ToString();
@@ -1674,7 +1636,6 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <returns>System.String.</returns>
         public static string GetCurrentUserName(string AccessCode)
         {
-            object[,] packet = null;
             int res = GetPacket(
                 AccessCode,
                 string.Format("SELECT ISNULL(Imie_Nazwisko,'???') " +
@@ -1683,7 +1644,7 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
                               GetParam(AccessCode, "UID", "-1")),
                 -1,
                 -1,
-                out packet);
+                out object[,] packet);
 
             if (res > 0)
                 return packet[1, 0].ToString();
@@ -1771,7 +1732,7 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         {
             string tmp = string.Format(pattern, 1);
             if (tmp == pattern)
-                throw new ArgumentException("The pattern must include an index place-holder", "pattern");
+                throw new ArgumentException("The pattern must include an index place-holder", nameof(pattern));
 
             if (!File.Exists(tmp))
                 return tmp;
@@ -1835,8 +1796,7 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <returns>System.String.</returns>
         public static string GeneratePassphrase()
         {
-            DateTime td = new DateTime();
-            td = DateTime.Today;
+            DateTime td = DateTime.Today;
 
             return "DD" +
                 td.DayOfWeek.ToString().Substring(0, 3).Reverse().ToUpper() +
@@ -1901,7 +1861,6 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
                     arguments[0] = 2; // OperationType: GK_OPERATION_NEW_SESSION
                     arguments[1] = Params;
                     res = (int)ComWrapper.InvokeMethod("LoginClient", arguments, new bool[] { false, true });
-
 
                     if (res >= 0)
                     {
@@ -1989,15 +1948,14 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <returns>System.Double.</returns>
         public static double GetDouble(string value, double defaultValue)
         {
-            double result;
             string output;
 
             // check if last seperator == groupSeperator
             string groupSep = CultureInfo.CurrentCulture.NumberFormat.NumberGroupSeparator;
-            if (value.LastIndexOf(groupSep) + 4 == value.Count())
+            if (value.LastIndexOf(groupSep) + 4 == value.Length)
             {
-                bool tryParse = double.TryParse(value, NumberStyles.Any, CultureInfo.CurrentCulture, out result);
-                result = tryParse ? result : defaultValue;
+                bool tryParse = double.TryParse(value, NumberStyles.Any, CultureInfo.CurrentCulture, out double result);
+                return tryParse ? result : defaultValue;
             }
             else
             {
@@ -2007,18 +1965,17 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
                 // split it on points     
                 string[] split = output.Split('.');
 
-                if (split.Count() > 1)
+                if (split.Length > 1)
                 {
                     // take all parts except last         
-                    output = string.Join(string.Empty, split.Take(split.Count() - 1).ToArray());
+                    output = string.Concat(split.Take(split.Length - 1).ToArray());
 
                     // combine token parts with last part         
                     output = string.Format("{0}.{1}", output, split.Last());
                 }
                 // parse double invariant     
-                result = double.Parse(output, CultureInfo.InvariantCulture);
+                return double.Parse(output, CultureInfo.InvariantCulture);
             }
-            return result;
         }
 
         /// <summary>
@@ -2054,8 +2011,7 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
             List<int> myIntegers = new List<int>();
             Array.ForEach(myNumbers.Split(",".ToCharArray()), s =>
             {
-                int currentInt;
-                if (Int32.TryParse(s, out currentInt))
+                if (Int32.TryParse(s, out int currentInt))
                     myIntegers.Add(currentInt);
             });
             return myIntegers.ToArray();
@@ -2072,7 +2028,7 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// </summary>
         /// <param name="c">The c.</param>
         /// <returns><c>true</c> if [is word character] [the specified c]; otherwise, <c>false</c>.</returns>
-        public static bool IsWordChar(char c)
+        public static bool IsWordChar(this char c)
         {
             return Char.IsLetterOrDigit(c) || c == '_' || c == '@';
         }
@@ -2133,14 +2089,14 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
                     }
                     if (s.Length > copyPos)
                     { // Copy last chunk.
-                        sb.Append(s.Substring(copyPos, s.Length - copyPos));
+                        sb.Append(s, copyPos, s.Length - copyPos);
                     }
                     return sb.ToString();
                 }
                 int indexAfter = position + oldWord.Length;
                 if ((position == 0 || !IsWordChar(s[position - 1])) && (indexAfter == s.Length || !IsWordChar(s[indexAfter])))
                 {
-                    sb.Append(s.Substring(copyPos, position - copyPos)).Append(newWord);
+                    sb.Append(s, copyPos, position - copyPos).Append(newWord);
                     copyPos = position + oldWord.Length;
                 }
                 startIndex = position + oldWord.Length;

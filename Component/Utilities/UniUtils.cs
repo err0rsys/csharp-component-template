@@ -1,18 +1,4 @@
-﻿// ***********************************************************************
-// Assembly         : Component
-// Author           : Artur Maciejowski
-// Created          : 16-02-2020
-//
-// Last Modified By : Artur Maciejowski
-// Last Modified On : 02-04-2020
-// ***********************************************************************
-// <copyright file="UniUtils.cs" company="DomConsult Sp. z o.o.">
-//     Copyright ©  2021 All rights reserved
-// </copyright>
-// <summary></summary>
-// ***********************************************************************
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Collections.Concurrent;
@@ -401,14 +387,18 @@ namespace DomConsult.GlobalShared.Utilities
                 string svalue = ComUtils.GetRegParam(key, "", acc);
 
                 if (svalue.Length != 0)
+                {
                     value = svalue;
+                }
                 else if (setDefault)
                 {
                     value = defaultValue;
                     svalue = defaultValue;
                 }
                 else
+                {
                     svalue = defaultValue;
+                }
 
                 if (!exists)
                     Cache.TryAdd(keyC, value);
@@ -447,14 +437,18 @@ namespace DomConsult.GlobalShared.Utilities
                 string svalue = ComUtils.GetRegParam(key, "", acc);
 
                 if (svalue.Length != 0)
+                {
                     value = svalue;
+                }
                 else if (setDefault)
                 {
                     value = defaultValue;
                     svalue = defaultValue;
                 }
                 else
+                {
                     svalue = defaultValue;
+                }
 
                 if (!exists)
                     Cache.TryAdd(keyC, value);
@@ -584,7 +578,7 @@ namespace DomConsult.GlobalShared.Utilities
     /// <summary>
     /// Class TUserSession.
     /// </summary>
-    public class TUserSession
+    public static class TUserSession
     {
         /// <summary>
         /// Gets the current language identifier.
@@ -651,7 +645,7 @@ namespace DomConsult.GlobalShared.Utilities
     /// <summary>
     /// Class TStrParams.
     /// </summary>
-    public class TStrParams
+    public static class TStrParams
     {
         /// <summary>
         /// Gets the parameter.
@@ -686,10 +680,12 @@ namespace DomConsult.GlobalShared.Utilities
                     paramName = paramName.ToUpper();
                 }
                 else
+                {
                     tmpParamStr = paramStr;
+                }
 
                 if (paramName[paramName.Length - 1] != '=')
-                    paramName = paramName + '=';
+                    paramName += '=';
 
                 bool beginWithDelim = delims.ContainsKey(paramName[0]);
 
@@ -704,14 +700,16 @@ namespace DomConsult.GlobalShared.Utilities
                 do
                 {
                     j0 = tmpParamStr.IndexOf(paramName, j, ls - j);
-                    j = j + j0;
+                    j += j0;
                     if (j == 0) //jesli znaleziono ciag na poczatku
                     {
                         paramFound = true;
                         break;
                     }
                     else if ((j0 == -1) || (j == -1)) //jesli ciagu nie znaleziono
+                    {
                         break;
+                    }
                     else if (beginWithDelim)
                     {
                         paramFound = true;
@@ -792,7 +790,9 @@ namespace DomConsult.GlobalShared.Utilities
                     return nullValue;
             }
             else
+            {
                 return nullValue;
+            }
         }
 
         public static int GetParamsAsDic(ref string paramStr, out Dictionary<string, object> paramsDic)
@@ -852,13 +852,13 @@ namespace DomConsult.GlobalShared.Utilities
         public static int GetParamsArrAsDic(object[,] paramsArr, out Dictionary<string, object> paramsDic)
         {
             paramsDic = new Dictionary<string, object>();
-            int result = 0;
+            const int result = 0;
 
             for (int i = 0; i < paramsArr.GetLength(0); i++)
             {
                 if (paramsArr[i, 0] != null)
                 {
-                    paramsDic.Add(((string)paramsArr[i, 0]), paramsArr[i, 1]);
+                    paramsDic.Add((string)paramsArr[i, 0], paramsArr[i, 1]);
                 }
             }
 
@@ -885,7 +885,9 @@ namespace DomConsult.GlobalShared.Utilities
         public static string GetAppSetting(NameValueCollection settings, string key, string defaultValue = "")
         {
             if (settings == null)
+            {
                 return defaultValue;
+            }
             else
             {
                 string value = settings[key];
@@ -897,7 +899,7 @@ namespace DomConsult.GlobalShared.Utilities
     /// <summary>
     /// Class TSysReg.
     /// </summary>
-    public class TSysReg
+    public static class TSysReg
     {
         /*
          * MS 12.12.2016
@@ -916,7 +918,7 @@ namespace DomConsult.GlobalShared.Utilities
         {
             try
             {
-                key = key + "=";
+                key += "=";
                 string[] lines = System.IO.File.ReadAllLines(TUniConstants.SYSREG_PATH);
                 for (int i = 0; i < lines.Length; i++)
                 {
@@ -937,7 +939,7 @@ namespace DomConsult.GlobalShared.Utilities
     /// <summary>
     /// Class TUniJob.
     /// </summary>
-    public class TUniJob
+    public static class TUniJob
     {
         /// <summary>
         /// Enum TJobEventCategory
@@ -987,8 +989,7 @@ namespace DomConsult.GlobalShared.Utilities
                 //    eventDescription = eventDescription.Substring(0,252) + "...";
                 //}
 
-                string sql = "SELECT * FROM jobZdarzenie WHERE jobZdarzenieId=-1";
-
+                const string sql = "SELECT * FROM jobZdarzenie WHERE jobZdarzenieId=-1";
 
                 int result = ComUtils.OpenResultset("LOGON", sql, "jobZdarzenieId", -1, -1, out comObj);
                 if (result < 0)
@@ -1005,11 +1006,7 @@ namespace DomConsult.GlobalShared.Utilities
             }
             finally
             {
-                if (comObj != null)
-                {
-                    comObj.Disconnect();
-                }
-                comObj = null;
+                comObj?.Disconnect();
             }
         }
     }
@@ -1117,8 +1114,7 @@ namespace DomConsult.GlobalShared.Utilities
             }
             else
             {
-                object[,] _msg = Messages as object[,];
-                if (_msg == null)
+                if (!(Messages is object[,] _msg))
                 {
                     return 0;
                 }
@@ -1138,7 +1134,6 @@ namespace DomConsult.GlobalShared.Utilities
         /// <param name="newRoNum">The new ro number.</param>
         private static void ResizeArray<T>(ref T[,] original, int newCoNum, int newRoNum)
         {
-
             var newArray = new T[newRoNum, newCoNum];
             int columnCount = original.GetLength(1);
             int columns = original.GetUpperBound(0);
@@ -1153,7 +1148,7 @@ namespace DomConsult.GlobalShared.Utilities
     /// <summary>
     /// Class TUniCert.
     /// </summary>
-    public class TUniCert
+    public static class TUniCert
     {
         /// <summary>
         /// Installs the cerificates.
@@ -1166,7 +1161,7 @@ namespace DomConsult.GlobalShared.Utilities
             if (!Directory.Exists(certRootPath))
                 return;
 
-            bool flush = true;
+            const bool flush = true;
 
             string message = string.Format("Installing certificates from path: [{0}]", certRootPath);
             if (log != null)
@@ -1190,13 +1185,11 @@ namespace DomConsult.GlobalShared.Utilities
                         {
                             StoreName storeName = (StoreName)Enum.Parse(typeof(StoreName), storeNameDir);
 
-                            if (log != null)
-                                log.Add("X509Store store", true, flush);
+                            log?.Add("X509Store store", true, flush);
 
                             X509Store store = new X509Store(storeName, storeLocation);
 
-                            if (log != null)
-                                log.Add("store.Open", true, flush);
+                            log?.Add("store.Open", true, flush);
 
                             store.Open(OpenFlags.ReadWrite);
 
@@ -1204,14 +1197,12 @@ namespace DomConsult.GlobalShared.Utilities
                             {
                                 try
                                 {
-                                    if (log != null)
-                                        log.Add("X509Certificate2 cert", true, flush);
+                                    log?.Add("X509Certificate2 cert", true, flush);
 
                                     //Błędne pliki bedą rzucać wyjątkami!!!
                                     X509Certificate2 cert = new X509Certificate2(certPath);
 
-                                    if (log != null)
-                                        log.Add("store.Certificates.Find", true, flush);
+                                    log?.Add("store.Certificates.Find", true, flush);
 
                                     //check if cert exists
                                     var certlist = store.Certificates.Find(X509FindType.FindByThumbprint, cert.Thumbprint, false);
@@ -1223,8 +1214,7 @@ namespace DomConsult.GlobalShared.Utilities
                                         else if (!silent)
                                             Console.WriteLine(message);
 
-                                        if (log != null)
-                                            log.Add("store.Add", true, flush);
+                                        log?.Add("store.Add", true, flush);
 
                                         store.Add(cert);
                                     }
@@ -1293,7 +1283,7 @@ namespace DomConsult.GlobalShared.Utilities
     /// <summary>
     /// Class TUniVar.
     /// </summary>
-    public class TUniVar
+    public static class TUniVar
     {
         /// <summary>
         /// Variables the is null or empty.
@@ -1302,12 +1292,12 @@ namespace DomConsult.GlobalShared.Utilities
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
         public static bool VarIsNullOrEmpty(object value)
         {
-            return ((value == null) || (value is DBNull));
+            return (value == null) || (value is DBNull);
         }
 
         public static bool VarIsNullOrEmptyOrDefault(object value, object defValue)
         {
-            return ((value == null) || (value is DBNull) || value.Equals(defValue));
+            return (value == null) || (value is DBNull) || value.Equals(defValue);
         }
 
         /// <summary>
@@ -1322,11 +1312,17 @@ namespace DomConsult.GlobalShared.Utilities
             int ivalue = var_null;
 
             if (VarIsNullOrEmpty(value))
+            {
                 return ivalue;
+            }
             else if (int.TryParse(value.ToString(), out ivalue))
+            {
                 return ivalue;
+            }
             else if (def)
+            {
                 return var_null;
+            }
             else
             {
                 ivalue = (int)value;
@@ -1394,7 +1390,7 @@ namespace DomConsult.GlobalShared.Utilities
                         res = (bool)value ? "1" : "0";
                         break;
                     default:
-                        res = string.Concat("'", (value.ToString()).Replace("'", "''"), "'"); ;
+                        res = string.Concat("'", (value.ToString()).Replace("'", "''"), "'");
                         break;
                 }
             }
@@ -1405,13 +1401,12 @@ namespace DomConsult.GlobalShared.Utilities
         {
             if (VarIsNullOrEmpty(value))
             {
-                if (var_null.HasValue)
-                    return var_null.Value;
-                else
-                    return DateTime.MinValue;
+                return var_null ?? DateTime.MinValue;
             }
             else
+            {
                 return (DateTime)value;
+            }
         }
 
         public static DateTime? VarToDateTimeN(object value)
@@ -1421,7 +1416,9 @@ namespace DomConsult.GlobalShared.Utilities
                 return null;
             }
             else
+            {
                 return (DateTime)value;
+            }
         }
 
         /// <summary>
@@ -1433,22 +1430,24 @@ namespace DomConsult.GlobalShared.Utilities
         public static bool VarIsArray(object value, int dimCount = 0)
         {
             if (VarIsNullOrEmpty(value))
+            {
                 return false;
+            }
             else if (dimCount == 0)
+            {
                 return value.GetType().IsArray;
+            }
             else
             {
-                Array arr = value as Array;
-
-                if (arr == null)
+                if (!(value is Array arr))
                     return false;
                 else
-                    return (arr.Rank == dimCount);
+                    return arr.Rank == dimCount;
             }
         }
     }
 
-    public class TUniTools
+    public static class TUniTools
     {
         public static string ResolvePath(string acc, string path)
         {
@@ -1469,18 +1468,23 @@ namespace DomConsult.GlobalShared.Utilities
                     start = @"\\";
                     path = path.Substring(2);
                 }
-                else if(path.StartsWith(@"//"))
+                else if(path.StartsWith("//"))
                 {
-                    start = @"//";
+                    start = "//";
                     path = path.Substring(2);
                 }
 
                 path = path.Replace(@"\\",@"\");
-                path = path.Replace(@"//", @"/");
+                path = path.Replace("//", "/");
                 path = string.Concat(start, path);
             }
 
             return path;
+        }
+
+        public static bool ErrorDetected(int result_, bool include_csWMK = false)
+        {
+            return (result_ < 0) || (result_ == (int)TCSWMK.csWMK_Error) || ((result_ == (int)TCSWMK.csWMK) && include_csWMK);
         }
     }
 }

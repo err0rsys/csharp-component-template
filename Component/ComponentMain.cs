@@ -1,19 +1,4 @@
-// ***********************************************************************
-// Assembly         : Component
-// Author           : Artur Maciejowski
-// Created          : 16-02-2020
-//
-// Last Modified By : Artur Maciejowski
-// Last Modified On : 28-10-2020
-// ***********************************************************************
-// <copyright file="ComponentMain.cs" company="DomConsult Sp. z o.o.">
-//     Copyright ©  2021 All rights reserved
-// </copyright>
-// <summary></summary>
-// ***********************************************************************
-
 using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.EnterpriseServices;
 using DomConsult.GlobalShared.Utilities;
@@ -25,10 +10,10 @@ namespace DomConsult.Components
 {
 #if !TEST
     [ComVisible(true)]
-    [Guid("902545D5-2699-43b1-8D8A-CE50F2127886")]
+    [Guid("BEDF705E-B788-47A6-B915-2BD71DA159D4")]
     [ProgId("Component.Manager")]
     [Transaction(TransactionOption.Disabled)]
-    [JustInTimeActivation(false)]
+    [JustInTimeActivation(true)]
     [ClassInterface(ClassInterfaceType.None)]
     [ComDefaultInterface(typeof(IManager))]
 #else
@@ -76,31 +61,78 @@ namespace DomConsult.Components
 
         /// <summary>
         /// Assigns the start up parameters (method body).
-        /// This Code can be executed several times when Formular is connected to statement in application.
+        /// This Code can be executed several times when Formular is connected to statement in the application.
         /// </summary>
         public override void OnAssignStartUpParameter()
         {
-            //INFO: Analyze input parameters and determine which formId to use and on which record component will work on
+            //INFO: Determine which formId to use and on which record component will work on
+
+            switch (FormType)
+            {
+                case 1:
+                    FormId = ComponentDef.FRM_EXAMPLE1_ID;
+                    break;
+                case 2:
+                    FormId = ComponentDef.FRM_EXAMPLE2_ID;
+                    break;
+                case 3:
+                    FormId = ComponentDef.FRM_EXAMPLE3_ID;
+                    break;
+                default:
+                    FormId = ComponentDef.FRM_EXAMPLE1_ID;
+                    break;
+            }
 
             Record.Id = -1;
-            if (BDW.ParamExists("uniExampleId"))
-                Record.Id = BDW.Params["uniExampleId"].AsInt();
-
             Record.TableName = "uniExample";
-            Record.KeyName = "uniExampleId";
-            Record.Query = @"SELECT
-  uniExampleId, StringValue, IntegerValue, FloatValue, CurrencyValue, DateValue
-FROM uniExample m WHERE m.uniExampleId = {0}";
+            Record.KeyName = Record.TableName + "Id";
+            Record.Query = @"
+SELECT
+  uniExampleId,
+  StringValue,
+  IntegerValue,
+  FloatValue,
+  CurrencyValue,
+  DateValue
+FROM uniExample m
+WHERE m.uniExampleId = {0}";
 
-            FormId = ComponentDef.FRM_EXAMPLE1_ID;
+            BDW.AddModifyOther(TBDOthers.coDisabledFunction, 0);
+            BDW.AddModifyOther(TBDOthers.coAddAllFieldValuesToArray, 1);
+        }
+
+        /// <summary>
+        /// Processes the input parameters.
+        /// </summary>
+        public override void OnProcessInputParams()
+        {
+            //TODO: OnProcessInputParams - [MP] Czy ta metoda jest do czegoœ w ogóle potrzebna
+            //                             [AM] do wczytywania i obróbki parametrów zewnêtrznych komponentu
+
+            //INFO: Analyze input parameters
+
+            if (BDW.ParamExists(Record.KeyName))
+                Record.Id = BDW.Params[Record.KeyName].AsInt();
+
+            /*
+            if (BDW.ParamExists("param_1"))
+                param1 = BDW.Params["param1"].AsInt();
+            */
 
             if (Record.Id > 0)
             {
-                var sql = string.Format(@"select StringValue from uniExample where uniExampleId={0}", Record.Id);
+                var sql = string.Format(@"
+SELECT
+  StringValue
+FROM uniExample
+WHERE uniExampleId={0}", Record.Id);
+
                 int res = ComUtils.GetPacket(AccessCode, sql, -1, -1, out object[,] data);
 
                 if (res > 0)
-                    FormCaption = string.Format("{0}:{1}", Language.GetText(ComponentDef.TXT_A00100_ID) ,TUniVar.VarToStr(data[1, 0]));
+                {
+                    FormCaption = string.Format("{0}:{1}", Language.GetText(ComponentDef.TXT_A00100_ID), TUniVar.VarToStr(data[1, 0]));
+                }
                 else
                 {
                     NewFormState = TFormState.cfsCloseBD;
@@ -112,16 +144,6 @@ FROM uniExample m WHERE m.uniExampleId = {0}";
             {
                 NewFormState = TFormState.cfsNew;
             }
-
-            BDW.AddModifyOther(TBDOthers.coDisabledFunction, 0);
-        }
-
-        /// <summary>
-        /// Processes the input parameters.
-        /// </summary>
-        public override void OnProcessInputParams()
-        {
-            //TODO: OnProcessInputParams - [MP] Czy ta metoda jest do czegoœ w ogóle potrzebna
         }
 
         /// <summary>
@@ -227,8 +249,9 @@ FROM uniExample m WHERE m.uniExampleId = {0}";
                 if (value.Length < 5)
                 {
                     errorCount++;
+
                     //INFO: get MLText instead of static text: Language.GetText(0) 
-                    errorDescription = String.Concat(errorDescription, 
+                    errorDescription = String.Concat(errorDescription,
                         "Pole [String] powinno mieæ przynajmniej 5 znaków.", Environment.NewLine);
                 }
             }
@@ -296,7 +319,7 @@ FROM uniExample m WHERE m.uniExampleId = {0}";
                 if (value < 10)
                 {
                     errorCount++;
-                    errorDescription = String.Concat(errorDescription,                            
+                    errorDescription = String.Concat(errorDescription,
                         string.Format(Language.GetText(ComponentDef.TXT_A00101_ID), "10"));
                 }
             }

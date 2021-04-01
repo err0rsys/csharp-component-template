@@ -12,12 +12,12 @@ namespace DomConsult.Platform.Interfaces
         /// <summary>
         /// Assigns access code.
         /// </summary>
-        /// <param name="AccessCode">Access coede</param>
-        /// <returns>Sy=stem.Int32.</returns>
+        /// <param name="AccessCode">Access code</param>
+        /// <returns>System.Int32.</returns>
         int AssignAccessCode(object AccessCode);
 
         /// <summary>
-        /// Check the state of current transaction.
+        /// Checks the state of current transaction.
         /// </summary>
         /// <returns>System.Int32.</returns>
         int CheckTransaction();

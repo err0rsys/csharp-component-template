@@ -1,18 +1,4 @@
-﻿// ***********************************************************************
-// Assembly         : Component
-// Author           : Artur Maciejowski
-// Created          : 16-02-2020
-//
-// Last Modified By : Artur Maciejowski
-// Last Modified On : 28-02-2020
-// ***********************************************************************
-// <copyright file="IManager.cs" company="DomConsult Sp. z o.o.">
-//     Copyright ©  2021 All rights reserved
-// </copyright>
-// <summary></summary>
-// ***********************************************************************
-
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 
 namespace DomConsult.Components.Interfaces
@@ -20,9 +6,10 @@ namespace DomConsult.Components.Interfaces
     /// <summary>
     /// Interface IManager
     /// </summary>
-    [ComVisible(true), Guid("CAF8BD41-EA4C-4C49-9782-BAC86CA5B5F9")]
+    [ComVisible(true)]
+    [Guid("D4AC193C-826C-44D7-AAB8-8F04F83C27FD")]
     [InterfaceType(ComInterfaceType.InterfaceIsDual)]
-    public interface IManager //: IDCPlatform - using inheritance methods are invisible in COM+ console and our application :-(
+    public interface IManager // IDCPlatform - using inheritance methods are invisible in COM+ console and our application :-(
     {
         /// <summary>
         /// Assigns the start up parameter.
@@ -46,7 +33,7 @@ namespace DomConsult.Components.Interfaces
         /// <param name="messages">The messages.</param>
         /// <param name="others">The others.</param>
         /// <returns>System.Int32.</returns>
-        int SetGetValues(ref object formState, ref object fields, 
+        int SetGetValues(ref object formState, ref object fields,
                          ref object messages, ref object others);
         /// <summary>
         /// Supports the SQL.
@@ -76,12 +63,34 @@ namespace DomConsult.Components.Interfaces
         /// <returns>System.Int32.</returns>
         int GetLastErrorDescription(ref object error);
 
-
         #region IDCPlatform - Should be done by inheritance but how?
+        // https://social.msdn.microsoft.com/Forums/vstudio/en-US/7313191a-10db-4a16-9cdd-de9fb80b378a/com-interop-base-class-properties-not-exposed-to-com?forum=csharpgeneral
+
+        /// <summary>
+        /// Assigns access code.
+        /// </summary>
+        /// <param name="AccessCode">Access code</param>
+        /// <returns>System.Int32.</returns>
         int AssignAccessCode(object AccessCode);
+
+        /// <summary>
+        /// Checks the state of current transaction.
+        /// </summary>
+        /// <returns>System.Int32.</returns>
         int CheckTransaction();
+
+        /// <summary>
+        /// Commits current transaction.
+        /// </summary>
+        /// <returns>System.Int32.</returns>
         int Transaction_Commit();
+
+        /// <summary>
+        /// Rollback current transaction.
+        /// </summary>
+        /// <returns>System.Int32.</returns>
         int Transaction_Rollback();
+
         #endregion
     }
 }
