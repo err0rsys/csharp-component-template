@@ -213,7 +213,7 @@ namespace DomConsult.Platform
         /// </summary>
         /// <param name="accessCode">The access code.</param>
         /// <returns>System.Int32.</returns>
-        public new int AssignAccessCode(object accessCode)
+        public override int AssignAccessCode(object accessCode)
         {
             try
             {
@@ -291,12 +291,14 @@ namespace DomConsult.Platform
                 Trace.TraceInformation(mex.Message);
                 Err.HandleMessage(mex);
                 result = (int)TCSWMK.csWMK;
+                Err.ErrCode = result;
             }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
                 Err.HandleException(ex, "AssignStartUpParameter", false);
                 result = (int)TCSWMK.csWMK_Error;
+                Err.ErrCode = result;
             }
             finally
             {
@@ -436,7 +438,7 @@ namespace DomConsult.Platform
                 BDW.LoadFields(fields, false);
                 BDW.LoadOthers(others);
 
-                if (!FormInitialized)
+                if ((!FormInitialized) && (fs != TFormState.cfsCloseBD))
                 {
                     InitializeForm();
                 }
@@ -474,6 +476,7 @@ namespace DomConsult.Platform
 
                 if (NewFormState > TFormState.cfsNone)
                 {
+                    fs = NewFormState;
                     formState = (int)NewFormState;
                     NewFormState = TFormState.cfsNone;
                 }
@@ -487,6 +490,12 @@ namespace DomConsult.Platform
                     {
                         fields = null;
                     }
+                }
+
+                if ((fs == TFormState.cfsCloseBD) && (Err.ErrCode != 0))
+                {
+                    result = Err.ErrCode;
+                    Err.ErrCode = 0;
                 }
             }
             catch (MessageException mex)
@@ -690,11 +699,11 @@ namespace DomConsult.Platform
                         if (errorCount > 0)
                         {
                             Err.SendOthers = true;
-                            Err.MessageRaise(ManagerBaseDef.MtsComDicShared_ID, ManagerBaseDef.MSG_P00010_ID, new object[] { errorDescription });
+                            Err.MessageRaise(ManagerBaseDef.DIC_P2000000_ID, ManagerBaseDef.MSG_P00010_ID, new object[] { errorDescription });
                         }
 
                         if (!noDialog)
-                            Err.MessageRaise(ManagerBaseDef.MtsComDicShared_ID, ManagerBaseDef.MSG_P00011_ID, null);
+                            Err.MessageRaise(ManagerBaseDef.DIC_P2000000_ID, ManagerBaseDef.MSG_P00011_ID, null);
                     }
                     finally
                     {
@@ -894,11 +903,11 @@ namespace DomConsult.Platform
                         if (errorCount > 0)
                         {
                             Err.SendOthers = true;
-                            Err.MessageRaise(ManagerBaseDef.MtsComDicShared_ID, ManagerBaseDef.MSG_P00008_ID, new object[] { errorDescription });
+                            Err.MessageRaise(ManagerBaseDef.DIC_P2000000_ID, ManagerBaseDef.MSG_P00008_ID, new object[] { errorDescription });
                         }
 
                         if (!noDialog)
-                            Err.MessageRaise(ManagerBaseDef.MtsComDicShared_ID, ManagerBaseDef.MSG_P00009_ID, null);
+                            Err.MessageRaise(ManagerBaseDef.DIC_P2000000_ID, ManagerBaseDef.MSG_P00009_ID, null);
                     }
                     finally
                     {
@@ -1151,6 +1160,7 @@ namespace DomConsult.Platform
         {
             error = Err.ErrMsgStack;
             Err.ErrMsgStack = null;
+            Err.ErrCode = 0;
             return 0;
         }
 
@@ -1288,7 +1298,7 @@ namespace DomConsult.Platform
 
                 if (disposing)
                 {
-                    Language.Destroy();
+                    Language.Dispose();
                 }
 
                 // INFO: free unmanaged resources (unmanaged objects) and override finalizer

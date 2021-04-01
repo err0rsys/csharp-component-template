@@ -133,7 +133,7 @@ namespace DomConsult.Platform
         /// </summary>
         /// <param name="accessCode"></param>
         /// <returns></returns>
-        public int AssignAccessCode(object accessCode)
+        public virtual int AssignAccessCode(object accessCode)
         {
             int res = -1;
 
