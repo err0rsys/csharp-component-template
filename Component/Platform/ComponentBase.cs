@@ -1313,5 +1313,17 @@ namespace DomConsult.Platform
         {
             //throw new NotImplementedException();
         }
+
+        /// <summary>
+        /// Default WMK Handler
+        /// </summary>
+        /// <param name="wmk"></param>
+        public virtual void HandleWMK(object wmk)
+        {
+            if (Err != null)
+            {
+                Err.ErrMsgStack = wmk;
+            }
+        }
     }
 }
