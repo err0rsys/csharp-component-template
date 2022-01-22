@@ -1,0 +1,27 @@
+{
+  "_Description": [
+    "This is the JSON based Configuration for prepare_script.ps1",
+    "",
+    "Please edit only the Basic part of this file!"
+  ],
+  "Info": {
+    "project": "prepare_script.ps1",
+    "Modified": "21/12/2021",
+    "Author": "Artur Maciejowski <arturmaciejowski@domconsult.com>",
+    "Version": "1.0"
+  },
+  "Internal": {
+    "SolutionBaseGUID": "4ED811DE-B0C0-45D3-A064-E6127764B0D1",
+    "ProjectMainGUID": "ADEB71B0-1FC6-4287-83BF-F91E0B989BFE",
+    "ProjectTestGUID": "535C5E58-B6AD-407E-AC2B-3E68B97D35F7",
+    "ComponentGUID": "3611FDAE-CA45-4EB3-A474-1783339A568A",
+    "InterfaceGUID": "3DB7A78C-5114-441D-BD6B-33CDC83998D8",
+    "TypelibGUID": "C26012BE-17D1-4497-992B-1B930E286E14"
+  },
+  "Basic": {
+    "_VisualStudioPath": "The path to the Visual Studio installation. Please use double backslashes!",
+    "VisualStudioPath": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise",
+    "_ComponentAuthor": "The author of component (for future use)",
+    "ComponentAuthor": "Jan Kowalski"
+  }
+}
