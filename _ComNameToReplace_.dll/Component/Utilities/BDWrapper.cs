@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -241,267 +241,271 @@ namespace DomConsult.GlobalShared.Utilities
     public enum TBDOthers
     {
         /// <summary>
-        /// RozdzielczoÅ›Ä‡ ekranu na ktÃ³rym jest uruchomiona aplikacja, np.: 1920x1080
+        /// Rozdzielczoœæ ekranu na którym jest uruchomiona aplikacja, np.: 1920x1080
         /// </summary>
-        coScreenSize = -14, // BD->Com!!!
+        coScreenSize = -14, // BD--+Com!!!
 
         /// <summary>
-        /// Nazwa exe-ka z jakiego zostaÅ‚ uruchomiony systemm, np.: granitxp; xeidox; granos
+        /// Nazwa exe-ka z jakiego zosta³ uruchomiony systemm, np.: granitxp; xeidox; granos
         /// </summary>
-        coAppName = -13, // BD->Com!!!
+        coAppName = -13, // BD--+Com!!!
 
         /// <summary>
-        /// (< -) DesignTime â€“ jeÅ¼eli jest i ma wartosc <> 0 to oznacza, Å¼e aplikacja pracuje w trybie DesignTime
+        /// (+--) DesignTime – je¿eli jest i ma wartosc != 0 to oznacza, ¿e aplikacja pracuje w trybie DesignTime
         /// </summary>
-        coDesignTime = -5, // BD->Com!!!
+        coDesignTime = -5, // BD--+Com!!!
 
         /// <summary>
         /// ObjectId
         /// </summary>
-        coObjectId = 1, // Com->BD !!!
+        coObjectId = 1, // Com--+BD !!!
 
         /// <summary>
         /// ObjectTypeId
         /// </summary>
-        coObjectTypeId = 2, // Com->BD !!!
+        coObjectTypeId = 2, // Com--+BD !!!
 
         /// <summary>
-        /// (->) DisabledFunction â€“ jeÅ›li nie ma, to domyÅ›lnie przyjmowana jest wartoÅ›Ä‡ 0 â€“ brak blokowania funkcji formatki
+        /// (--+) DisabledFunction – jeœli nie ma, to domyœlnie przyjmowana jest wartoœæ 0 – brak blokowania funkcji formatki
         /// </summary>
-        coDisabledFunction = 3, // Com->BD !!!
+        coDisabledFunction = 3, // Com--+BD !!!
 
         /// <summary>
-        /// (->) FormId â€“ jeÅ¼eli zostanie zwrÃ³cona ta wartoÅ›Ä‡(i bÄ™dzie rÃ³Å¼na od FormId obecnie pokazywanej
-        /// w BaseDetailâ€™u), wÃ³wczas przed przypisaniem wartoÅ›ci do kontrolek, zostanie przebudowany formularz
-        /// na BaseDetailâ€™u(nowoÅ›Ä‡!!!!!).
+        /// (--+) FormId – je¿eli zostanie zwrócona ta wartoœæ(i bêdzie ró¿na od FormId obecnie pokazywanej
+        /// w BaseDetail’u), wówczas przed przypisaniem wartoœci do kontrolek, zostanie przebudowany formularz
+        /// na BaseDetail’u(nowoœæ!!!!!).
         /// </summary>
-        coFormId = 4, // Com->BD !!!
+        coFormId = 4, // Com--+BD !!!
 
         /// <summary>
-        /// (->) ForceReturnAllFieldName â€“ wymusza zwracanie w tablicy Fields(dla zapisu, wycofania zmian oraz
-        ///      aktualizacji kontrolek) wartoÅ›ci wszystkich kontrolek, a nie tylko tych ktÃ³re sÄ… modyfikowalne(domyÅ›lnie)
+        /// (--+) przekazanie do aplikacji nag³ówka formularza
         /// </summary>
-        coFormCaption = 5, // Com->BD !!!
+        coFormCaption = 5, // Com--+BD !!!
 
-        coForceReturnAllFieldName = 6, // Com->BD !!!
         /// <summary>
-        ///(->) RequiredFieldsArray â€“ wymusza przekazania w parametrze Fields do metody GetSetValues podczas pokazywania
-        /// rekordu do podglÄ…du zamiast wartoÅ›ci Unassigned(domyÅ›lnie), tablicy z wszystkimi FieldNameâ€™ami znalezionymi
-        ///na formatce(aby to zadziaÅ‚aÅ‚o, w parametrze OTHERS z metody AssignStartUpParams musi byÄ‡ przekazane
+        /// (--+) ForceReturnAllFieldName – wymusza zwracanie w tablicy Fields(dla zapisu, wycofania zmian oraz
+        ///      aktualizacji kontrolek) wartoœci wszystkich kontrolek, a nie tylko tych które s¹ modyfikowalne(domyœlnie)
+        /// </summary>
+        coForceReturnAllFieldName = 6, // Com--+BD !!!
+
+        /// <summary>
+        ///(--+) RequiredFieldsArray – wymusza przekazania w parametrze Fields do metody GetSetValues podczas pokazywania
+        /// rekordu do podgl¹du zamiast wartoœci Unassigned(domyœlnie), tablicy z wszystkimi FieldName’ami znalezionymi
+        ///na formatce(aby to zadzia³a³o, w parametrze OTHERS z metody AssignStartUpParams musi byæ przekazane
         ///FormId dla formularza).
         /// </summary>
-        coRequiredFieldsArray = 7, // Com->BD !!!
+        coRequiredFieldsArray = 7, // Com--+BD !!!
 
         /// <summary>
-        /// (<-) ActiveControlFieldName â€“ FieldName kontrolki, na ktÃ³rej wystapiÅ‚o zdarzen ie OnExit lub OnEnter lub
-        /// FieldName dla ktÃ³rego jest wykonywane zdarzenie po wybraniu elementu na liscie LookUp
+        /// (+--) ActiveControlFieldName – FieldName kontrolki, na której wystapi³o zdarzen ie OnExit lub OnEnter lub
+        /// FieldName dla którego jest wykonywane zdarzenie po wybraniu elementu na liscie LookUp
         /// </summary>
-        coActiveControlFieldName = 8, // BD->Com
+        coActiveControlFieldName = 8, // BD--+Com
 
         /// <summary>
-        /// (< -) ActualizationType â€“ typ zdarzenia ktÃ³re wystapiÅ‚o na kontrolce(OnExit= 1, OnEnter= 2)
+        /// (+--) ActualizationType – typ zdarzenia które wystapi³o na kontrolce(OnExit= 1, OnEnter= 2)
         /// </summary>
-        coActualizationType = 9, // BD->Com
+        coActualizationType = 9, // BD--+Com
 
         /// <summary>
-        /// (< -) ConfirmationResult â€“ zwraca informacje o wyborze uÅ¼ytkownika, ktÃ³ry dokonaÅ‚ on po pokazaniu mu
+        /// (+--) ConfirmationResult – zwraca informacje o wyborze u¿ytkownika, który dokona³ on po pokazaniu mu
         /// komunikatu wymagajacego informacji zwrotnej do komponentu(Yes = 1, No = 2).
         /// </summary>
-        coConfirmationResult = 10, // BD->Com
+        coConfirmationResult = 10, // BD--+Com
 
         /// <summary>
-        /// (->) ReturnFieldNameDuringCancel â€“ informacja, Å¼e komponent Å¼yczy sobie aby podczas Cancelu, otrzymywaÅ‚
-        /// w parametrze Fields wartoÅ›ci zmiennych wprowadzone przez uÅ¼ytkownika
+        /// (--+) ReturnFieldNameDuringCancel – informacja, ¿e komponent ¿yczy sobie aby podczas Cancelu, otrzymywa³
+        /// w parametrze Fields wartoœci zmiennych wprowadzone przez u¿ytkownika
         /// </summary>
-        coReturnFieldNameDuringCancel = 11, // Com->BD !!!
+        coReturnFieldNameDuringCancel = 11, // Com--+BD !!!
 
         /// <summary>
-        /// (->) CallAgain â€“ informacja, Å¼e komponent Å¼yczy sobie aby jeszcze raz wywoÅ‚ano metodÄ™ SetGetValue
+        /// (--+) CallAgain – informacja, ¿e komponent ¿yczy sobie aby jeszcze raz wywo³ano metodê SetGetValue
         /// </summary>
-        coCallAgain = 12, // Com->BD !!!
+        coCallAgain = 12, // Com--+BD !!!
 
         /// <summary>
-        /// (< -) RefreshAllDictionaries â€“ informacja dla komponentu, Å¼e majÄ… zostaÄ‡ odÅ›wieÅ¼one wszystkie skorowidze w tablicy Fields
+        /// (+--) RefreshAllDictionaries – informacja dla komponentu, ¿e maj¹ zostaæ odœwie¿one wszystkie skorowidze w tablicy Fields
         /// </summary>
-        coRefreshAllDictionaries = 13, // BD->Com
+        coRefreshAllDictionaries = 13, // BD--+Com
 
         /// <summary>
-        /// (< -) ActiveControlValue â€“ Jest to wartoÅ›Ä‡ klucza gÅ‚Ã³wnego zaznaczonego na liÅ›cie typu LookUp. W przypadku gdy
-        /// na DDButton'ie ustawiony jest property MultipleExecute, wÃ³wczas na liÅ›cie LookUp'a moÅ¼liwa jest
+        /// (+--) ActiveControlValue – Jest to wartoœæ klucza g³ównego zaznaczonego na liœcie typu LookUp. W przypadku gdy
+        /// na DDButton'ie ustawiony jest property MultipleExecute, wówczas na liœcie LookUp'a mo¿liwa jest
         /// multiselekcja i w tym parametrze zwracana jest zawsze wektor(tablica 1 - wymiarowa) z identyfikatorami
-        /// wybranymi na liÅ›cie.
+        /// wybranymi na liœcie.
         /// </summary>
-        coActiveControlValue = 14, // BD->Com
+        coActiveControlValue = 14, // BD--+Com
 
         /// <summary>
-        /// (->) RebuildForm â€“ Ustawienie tego parametru powoduje wymuszenie przebudowania formularza - ma to
-        /// zastosowanie przy DDPanelach, moÅ¼liwe jest wymuszenie w FormState = 8 ponownego odpytania o liczbÄ™ DDPaneli
+        /// (--+) RebuildForm – Ustawienie tego parametru powoduje wymuszenie przebudowania formularza - ma to
+        /// zastosowanie przy DDPanelach, mo¿liwe jest wymuszenie w FormState = 8 ponownego odpytania o liczbê DDPaneli
         /// </summary>
-        coRebuildForm = 15, // Com->BD
+        coRebuildForm = 15, // Com--+BD
 
         /// <summary>
-        /// (->) AddAllFieldValuesToArray â€“ Ustawienie tego parametry powoduje wymuszenie wystawiania komponentowi
-        /// wypeÅ‚nionej tablicy Fields(zawartoÅ›ciÄ… wszystkich kontrolek) w woÅ‚aniu metody SetGetValue z FormState 8
-        /// (bez zmian) lub 4096(nacisniecie DDButton'a). Przekazanie tej wartoÅ›ci w jednym OTHERS obowiÄ…zuje tak
-        /// dlugo, aÅ¼ nie zostanie odwoÅ‚ane(jeÅ¼eli w OTHERS nie pojawia sie dany typ wartoÅ›ci oznacza to Å¼e siÄ™ ona
+        /// (--+) AddAllFieldValuesToArray – Ustawienie tego parametry powoduje wymuszenie wystawiania komponentowi
+        /// wype³nionej tablicy Fields(zawartoœci¹ wszystkich kontrolek) w wo³aniu metody SetGetValue z FormState 8
+        /// (bez zmian) lub 4096(nacisniecie DDButton'a). Przekazanie tej wartoœci w jednym OTHERS obowi¹zuje tak
+        /// dlugo, a¿ nie zostanie odwo³ane(je¿eli w OTHERS nie pojawia sie dany typ wartoœci oznacza to ¿e siê ona
         /// nie zmienia - przyp.aut.)
         /// </summary>
-        coAddAllFieldValuesToArray = 16, // Com->BD
+        coAddAllFieldValuesToArray = 16, // Com--+BD
 
         /// <summary>
-        /// (->) AddEditabledFieldValuesToArray â€“ Efekt analogiczy jak dla AddAllFieldValueToArray, z tÄ… rÃ³Å¼nicÄ… Å¼e do
-        /// Fields trafiajÄ… tylko zawartoÅ›ci pÃ³Å‚ edytowalnych
+        /// (--+) AddEditabledFieldValuesToArray – Efekt analogiczy jak dla AddAllFieldValueToArray, z t¹ ró¿nic¹ ¿e do
+        /// Fields trafiaj¹ tylko zawartoœci pó³ edytowalnych
         /// </summary>
-        coAddEditableFieldValuesToArray = 17, // Com->BD
+        coAddEditableFieldValuesToArray = 17, // Com--+BD
 
         /// <summary>
-        /// (->) AllowProcessing â€“ MoÅ¼liwe jest zablokowanie(brak wpisu w OTHERS lub wartosc 0) lub zezwolenie na
-        /// uruchomienie(wartosc 1) akcji zwiÄ…zanej z naciskanym przyciskiem.
+        /// (--+) AllowProcessing – Mo¿liwe jest zablokowanie(brak wpisu w OTHERS lub wartosc 0) lub zezwolenie na
+        /// uruchomienie(wartosc 1) akcji zwi¹zanej z naciskanym przyciskiem.
         /// </summary>
-        coAllowProcessing = 18, // Com->BD
+        coAllowProcessing = 18, // Com--+BD
 
         /// <summary>
-        /// (< -) CancelCallAgain â€“ Informacja, Å¼e uÅ¼ytkownik przerwaÅ‚ wykonywanie cyklu CallAgain(wartoÅ›Ä‡ nie ma znaczenia).
+        /// (+--) CancelCallAgain – Informacja, ¿e u¿ytkownik przerwa³ wykonywanie cyklu CallAgain(wartoœæ nie ma znaczenia).
         /// </summary>
-        coCancelCallAgain = 19, // BD->Com
+        coCancelCallAgain = 19, // BD--+Com
 
         /// <summary>
-        /// (< -) ModificationsCancelled â€“ Informacja, Å¼e Update/ Cancel / Delete zostaÅ‚ przerwany wewnÄ…trz komponentu -
-        /// oznacza to Å¼e BDC nie bÄ™dzie woÅ‚aÅ‚ ponownie SetGetValue z odpowiednimi flagami wÅ‚aÅ›ciwymi przerwanej
-        /// operacji(oczywiÅ›cie parametry wynikowe zostanÄ… zanalizowane).
+        /// (+--) ModificationsCancelled – Informacja, ¿e Update/ Cancel / Delete zosta³ przerwany wewn¹trz komponentu -
+        /// oznacza to ¿e BDC nie bêdzie wo³a³ ponownie SetGetValue z odpowiednimi flagami w³aœciwymi przerwanej
+        /// operacji(oczywiœcie parametry wynikowe zostan¹ zanalizowane).
         /// </summary>
-        coModificationsCancelled = 20, // BD->Com
+        coModificationsCancelled = 20, // BD--+Com
 
         /// <summary>
-        /// (->) IgnoreDDButtonsForFIELDSArray â€“ Informacja, Å¼e komponent nie chce(wartoÅ›Ä‡ TRUE) otrzymywaÄ‡ w tablicy
-        /// FIELDS wpisÃ³w dotyczÄ…cych kontrolek DDButton
+        /// (--+) IgnoreDDButtonsForFIELDSArray – Informacja, ¿e komponent nie chce(wartoœæ TRUE) otrzymywaæ w tablicy
+        /// FIELDS wpisów dotycz¹cych kontrolek DDButton
         /// </summary>
-        coIgnoreDDButtonsForFIELDSArray = 21, // Com->BD
+        coIgnoreDDButtonsForFIELDSArray = 21, // Com--+BD
 
         /// <summary>
-        /// (->) EnterLikeTab â€“ Wymuszenie, aby naciÅ›niÄ™cie klawisza ENTER w kontrolce formularza powodowaÅ‚o przejÅ›cie
-        /// do nstÄ™pnej kontrolki(podobne zachowania jak naciÅ›niÄ™cie klawisza TAB)
+        /// (--+) EnterLikeTab – Wymuszenie, aby naciœniêcie klawisza ENTER w kontrolce formularza powodowa³o przejœcie
+        /// do nstêpnej kontrolki(podobne zachowania jak naciœniêcie klawisza TAB)
         /// </summary>
-        coEnterLikeTab = 22, // Com->BD
+        coEnterLikeTab = 22, // Com--+BD
 
         /// <summary>
-        /// (->) FieldNameToActivate â€“ Przekazanie nazwy kontrolki(FieldName), ktÃ³ra ma staÄ‡ siÄ™ kontrolkÄ… aktywnÄ… }
+        /// (--+) FieldNameToActivate – Przekazanie nazwy kontrolki(FieldName), która ma staæ siê kontrolk¹ aktywn¹ }
         /// </summary>
-        coFieldNameToActivate = 23, // Com->BD
+        coFieldNameToActivate = 23, // Com--+BD
 
         /// <summary>
-        /// (< -/->) ClientVariable â€“ Ten OTHER omoÅ¼liwia przechowanie u klienta dowolnej wartoÅ›ci typu OleVariant.
-        /// WartoÅ›Ä‡ ta bÄ™dzie dokÅ‚adana do kaÅ¼dego OTHER'a podczas woÅ‚ania metody SetGetValue tak dÅ‚ugo jak dÅ‚ugo bÄ™dzie
-        /// rÃ³Å¼na od Unassigned.Ten OTHER ma szczegÃ³lne wykorzystanie podczas pracy z kilkoma zaznaczonymi rekordami,
-        /// gdy naleÅ¼y przekazywaÄ‡ coÅ› pomiÄ™dzy kolejnymi instancjami...
+        /// (+--/--+) ClientVariable – Ten OTHER omo¿liwia przechowanie u klienta dowolnej wartoœci typu OleVariant.
+        /// Wartoœæ ta bêdzie dok³adana do ka¿dego OTHER'a podczas wo³ania metody SetGetValue tak d³ugo jak d³ugo bêdzie
+        /// ró¿na od Unassigned.Ten OTHER ma szczególne wykorzystanie podczas pracy z kilkoma zaznaczonymi rekordami,
+        /// gdy nale¿y przekazywaæ coœ pomiêdzy kolejnymi instancjami...
         /// </summary>
-        coClientVariable = 24, // Com->BD | BD->Com
+        coClientVariable = 24, // Com--+BD | BD--+Com
 
         /// <summary>
-        /// (->) ClearAllFields â€“ Wymuszenie wyczyszczenie wszystkich kontrolek na formularzu
+        /// (--+) ClearAllFields – Wymuszenie wyczyszczenie wszystkich kontrolek na formularzu
         /// </summary>
-        coClearAllFields = 25, // Com->BD
+        coClearAllFields = 25, // Com--+BD
 
         /// <summary>
-        /// (->) InParams â€“ parametr pozwalajacy zwrÃ³cic ciÄ…g parametrÃ³w wejsciowych dla BDC odpowiadajÄ…cy bieÅ¼Ä…cemu
-        /// stanowi formularza -ma to zastosowanie jeÅ¼eli po utworzeniu nowego rekordu, chcemy aby rekord ten dopisal
-        /// siÄ™ do listy i by moÅ¼na do niego wrÃ³ciÄ‡...
+        /// (--+) InParams – parametr pozwalajacy zwrócic ci¹g parametrów wejsciowych dla BDC odpowiadaj¹cy bie¿¹cemu
+        /// stanowi formularza -ma to zastosowanie je¿eli po utworzeniu nowego rekordu, chcemy aby rekord ten dopisal
+        /// siê do listy i by mo¿na do niego wróciæ...
         /// </summary>
-        coInParams = 26, // Com->BD
+        coInParams = 26, // Com--+BD
 
         /// <summary>
-        /// (->) ForceRefresh â€“ zwrÃ³cenie tego OTHER'a umoÅ¼liwia wysÅ‚anie do rodzica (czyli do aplikacji, z ktÃ³rej
-        /// zostaÅ‚ formularz uruchomiony) informacji, Å¼e ma siÄ™ on odÅ›wieÅ¼yÄ‡.
-        /// PoczÄ…wszy od wersji 1399 tego othera moÅ¼na uÅ¼yÄ‡ rÃ³wnieÅ¼ w narzÄ™dziu typu 7 aby wymusiÄ‡ odÅ›wieÅ¼enie.
+        /// (--+) ForceRefresh – zwrócenie tego OTHER'a umo¿liwia wys³anie do rodzica (czyli do aplikacji, z której
+        /// zosta³ formularz uruchomiony) informacji, ¿e ma siê on odœwie¿yæ.
+        /// Pocz¹wszy od wersji 1399 tego othera mo¿na u¿yæ równie¿ w narzêdziu typu 7 aby wymusiæ odœwie¿enie.
         /// </summary>
-        coForceRefresh = 27, // Com->BD
+        coForceRefresh = 27, // Com--+BD
 
         /// <summary>
-        /// (->) FormDefinition â€“ poprzez tego OTHER'a moÅ¼na zwrÃ³ciÄ‡ do BDC definicje formularza (jako ciÄ…g znakÃ³w)
+        /// (--+) FormDefinition – poprzez tego OTHER'a mo¿na zwróciæ do BDC definicje formularza (jako ci¹g znaków)
         /// zamiast FormId
         /// </summary>
-        coFormDefinition = 28, // Com->BD
+        coFormDefinition = 28, // Com--+BD
 
         /// <summary>
-        /// (->) GRAFCOMName â€“ dla komponentu TDDGraf
+        /// (--+) GRAFCOMName – dla komponentu TDDGraf
         /// </summary>
         coGRAFCOMName = 29,
 
         /// <summary>
-        /// (->) GRAFPKValue â€“ dla komponentu TDDGraf
+        /// (--+) GRAFPKValue – dla komponentu TDDGraf
         /// </summary>
         coGRAFPKValue = 30,
 
         /// <summary>
-        /// (->) GRAFFKValue â€“ dla komponentu TDDGraf
+        /// (--+) GRAFFKValue – dla komponentu TDDGraf
         /// </summary>
         coGRAFFKValue = 31,
 
         /// <summary>
-        /// (->) GRAFAssignFlag â€“ dla komponentu TDDGraf
+        /// (--+) GRAFAssignFlag – dla komponentu TDDGraf
         /// </summary>
         coGRAFAssignFlag = 32,
 
         /// <summary>
-        /// (->) GRAFAssignType â€“ dla komponentu TDDGraf
+        /// (--+) GRAFAssignType – dla komponentu TDDGraf
         /// </summary>
         coGRAFAssignType = 33,
 
         /// <summary>
-        /// (->) GRAFAssignResult â€“ dla komponentu TDDGraf
+        /// (--+) GRAFAssignResult – dla komponentu TDDGraf
         /// </summary>
         coGRAFAssignResult = 34,
 
         /// <summary>
-        /// (->) CancelMessages â€“ przeslanie tego OTHER'a jest rÃ³wnowaÅ¼ne uruchomieniu BDC z parametrem "/CancelMessage"
-        /// - czyli wÅ‚Ä…czenie bÄ…dÅº wyÅ‚Ä…czenie komunikatu informujÄ…cego o utracie danych po przerwaniu edycji bÄ…dÅº
+        /// (--+) CancelMessages – przeslanie tego OTHER'a jest równowa¿ne uruchomieniu BDC z parametrem "/CancelMessage"
+        /// - czyli w³¹czenie b¹dŸ wy³¹czenie komunikatu informuj¹cego o utracie danych po przerwaniu edycji b¹dŸ
         /// zapisu...
         /// </summary>
         coCancelMessages = 35,
 
         /// <summary>
-        /// (<->) InformAboutUserDecision â€“ przeslanie tego OTHER'a powoduje wysÅ‚anie do komponentu informacji o wyborze
-        /// jakiego dokonaÅ‚ uÅ¼ytkownik podczas oglÄ…daniu komunikatu -innymi sÅ‚owy jest to wymuszenie na komunikacie
-        /// zachowania tzw. ConfirmationResult.Informacja o decyzji uÅ¼ytkownika trafia do komponentu analogicznie jak
-        /// przy zwyklym komunikacie ConfirmationResult, tyle Å¼e nie w OTTHER'ze 10 a 36. (Ma to zastosowanie podczas
-        /// tunelowania komunikatÃ³w pochodzÄ…cych z innych komponentÃ³w -np.FormGenerator i komunikaty z plug-in'Ã³w).
-        /// UWAGA: OTHER ten ma wiÄ™kszy piorytet anizeli typ komunikatu ConfirmationResult - oznacza to Å¼e jezeli
-        /// pokazany zostaÅ‚ komunikat ConfirmationResult i rÃ³wnoczesnie zostal zwrocony OTHER 36, to BDC zachowa siÄ™ jak
-        /// opisano przed chwilÄ…...
+        /// (+--+) InformAboutUserDecision – przeslanie tego OTHER'a powoduje wys³anie do komponentu informacji o wyborze
+        /// jakiego dokona³ u¿ytkownik podczas ogl¹daniu komunikatu -innymi s³owy jest to wymuszenie na komunikacie
+        /// zachowania tzw. ConfirmationResult.Informacja o decyzji u¿ytkownika trafia do komponentu analogicznie jak
+        /// przy zwyklym komunikacie ConfirmationResult, tyle ¿e nie w OTTHER'ze 10 a 36. (Ma to zastosowanie podczas
+        /// tunelowania komunikatów pochodz¹cych z innych komponentów -np.FormGenerator i komunikaty z plug-in'ów).
+        /// UWAGA: OTHER ten ma wiêkszy piorytet anizeli typ komunikatu ConfirmationResult - oznacza to ¿e jezeli
+        /// pokazany zosta³ komunikat ConfirmationResult i równoczesnie zostal zwrocony OTHER 36, to BDC zachowa siê jak
+        /// opisano przed chwil¹...
         /// </summary>
         coInformAboutUserDecision = 36,
 
         /// <summary>
-        /// (->) SetGetValueAfterMessage - Ten OTHER doklejany jest zawsze gdy woÅ‚anie metody SetGetValue jest
-        /// spowodowane koniecznoÅ›ciÄ… poinformowania komponentu o decyzji jakÄ… podjÄ…Å‚ uÅ¼ytkownik po zobaczeniu
-        /// komunikatu ktÃ³ry jest typu ConfirmationResult bÄ…dÅº dla ktÃ³rego zostaÅ‚ przekazany OTHER 36.
+        /// (--+) SetGetValueAfterMessage - Ten OTHER doklejany jest zawsze gdy wo³anie metody SetGetValue jest
+        /// spowodowane koniecznoœci¹ poinformowania komponentu o decyzji jak¹ podj¹³ u¿ytkownik po zobaczeniu
+        /// komunikatu który jest typu ConfirmationResult b¹dŸ dla którego zosta³ przekazany OTHER 36.
         /// </summary>
         coSetGetValueAfterMessage = 37,
 
         /// <summary>
-        /// (->) ToolBarVisibility - Ten OTHER pozwala sterowaÄ‡ widocznoÅ›ciÄ… ToolBar'Ã³w - podobnie jak ma to miejsce
-        /// poprzez paramentr wejÅ›ciowy /ToolBar=x
+        /// (--+) ToolBarVisibility - Ten OTHER pozwala sterowaæ widocznoœci¹ ToolBar'ów - podobnie jak ma to miejsce
+        /// poprzez paramentr wejœciowy /ToolBar=x
         /// </summary>
         coToolBarVisibility = 38,
 
         /// <summary>
-        /// (->) ExecuteToolAtClient - Ten OTHER umoÅ¼liwia przekazanie do BDC informacji na temat Tooli(i parametrÃ³w ich
-        /// uruchomienia) ktore majÄ… zostac uruchomione po analizie wynikÃ³w metody SetGetValue.WartoÅ›Ä‡ tego OTHERa to
-        /// tablica dwuwymiarowa, ktorej pierwszÄ… kolumnÄ…[0] jest ToolId a drugÄ…[1] ObjectId.
+        /// (--+) ExecuteToolAtClient - Ten OTHER umo¿liwia przekazanie do BDC informacji na temat Tooli(i parametrów ich
+        /// uruchomienia) ktore maj¹ zostac uruchomione po analizie wyników metody SetGetValue.Wartoœæ tego OTHERa to
+        /// tablica dwuwymiarowa, ktorej pierwsz¹ kolumn¹[0] jest ToolId a drug¹[1] ObjectId.
         /// </summary>
         coExecuteToolAtClient = 39,
 
         /// <summary>
-        /// (->) SetGetValueOnClose - OTHER ten umoÅ¼liwia wymuszenie wywoÅ‚ania SetGetValue podczas zamykania formularza
-        /// (Alt-F4 lub X na oknie) -w tym celu naleÅ¼y jednorazowa przeslac w dowolnym momecie tego OTHER'a z wartoscia
-        /// "1"("0" deaktywuje koniecznosc wolania metody).Istotne jest, iÅ¼ wolanie metody ma na celu jedynie
-        /// poinformowanie komponentu o zamykaniu, NIE SA ANALIZOWANE JEJ WYNIKI CZY ZWROCONE PARAMETRY -formularz siÄ™
+        /// (--+) SetGetValueOnClose - OTHER ten umo¿liwia wymuszenie wywo³ania SetGetValue podczas zamykania formularza
+        /// (Alt-F4 lub X na oknie) -w tym celu nale¿y jednorazowa przeslac w dowolnym momecie tego OTHER'a z wartoscia
+        /// "1"("0" deaktywuje koniecznosc wolania metody).Istotne jest, i¿ wolanie metody ma na celu jedynie
+        /// poinformowanie komponentu o zamykaniu, NIE SA ANALIZOWANE JEJ WYNIKI CZY ZWROCONE PARAMETRY -formularz siê
         /// zamyka.
         /// </summary>
         coSetGetValueOnClose = 40,
 
         /// <summary>
-        /// (->) ForceCallSetGetOnExit - Other ten umoÅ¼liwia wymuszenie wywoÅ‚ywanie SetGetValue przy wyjsciu z kontrolki
+        /// (--+) ForceCallSetGetOnExit - Other ten umo¿liwia wymuszenie wywo³ywanie SetGetValue przy wyjsciu z kontrolki
         /// niezalzenie od tego czy wartosc w niej ulegla zmianie czy tez nie - ma to zastosowanie w przypadku, gdy
         /// np.maja byc sprawdzane wartosci w polu i nie mozna wyjsc tak dlugo jak wartosc nie jest prawidlowa(po
         /// wykonaniu SetGetValue i wymuszeniu powrotu do kontroli - znacznik zmiany wartosci zostaje zerowany
@@ -510,7 +514,7 @@ namespace DomConsult.GlobalShared.Utilities
         coForceCallSetGetOnExit = 41,
 
         /// <summary>
-        /// (->) InformAboutParentClose - Ustawienie wartosci "1" powoduje Å¼e jezeli formularz byl uruchomiony z innego
+        /// (--+) InformAboutParentClose - Ustawienie wartosci "1" powoduje ¿e jezeli formularz byl uruchomiony z innego
         /// formularza(parent), wowczas przy zamykaniu "parent'a" formularz dostaje informacje o tym w postaci
         /// wywolania metody SetGetValue.Parametr OTHERS : [0,0]= 42[0, 1] = ToolId w wyniku ktorego zostal uruchomiony
         /// parent.
@@ -518,7 +522,7 @@ namespace DomConsult.GlobalShared.Utilities
         coInformAboutParentClose = 42,
 
         /// <summary>
-        /// (->) AllowDirectEdit - Other ten umozliwia zaznaczenie ze formularz obsluguje bezposrednie wywolanie
+        /// (--+) AllowDirectEdit - Other ten umozliwia zaznaczenie ze formularz obsluguje bezposrednie wywolanie
         /// SetGetValue(Edit, ...) w ramach swojej inicjalizacji(od razu pokazanie formularza w edycji, bez
         /// przechodzenia przez View). Ma to zastosowanie w przypadku zlozonych formularzy, gdzie duzo czasu zajmuje
         /// pokazanie trybu View, ktory w tym przypadku jest inorowany.
@@ -526,86 +530,86 @@ namespace DomConsult.GlobalShared.Utilities
         coAllowDirectEdit = 43,
 
         /// <summary>
-        /// (->) AddAllFieldsToCallAgain - Other ten umozliwia wymuszenie tego aby przy wolaniu SetGetValue jako
+        /// (--+) AddAllFieldsToCallAgain - Other ten umozliwia wymuszenie tego aby przy wolaniu SetGetValue jako
         /// CallAgain byly posylane do komnponentu wartosci wszystkich kontrolek(rowniez typu isView) - ma to
         /// zastosowanie dla DDList, dla ktorych komponent musi sprawdzic wartosc jak na niej jest ustawiana).
         /// </summary>
         coAddAllFieldsToCallAgain = 44,
 
         /// <summary>
-        /// (->) AddSearchControlToFields - Other ten umoÅ¼liwia wymuszenie przekazywania do FIELDS'ow rowniez wartosci
+        /// (--+) AddSearchControlToFields - Other ten umo¿liwia wymuszenie przekazywania do FIELDS'ow rowniez wartosci
         /// kontrolek typu isSearch
         /// </summary>
         coAddSearchControlToFields = 45,
 
         /// <summary>
-        /// (->) AllowNewFormConnectedWithList - Other ten umoÅ¼liwia podÅ‚Ä…czenie formularza w trybie NEW do zestawienia,
-        /// z ktÃ³rego zostaÅ‚ uruchomiony(aktywne sÄ… przyciski lewo, prawo).
+        /// (--+) AllowNewFormConnectedWithList - Other ten umo¿liwia pod³¹czenie formularza w trybie NEW do zestawienia,
+        /// z którego zosta³ uruchomiony(aktywne s¹ przyciski lewo, prawo).
         /// </summary>
         coAllowNewFormConnectedWithList = 46,
 
         /// <summary>
-        /// (< -) DefaultValuesSaveForComponentIn - Other ten wykorzystywany jest do przekazania do komponentÃ³w talicy
+        /// (+--) DefaultValuesSaveForComponentIn - Other ten wykorzystywany jest do przekazania do komponentów talicy
         /// Fields ze wszystkimi wartosciami kontrolek w celu przygotowania tablicy Fields do zapisania jako szablon.
         /// </summary>
         coDefaultValuesSaveForComponentIn = 47,
 
         /// <summary>
-        /// (->) DefaultValuesSaveForComponentOut - Other ten umoÅ¼liwia zwrÃ³cenie do BDC paczki FIELDS zawiwerajacej dane
-        /// majÄ…ce zosta zapisane jako szablon.
+        /// (--+) DefaultValuesSaveForComponentOut - Other ten umo¿liwia zwrócenie do BDC paczki FIELDS zawiwerajacej dane
+        /// maj¹ce zosta zapisane jako szablon.
         /// </summary>
         coDefaultValuesSaveForComponentOut = 48,
 
         /// <summary>
-        /// (< -) DefaultValuesGetForComponent - Other ten umoÅ¼liwia przekazanie do komponentu paczki FIELDS z wartosciami
+        /// (+--) DefaultValuesGetForComponent - Other ten umo¿liwia przekazanie do komponentu paczki FIELDS z wartosciami
         /// zapisanymi jako szablon.
         /// </summary>
         coDefaultValuesGetForComponent = 49,
 
         /// <summary>
-        /// (->) DefaultValuesPossible - Other ten umoÅ¼liwia wlÄ…czenie obslugi szablonÃ³w dla danego formularza
+        /// (--+) DefaultValuesPossible - Other ten umo¿liwia wl¹czenie obslugi szablonów dla danego formularza
         /// </summary>
         coDefaultValuesPossible = 50,
 
         /// <summary>
-        /// Other ten informuje, Å¼e wywolanie metody SetGetValue pochodzi w wyniku nacisniecia przycisku w jednej
+        /// Other ten informuje, ¿e wywolanie metody SetGetValue pochodzi w wyniku nacisniecia przycisku w jednej
         /// z cell kontrolki DDGrid
         /// </summary>
         coButtonClickFromDDGrid = 51,
 
         /// <summary>
-        /// Other ten umoÅ¼liwia przekazanie do formularza nazwy DDButtona, ktÃ³ry ma zostaÄ‡ "klikniÄ™ty" przez formularz
-        /// w celu wykonania akcji z nim zwiÄ…zanej
+        /// Other ten umo¿liwia przekazanie do formularza nazwy DDButtona, który ma zostaæ "klikniêty" przez formularz
+        /// w celu wykonania akcji z nim zwi¹zanej
         /// </summary>
         coClickDDButton = 52,
 
         /// <summary>
-        /// jezeli zostanie zwrocone w SetGetValue, a to SetGetValue byÅ‚o wywolane w wyniku rozpoczecia wykonania
-        /// procedury zapisu rekordu -wowczas zapis zostanie przerwany(bez Å¼adnego komunikatu).Jezeli SetGetValue
-        /// byÅ‚o wykonane tak sobie - np.gosc wyszedl tabulatorem z pola -wowczas flaga jest ignorowana - czyli jak
-        /// goÅ›Ä‡ zaraz nacisnie Save - to pojdzie SetGetValue ...
+        /// jezeli zostanie zwrocone w SetGetValue, a to SetGetValue by³o wywolane w wyniku rozpoczecia wykonania
+        /// procedury zapisu rekordu -wowczas zapis zostanie przerwany(bez ¿adnego komunikatu).Jezeli SetGetValue
+        /// by³o wykonane tak sobie - np.gosc wyszedl tabulatorem z pola -wowczas flaga jest ignorowana - czyli jak
+        /// goœæ zaraz nacisnie Save - to pojdzie SetGetValue ...
         /// </summary>
         coLockSaveMethod = 53,
 
         /// <summary>
-        /// (->) Po przekazaniu tego OTHERa przez komponent, BaseDetail sprawdza, czy jego wartoÅ›Ä‡ stanowi prawidÅ‚owy
-        /// identyfikator mandanta, i jeÅ›li tak, to zmienia mandanta dla formularza uwidaczniajÄ…c jego wybÃ³r w nagÅ‚Ã³wku
+        /// (--+) Po przekazaniu tego OTHERa przez komponent, BaseDetail sprawdza, czy jego wartoœæ stanowi prawid³owy
+        /// identyfikator mandanta, i jeœli tak, to zmienia mandanta dla formularza uwidaczniaj¹c jego wybór w nag³ówku
         /// formularza.
-        /// (< -) OTHER ten jest przekazywany do komponentu w momencie wybrania mandanta przez uÅ¼ytkownika ze specjalnego
+        /// (+--) OTHER ten jest przekazywany do komponentu w momencie wybrania mandanta przez u¿ytkownika ze specjalnego
         /// panelu(patrz opis OTHERa #59). BaseDetail nie zmienia w tym momencie mandanta dla formularza - zrobi to
-        /// dopiero po przesÅ‚aniu go przez komponent.
-        /// WartoÅ›Ä‡ tego OTHERa moÅ¼e przyjÄ…Ä‡ dwie postacie:
-        /// -postaÄ‡ prosta: zwykÅ‚y integerowy identyfikator mandanta(przy typie wyboru 1)
-        /// - postaÄ‡ zÅ‚oÅ¼ona: string '/mulItemId=.../mulMandantId=...'(przy typie wyboru 2)
-        /// WybÃ³r typu wyboru mandanta jest opisany w opisie OTHERa #59
-        /// Typ wyboru nie ma wpÅ‚ywu na oczekiwania BaseDetaila co do postaci, w jakiej komponent zwrÃ³ci identyfikator
-        /// mandanta - najpierw nastÄ™puje prÃ³ba potraktowania wartoÅ›ci jako Integer, a pÃ³Åºniej(w razie niepowodzenia)
-        /// nastÄ™puje prÃ³ba odczytania parametru '/mulMandantId='.
+        /// dopiero po przes³aniu go przez komponent.
+        /// Wartoœæ tego OTHERa mo¿e przyj¹æ dwie postacie:
+        /// -postaæ prosta: zwyk³y integerowy identyfikator mandanta(przy typie wyboru 1)
+        /// - postaæ z³o¿ona: string '/mulItemId=.../mulMandantId=...'(przy typie wyboru 2)
+        /// Wybór typu wyboru mandanta jest opisany w opisie OTHERa #59
+        /// Typ wyboru nie ma wp³ywu na oczekiwania BaseDetaila co do postaci, w jakiej komponent zwróci identyfikator
+        /// mandanta - najpierw nastêpuje próba potraktowania wartoœci jako Integer, a póŸniej(w razie niepowodzenia)
+        /// nastêpuje próba odczytania parametru '/mulMandantId='.
         /// </summary>
-        coMandantId = 54, // BD<->Com
+        coMandantId = 54, // BD+--+Com
 
         /// <summary>
-        /// od wersji 5.7.3.x BaseDetaila ten OTHER nie jest juÅ¼ uÅ¼ywany
+        /// od wersji 5.7.3.x BaseDetaila ten OTHER nie jest ju¿ u¿ywany
         /// </summary>
         coMandantEnable = 55,
 
@@ -615,39 +619,39 @@ namespace DomConsult.GlobalShared.Utilities
         coRecordValuesModified = 56,
 
         /// <summary>
-        /// (< -) OTHER ten jest przekazywany tylko w wywoÅ‚aniu AssignStartupParameter. Aby odczytaÄ‡ numer wersji naleÅ¼y
-        /// posÅ‚uÅ¼yÄ‡ siÄ™ funkcjÄ… GetClientVersion() i odczytaÄ‡ numer wersji z wVer1..wVer4
+        /// (+--) OTHER ten jest przekazywany tylko w wywo³aniu AssignStartupParameter. Aby odczytaæ numer wersji nale¿y
+        /// pos³u¿yæ siê funkcj¹ GetClientVersion() i odczytaæ numer wersji z wVer1..wVer4
         /// </summary>
-        coClientVersion = 57, // BD->Com
+        coClientVersion = 57, // BD--+Com
 
         /// <summary>
-        /// (->) OTHER ten sÅ‚uÅ¼y do przekazania do BaseDetaila specjalnego tokenu, wedÅ‚ug ktÃ³rego bÄ™dÄ… nakÅ‚adane
-        /// negatywne uprawnienia na dany formularz.JeÅ›li ten token nie zostanie przekazany lub zostanie przekazany
-        /// pusty, uprawnienia bÄ™dÄ… nakÅ‚adane wedÅ‚ug identyfikatora narzÄ™dzia, z ktÃ³rego zostaÅ‚ uruchomiony formularz.
+        /// (--+) OTHER ten s³u¿y do przekazania do BaseDetaila specjalnego tokenu, wed³ug którego bêd¹ nak³adane
+        /// negatywne uprawnienia na dany formularz.Jeœli ten token nie zostanie przekazany lub zostanie przekazany
+        /// pusty, uprawnienia bêd¹ nak³adane wed³ug identyfikatora narzêdzia, z którego zosta³ uruchomiony formularz.
         /// </summary>
-        coBDToken = 58, // Com->BD
+        coBDToken = 58, // Com--+BD
 
         /// <summary>
-        /// (->) OTHER ten sÅ‚uÅ¼y do okreÅ›lenia, czy podczas edycji istniejÄ…cego lub nowego rekordu na formularzu ma
-        /// zostaÄ‡ wyÅ›wietlony panel do wyboru mandanta(zawierajÄ…cy pole tekstowe i przycisk wyboru) oraz jakiego typu
-        /// ma to byÄ‡ wybÃ³r. WartoÅ›ci to:
-        /// < 0 - chowa panel wyboru mandanta
-        ///   0 - pokazuje panel i ustawia wybÃ³r mandanta na typ 1
-        /// > 0 - pokazuje panel i ustawia wybÃ³r mandanta na typ 2.WartoÅ›Ä‡ OTHERa jest tu typem tabeli mandantowej
+        /// (--+) OTHER ten s³u¿y do okreœlenia, czy podczas edycji istniej¹cego lub nowego rekordu na formularzu ma
+        /// zostaæ wyœwietlony panel do wyboru mandanta(zawieraj¹cy pole tekstowe i przycisk wyboru) oraz jakiego typu
+        /// ma to byæ wybór. Wartoœci to:
+        /// &lt; 0 - chowa panel wyboru mandanta
+        ///   0 - pokazuje panel i ustawia wybór mandanta na typ 1
+        /// &gt; 0 - pokazuje panel i ustawia wybór mandanta na typ 2.Wartoœæ OTHERa jest tu typem tabeli mandantowej
         /// (TableTypeId z tabeli Dictionaries)
         /// </summary>
-        coSelectMandant = 59, // Com->BD
+        coSelectMandant = 59, // Com--+BD
 
         /// <summary>
-        /// (< -) This OTHER is sent to the component only when the form switches to the "NEW RECORD" state.The value
+        /// (+--) This OTHER is sent to the component only when the form switches to the "NEW RECORD" state.The value
         /// indicates the current mandant, be it the mandant set by the component(in the previous NEW / EDIT state), set
         /// by the parent(invoking) window or the system active mandant - in this order.
         /// </summary>
-        coMandantContext = 60, // BD->Com
+        coMandantContext = 60, // BD--+Com
 
         /// <summary>
         /// <para>
-        /// (->) This OTHER may be used to send a custom command to a DD - control or to the client application.The data
+        /// (--+) This OTHER may be used to send a custom command to a DD - control or to the client application.The data
         /// is a 2 - dimensional OleVariant array:
         /// </para>
         /// <para>
@@ -674,11 +678,11 @@ namespace DomConsult.GlobalShared.Utilities
         /// -supported command: SendMail(described elsewhere)
         /// </para>
         /// </summary>
-        coCustomCommand = 61, // Com->BD
+        coCustomCommand = 61, // Com--+BD
 
         /// <summary>
         /// <para>
-        /// (->) This OTHER lets you utilize the global parameters, if any.The data consists of a 2 - dimensional
+        /// (--+) This OTHER lets you utilize the global parameters, if any.The data consists of a 2 - dimensional
         /// OleVariant array:
         /// </para>
         /// <para>
@@ -691,57 +695,57 @@ namespace DomConsult.GlobalShared.Utilities
         /// +---------+-------+--------+
         /// </para>
         /// <para>
-        /// UWAGA: Parametry globalne po wczytaniu sÄ… dodawane jako Other-y o wartoÅ›ciach: coGP1000 + ParamId aby byÅ‚
-        /// szybszy i Å‚atwiejszy dostÄ™p do wartoÅ›ci parametrÃ³w globalnych.Patrz staÅ‚e coGPxxxx!!!
+        /// UWAGA: Parametry globalne po wczytaniu s¹ dodawane jako Other-y o wartoœciach: coGP1000 + ParamId aby by³
+        /// szybszy i ³atwiejszy dostêp do wartoœci parametrów globalnych.Patrz sta³e coGPxxxx!!!
         /// </para>
         /// </summary>
-        coGlobalParameters = 62, // BD->Com
+        coGlobalParameters = 62, // BD--+Com
 
         /// <summary>
-        /// (< -) This other lets you set the Clipboard contents on the client machine. The value of this OTHER is a string.
+        /// (+--) This other lets you set the Clipboard contents on the client machine. The value of this OTHER is a string.
         /// </summary>
-        coSetClipboard = 65, // Com->BD
+        coSetClipboard = 65, // Com--+BD
         /// <summary>
-        /// (< -) This other lets you set the caption for any statement spawned from the detail form(be it from DDButton
+        /// (+--) This other lets you set the caption for any statement spawned from the detail form(be it from DDButton
         /// of btActionMenu or btTool type, from action associated with the current ObjectTypeId, by sending
         /// OTHER#39 etc.)
         /// </summary>
-        coStatementCaption = 66, // Com->BD
+        coStatementCaption = 66, // Com--+BD
 
         /// <summary>
-        /// (->) Ten Other przekazuje nazwÄ™ akcji, ktÃ³ra spowodowaÅ‚a uruchomienie bieÅ¼acego formularza.
+        /// (--+) Ten Other przekazuje nazwê akcji, która spowodowa³a uruchomienie bie¿acego formularza.
         /// </summary>
-        coActionName = 67, // BD->Com
+        coActionName = 67, // BD--+Com
 
         /// <summary>
-        /// (< -)
+        /// (+--)
         /// </summary>
-        coCustomDebugInfo = 68, // Com->BD
+        coCustomDebugInfo = 68, // Com--+BD
 
         /// <summary>
-        /// (->) This Other, since version 7.3.39.904, is always passed by the application. 0 means "debug not enabled",
+        /// (--+) This Other, since version 7.3.39.904, is always passed by the application. 0 means "debug not enabled",
         /// greater than 0 means "debug enabled"
         /// </summary>
-        coDebugState = 69, // BD->Com
+        coDebugState = 69, // BD--+Com
         /// <summary>
-        /// (->) This Other, since version xxxxxxxxxxxx, is passed by the application during execution of tool. Value
+        /// (--+) This Other, since version xxxxxxxxxxxx, is passed by the application during execution of tool. Value
         /// determines static params used during execution of the tool(defined in tool and Action_ObjectType). Other
         /// is usefull mainly in ToolType = 18(job multi in one) when static params are not passed i other way to
         /// business component.
         /// </summary>
-        coToolStaticParams = 70, // BD->Com
+        coToolStaticParams = 70, // BD--+Com
 
         /// <summary>
         /// This other lets you set information about mandant in caption for form.Remember to pass mulitemid not
         /// mandant's description as a value of this parameter. New version of application will get description by
         /// itself and put it in the Caption.
         /// </summary>
-        coMandant = 71, // Com->BD
+        coMandant = 71, // Com--+BD
 
         /// <summary>
         /// ???
         /// </summary>
-        coDDPanelPreconfig = 72, // Com->BD
+        coDDPanelPreconfig = 72, // Com--+BD
 
         /// <summary>
         /// This other lets you set information about Main Object Class presented on form.It is an Integer value that
@@ -750,7 +754,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// In combination with coObjectTypeLookup_ID this information is used to automatically generate Header for
         /// curent form in application. This automatic Header has higher priority then coCaption.
         /// </summary>
-        coObjectTypeLookupClass = 73, // Com->BD
+        coObjectTypeLookupClass = 73, // Com--+BD
 
         /// <summary>
         /// This other lets you set a simple ID(Integer) of Main Object presented on form that correspond to the
@@ -761,72 +765,72 @@ namespace DomConsult.GlobalShared.Utilities
         /// In combination with coObjectTypeLookupClass this information is used to automatically generate Header for
         /// curent form in application.This automatic Header has higher priority then coCaption.
         /// </summary>
-        coObjectTypeLookup_ID = 74, // Com->BD
+        coObjectTypeLookup_ID = 74, // Com--+BD
 
         /// <summary>
         /// <para>
-        /// To umoÅ¼liwia wysÅ‚anie do "rodzica"(okna, z ktÃ³rego zostaÅ‚ uruchomiony ten formularz) "zdarzenia" podobnego
-        /// do wykonania wyjÅ›cia z kontrolki na formularzu.WartoÅ›ciÄ… tego othera jest wektor variantowy, gdzie
-        /// element[0] zawiera jakÄ…Å› nazwÄ™, a element[1] zawiera wartoÅ›Ä‡. Nazwa nie musi byÄ‡ nazwÄ… istniejÄ…cej
-        /// kontrolki - moÅ¼e to byÄ‡ cokolwiek(waÅ¼ne, Å¼eby nie byÅ‚ to pusty ciÄ…g).JeÅ›li komponent zechce wysÅ‚aÄ‡ w ten
-        /// sposÃ³b kilka elementÃ³w, to moÅ¼e utworzyÄ‡ dwuwymiarowÄ… tablicÄ™ variantowÄ…, gdzie w kolumnie[i, 0] bÄ™dzie
-        /// nazwa, a w kolumnie[i, 1] -wartoÅ›Ä‡.W takim wypadku do komponentu rodzica zostanie wysÅ‚any element
-        /// BEZ NAZWY -bo nazwy elementÃ³w bÄ™dÄ… w tablicy.
-        /// W przypadku wysÅ‚ania tego othera komponent "rodzica" nie otrzyma wartoÅ›ci ActiveFieldName ani
+        /// To umo¿liwia wys³anie do "rodzica"(okna, z którego zosta³ uruchomiony ten formularz) "zdarzenia" podobnego
+        /// do wykonania wyjœcia z kontrolki na formularzu.Wartoœci¹ tego othera jest wektor variantowy, gdzie
+        /// element[0] zawiera jak¹œ nazwê, a element[1] zawiera wartoœæ. Nazwa nie musi byæ nazw¹ istniej¹cej
+        /// kontrolki - mo¿e to byæ cokolwiek(wa¿ne, ¿eby nie by³ to pusty ci¹g).Jeœli komponent zechce wys³aæ w ten
+        /// sposób kilka elementów, to mo¿e utworzyæ dwuwymiarow¹ tablicê variantow¹, gdzie w kolumnie[i, 0] bêdzie
+        /// nazwa, a w kolumnie[i, 1] -wartoœæ.W takim wypadku do komponentu rodzica zostanie wys³any element
+        /// BEZ NAZWY -bo nazwy elementów bêd¹ w tablicy.
+        /// W przypadku wys³ania tego othera komponent "rodzica" nie otrzyma wartoœci ActiveFieldName ani
         /// ActiveFieldValue.
         /// </para>
-        /// <para>DostÄ™pne od wersji 1332</para>
+        /// <para>Dostêpne od wersji 1332</para>
         /// </summary>
-        coParentField = 75, // Com->BD
+        coParentField = 75, // Com--+BD
 
         /// <summary>
         /// <para>
-        /// Ten other zawiera to, co inny komponent wysÅ‚aÅ‚ za pomocÄ… othera #75 - czyli w [0] jest nazwa,
-        /// a w[1] -wartoÅ›Ä‡.JeÅ›li komponent wysÅ‚aÅ‚ kilka elementÃ³w, to w[0] bÄ™dzie PUSTY CIÄ„G, a w[1] -tablica
-        /// z tymi elementami([i, 0] - nazwa, [i, 1] -wartoÅ›Ä‡).
+        /// Ten other zawiera to, co inny komponent wys³a³ za pomoc¹ othera #75 - czyli w [0] jest nazwa,
+        /// a w[1] -wartoœæ.Jeœli komponent wys³a³ kilka elementów, to w[0] bêdzie PUSTY CI¥G, a w[1] -tablica
+        /// z tymi elementami([i, 0] - nazwa, [i, 1] -wartoœæ).
         /// </para>
-        /// <para>DostÄ™pne od wersji 1332</para>
+        /// <para>Dostêpne od wersji 1332</para>
         /// </summary>
-        coChildField = 76, // BD->Com
+        coChildField = 76, // BD--+Com
 
         /// <summary>
         /// <para>
-        /// Ten other nie ma znaczenia w komunikacji z komponentem BaseDetailowym. UÅ¼ywany jest tylko w narzÄ™dziach typu
-        /// 8, 9 i 24(czyli tych, co po wykonaniu powodujÄ… odÅ›wieÅ¼enie).
+        /// Ten other nie ma znaczenia w komunikacji z komponentem BaseDetailowym. U¿ywany jest tylko w narzêdziach typu
+        /// 8, 9 i 24(czyli tych, co po wykonaniu powoduj¹ odœwie¿enie).
         /// </para>
-        /// <para>DostÄ™pne od wersji 1399.</para>
+        /// <para>Dostêpne od wersji 1399.</para>
         /// </summary>
         coForceNoRefresh = 77,
 
         /// <summary>
         /// <para>
-        /// Ten other -jeÅ›li istnieje w paczce - zawiera klucze gÅ‚Ã³wne elementÃ³w, ktÃ³re wskazaÅ‚ ostatnio uÅ¼ytkownik
-        /// w kontrolce DDLookupEx.WskazaÅ‚ - czyli wybraÅ‚ z listy, albo wybraÅ‚ przez szybkie wyszukiwanie.
+        /// Ten other -jeœli istnieje w paczce - zawiera klucze g³ówne elementów, które wskaza³ ostatnio u¿ytkownik
+        /// w kontrolce DDLookupEx.Wskaza³ - czyli wybra³ z listy, albo wybra³ przez szybkie wyszukiwanie.
         /// Other jest w postaci dwuwymiarowej tablicy, gdzie w kolumnie[0] jest integerowy identyfikator rekordu,
-        /// a w kolumnie[1] jego stringowy klucz gÅ‚Ã³wny(taki, jaki wystÄ™puje w toolu zestawienia, z ktÃ³rego
-        /// wyÅ›wietlana jest lista lookupowa).
+        /// a w kolumnie[1] jego stringowy klucz g³ówny(taki, jaki wystêpuje w toolu zestawienia, z którego
+        /// wyœwietlana jest lista lookupowa).
         /// </para>
-        /// <para>DostÄ™pny od wersji 1404.</para>
+        /// <para>Dostêpny od wersji 1404.</para>
         /// </summary>
-        coLastSelectedPrimaryKeys = 78, // BD->Com
+        coLastSelectedPrimaryKeys = 78, // BD--+Com
 
         /// <summary>
         /// Stan kontrolek na formularzu w postaci paczki:[fieldname][dictionaryid][visible][enabled][parentfieldname]
-        /// UWAGA: paczka nie jest DBCom-owa czyli nie ma nagÅ‚Ã³wkÃ³w i flag!
-        /// Other jest przekazywany tylko gdy Stan formularza zmienia siÄ™ na NEW lub EDIT i wczeÅ›niej komponent
-        /// wysÅ‚aÅ‚ Othera coDefaultValuesPossible.
+        /// UWAGA: paczka nie jest DBCom-owa czyli nie ma nag³ówków i flag!
+        /// Other jest przekazywany tylko gdy Stan formularza zmienia siê na NEW lub EDIT i wczeœniej komponent
+        /// wys³a³ Othera coDefaultValuesPossible.
         /// </summary>
-        coFieldsDefinition = 79, // BD->Com
+        coFieldsDefinition = 79, // BD--+Com
 
         /// <summary>
-        /// WartoÅ›ci domyÅ›lne dla pol pobrane przez EXE i/ lub SC na podstawie coFieldsDefinition i innych informacji.
-        /// WartoÅ›Ä‡ ma postaÄ‡ paczki FieldsShort gdzie wartoÅ›ci to proponowane wartoÅ›ci domyÅ›lne.
-        /// MoÅ¼na je zaÅ‚adowaÄ‡ wysterowujÄ…c odpowiednio metodÄ™ LoadFieldsShort np.:
+        /// Wartoœci domyœlne dla pol pobrane przez EXE i/ lub SC na podstawie coFieldsDefinition i innych informacji.
+        /// Wartoœæ ma postaæ paczki FieldsShort gdzie wartoœci to proponowane wartoœci domyœlne.
+        /// Mo¿na je za³adowaæ wysterowuj¹c odpowiednio metodê LoadFieldsShort np.:
         /// FBDW.LoadFieldsShort(FBDW.Others[coFieldsDefaults].Value, false, true);
-        /// OczywiÅ›cie Komponent powinien zweryfikowaÄ‡ te wartoÅ›ci i skopiowaÄ‡ je do FieldValue(z DefaultValue)
-        /// a nastÄ™pnie zwrÃ³ciÄ‡ do EXE poprzez GetFields(no chyba, Å¼e ktoÅ› od razu zaÅ‚adowaÅ‚ to do FieldValue).
+        /// Oczywiœcie Komponent powinien zweryfikowaæ te wartoœci i skopiowaæ je do FieldValue(z DefaultValue)
+        /// a nastêpnie zwróciæ do EXE poprzez GetFields(no chyba, ¿e ktoœ od razu za³adowa³ to do FieldValue).
         /// </summary>
-        coFieldsDefaults = 80, // BD(SC)->Com
+        coFieldsDefaults = 80, // BD(SC)--+Com
 
         /// <summary>
         /// Reserved range for global params values. See coGlobalParameters
@@ -844,7 +848,7 @@ namespace DomConsult.GlobalShared.Utilities
         coGP_Year_N0001 = 10002,
 
         /// <summary>
-        /// MiesiÄ…c
+        /// Miesi¹c
         /// </summary>
         coGP_Month_N0002 = 10003,
 
@@ -931,6 +935,18 @@ namespace DomConsult.GlobalShared.Utilities
         }
 
         /// <summary>
+        /// Gets as datetime.
+        /// </summary>
+        /// <value>As datetime.</value>
+        public DateTime AsDateTime
+        {
+            get
+            {
+                return TUniVar.VarToDateTime(FieldValue, DateTime.FromOADate(TUniConstants._DATE_NULL));
+            }
+        }
+
+        /// <summary>
         /// Gets as variable.
         /// </summary>
         /// <value>As variable.</value>
@@ -963,11 +979,16 @@ namespace DomConsult.GlobalShared.Utilities
     {
         private readonly StringComparer _comparer = StringComparer.OrdinalIgnoreCase;
 
+        /// <summary>
+        /// G³ówny konstruktor klasy
+        /// </summary>
         public BDWrapper():base()
         {
             Fields = new Dictionary<string, BDField>(_comparer);
             Others = new Dictionary<TBDOthers, object>();
             Params = new Dictionary<string, object>(_comparer);
+
+            MultiInOneParams = new List<string>();
         }
 
         /// <summary>
@@ -982,6 +1003,10 @@ namespace DomConsult.GlobalShared.Utilities
         /// The parameter list
         /// </summary>
         public Dictionary<string, object> Params { get; }
+        /// <summary>
+        /// The MultiInOne parameter list
+        /// </summary>
+        public List<string> MultiInOneParams { get; }
         /// <summary>
         /// Adds the modify field.
         /// </summary>
@@ -1188,13 +1213,13 @@ namespace DomConsult.GlobalShared.Utilities
         }
 
         /// <summary>
-        /// Loads the parameters.
+        /// Loads the parameters from string.
         /// </summary>
-        /// <param name="ParamsStr">The parameters string.</param>
-        public void LoadParams(string ParamsStr)
+        /// <param name="paramsStr">The parameters string.</param>
+        public void LoadParams(string paramsStr)
         {
             string[] separators = new string[] { "/" };
-            string[] paramsTable = ParamsStr.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+            string[] paramsTable = paramsStr.Split(separators, StringSplitOptions.RemoveEmptyEntries);
 
             int count = paramsTable.GetUpperBound(0) + 1;
 
@@ -1210,6 +1235,39 @@ namespace DomConsult.GlobalShared.Utilities
                     Params[param[0]] = param[1];
                 else
                     Params[param[0]] = null;
+            }
+        }
+
+        /// <summary>
+        /// Loads the parameters from table.
+        /// </summary>
+        /// <param name="params">The parameters string.</param>
+        /// <param name="clear">Determines if current parameters list should be cleared before loading new parameters.</param>
+        public void LoadParams(object @params, bool clear = true)
+        {
+            if (clear)
+            {
+                ClearParams();
+            }
+
+            if (@params == null)
+            {
+                return;
+            }
+
+            if (!TUniVar.VarIsArray(@params))
+            {
+                LoadParams((string)@params);
+                return;
+            }
+
+            object[,] paramArray = (object[,])@params;
+
+            int count = paramArray.GetUpperBound(0) + 1;
+
+            for (int i = 0; i < count; i++)
+            {
+                Params[(string)paramArray[i, 0]] = paramArray[i, 1];
             }
         }
 
@@ -1265,7 +1323,40 @@ namespace DomConsult.GlobalShared.Utilities
         /// <param name="param">The parameters array.</param>
         internal void LoadMultiInOneParams(object param)
         {
-            throw new NotImplementedException();
+            MultiInOneParams.Clear();
+
+            if (param is Array arr)
+            {
+                if (arr.Rank == 1)
+                {
+                    foreach (string item in arr)
+                    {
+                        MultiInOneParams.Add(item);
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < arr.GetLength(0); i++)
+                    {
+                        MultiInOneParams.Add((string)arr.GetValue(i, 0));
+                    }
+                }
+                return;
+            }
+
+            string s = param.ToString();
+
+            int idx1 = s.IndexOf('[');
+            int idx2 = s.IndexOf(']', idx1 + 1);
+
+            string separator = s.Substring(idx1 + 1, idx2 - idx1 - 1);
+
+            foreach (string item in s.Substring(idx2 + 1)
+                                     .Split(new string[] { separator }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                MultiInOneParams.Add(item);
+            }
+
         }
     }
 }

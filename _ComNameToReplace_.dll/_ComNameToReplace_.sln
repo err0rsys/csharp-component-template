@@ -1,11 +1,10 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29709.97
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Component", "Component\Component.csproj", "{ADEB71B0-1FC6-4287-83BF-F91E0B989BFE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "_ComNameToReplace_", "Component\_ComNameToReplace_.csproj", "{ADEB71B0-1FC6-4287-83BF-F91E0B989BFE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComponentTest", "ComponentTest\ComponentTest.csproj", "{535C5E58-B6AD-407E-AC2B-3E68B97D35F7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "_ComNameToReplace_Test", "ComponentTest\_ComNameToReplace_Test.csproj", "{535C5E58-B6AD-407E-AC2B-3E68B97D35F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

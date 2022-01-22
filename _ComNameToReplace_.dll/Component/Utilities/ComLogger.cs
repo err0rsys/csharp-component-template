@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -10,8 +10,6 @@ namespace DomConsult.GlobalShared.Utilities
     /// </summary>
     public class ComLogger
     {
-        public static bool ComRemoteMode = false;
-
         /// <summary>
         /// The this lock
         /// </summary>
@@ -43,7 +41,7 @@ namespace DomConsult.GlobalShared.Utilities
             get
             {
                 if (_logFileName.Length == 0)
-                    _logFileName = string.Format("{0}_{1}.log", LogFilePrefix, DateTime.Now.ToString("dd_MM_yyyy_HH_mm_ss_fff"));
+                    _logFileName = $"{LogFilePrefix}_{DateTime.Now:dd_MM_yyyy_HH_mm_ss_fff}.log";
                 return _logFileName;
             }
 
@@ -66,7 +64,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// The m stop watch
         /// </summary>
         private readonly Stopwatch m_StopWatch = new Stopwatch();
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="ComLogger"/> class.
         /// </summary>
@@ -104,7 +102,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// <param name="allowDebugLog">if set to <c>true</c> [allow debug log].</param>
         /// <param name="logFilePrefix">The log file prefix.</param>
         /// <param name="logDir">The log dir.</param>
-        public ComLogger(bool allowDebugLog, string logFilePrefix, string logDir):this(allowDebugLog,logFilePrefix)
+        public ComLogger(bool allowDebugLog, string logFilePrefix, string logDir) : this(allowDebugLog, logFilePrefix)
         {
             LogDir = logDir;
         }
@@ -141,15 +139,15 @@ namespace DomConsult.GlobalShared.Utilities
             try
             {
                 m_StopWatch.Stop();
-
+                
                 if (AddDateToLog)
                     m_debug.Add(DateTime.Now.ToString());
 
                 string elapsedTime = "";
                 if (addElapsedTime)
-                    elapsedTime = string.Format("ElapsedTime[ms]:{0} - ", m_StopWatch.ElapsedMilliseconds);
+                    elapsedTime = $"ElapsedTime[ms]:{m_StopWatch.ElapsedMilliseconds} - ";
 
-                m_debug.Add(string.Format("{0}{1}", elapsedTime, message));
+                m_debug.Add(elapsedTime + message);
                 m_StopWatch.Start();
             }
             catch { }
@@ -176,11 +174,11 @@ namespace DomConsult.GlobalShared.Utilities
             {
                 m_StopWatch.Stop();
                 string _msg = string.Format(message, args);
-
+                
                 if (AddDateToLog)
                     m_debug.Add(DateTime.Now.ToString());
-
-                m_debug.Add(string.Format("ElapsedTime[ms]:{0} - {1}", m_StopWatch.ElapsedMilliseconds, _msg));
+                
+                m_debug.Add($"ElapsedTime[ms]:{m_StopWatch.ElapsedMilliseconds} - {_msg}");
                 m_StopWatch.Start();
             }
             catch { }
@@ -191,7 +189,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// </summary>
         /// <param name="message">The message.</param>
         /// <param name="ex">The ex.</param>
-        public void Add(string message,Exception ex)
+        public void Add(string message, Exception ex)
         {
             Add(message);
             Add(ex);
@@ -206,15 +204,15 @@ namespace DomConsult.GlobalShared.Utilities
             try
             {
                 m_StopWatch.Stop();
-
+                
                 if (AddDateToLog)
                     m_debug.Add(DateTime.Now.ToString());
 
-                m_debug.Add(string.Format("ElapsedTime[ms]:{0} - {1}", m_StopWatch.ElapsedMilliseconds, "Exception occured:"));
+                m_debug.Add($"ElapsedTime[ms]:{m_StopWatch.ElapsedMilliseconds} - Exception occured:");
                 m_debug.Add(ex.StackTrace);
                 m_debug.Add(ex.Message);
-                m_debug.Add("Exception type: "+ex.GetType().FullName);
-                while(ex.InnerException != null)
+                m_debug.Add("Exception type: " + ex.GetType().FullName);
+                while (ex.InnerException != null)
                 {
                     ex = ex.InnerException;
                     m_debug.Add(ex.Message);
@@ -239,7 +237,7 @@ namespace DomConsult.GlobalShared.Utilities
                         try
                         {
                             string key = "";
-                            if (ComRemoteMode)
+                            if (ComWrapper.ComRemoteMode)
                             {
                                 key = "LogDirectoryForApp";
                                 //LogDir = ComUtils.GetRegParam("LogDirectoryForApp", tempPath, "LOGON");
@@ -263,9 +261,9 @@ namespace DomConsult.GlobalShared.Utilities
 
                     string logFilePath = System.IO.Path.Combine(LogDir, LogFileName);
                     lock(thisLock)
-                    {
-                        System.IO.File.AppendAllText(logFilePath, PrintDebug());
-                    }
+					{
+						System.IO.File.AppendAllText(logFilePath, PrintDebug());
+					}
                 }
 
                 m_debug.Clear();

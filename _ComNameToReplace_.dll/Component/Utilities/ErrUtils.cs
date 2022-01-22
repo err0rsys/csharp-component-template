@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.Serialization;
 
 namespace DomConsult.GlobalShared.Utilities
@@ -15,12 +15,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// Gets or sets the mtscom identifier.
         /// </summary>
         /// <value>The mtscom identifier.</value>
-        public int MTSCOMId { get; set; }
-        /// <summary>
-        /// Gets or sets the error code.
-        /// </summary>
-        /// <value>The error code.</value>
-        public int ErrCode { get; set; }
+        public int MTSCOMId { get; set; } = -1;
         /// <summary>
         /// Gets or sets the text identifier.
         /// </summary>
@@ -62,7 +57,6 @@ namespace DomConsult.GlobalShared.Utilities
             MTSCOMId = mtsComId;
             TextId = textId;
             Params = param;
-            ErrCode = 0;
         }
 
         /// <summary>
@@ -72,7 +66,6 @@ namespace DomConsult.GlobalShared.Utilities
         public MessageException(object errMsgStack)
         {
             ErrMsgStack = errMsgStack;
-            ErrCode = 0;
         }
 
         /// <summary>
@@ -105,7 +98,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// Gets or sets the MTS COM identifier.
         /// </summary>
         /// <value>The MTS COM identifier.</value>
-        private int MTSComId { get; set; }
+        public int MTSComId { get; set; }
         /// <summary>
         /// Gets or sets the error code.
         /// </summary>
@@ -162,6 +155,14 @@ namespace DomConsult.GlobalShared.Utilities
         }
 
         /// <summary>
+        /// Clears whole message stack.
+        /// </summary>
+        public void ClearMessageStack()
+        {
+            _errMsgStack = null;
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Err"/> class.
         /// </summary>
         /// <param name="mtsComId">The MTS COM identifier.</param>
@@ -185,18 +186,7 @@ namespace DomConsult.GlobalShared.Utilities
         {
             if (!ComUtils.Assigned(e.ErrMsgStack))
             {
-                int tempMTSCOMId = MTSComId;
-                MTSComId = e.MTSCOMId;
-
-                if (!ComUtils.Assigned(e.Params))
-                {
-                    AddMsgStd(e.TextId);
-                }
-                else
-                {
-                    AddMsgStd(e.TextId, e.Params, false);
-                }
-                MTSComId = tempMTSCOMId;
+                AddMsgStd(e.MTSCOMId, e.TextId, e.Params);
             }
             else if (e.ErrMsgStack.GetType().IsArray)
             {
@@ -249,9 +239,12 @@ namespace DomConsult.GlobalShared.Utilities
         /// Messages the raise on MSG stack.
         /// </summary>
         /// <exception cref="DomConsult.GlobalShared.Utilities.MessageException"></exception>
-        private void MessageRaiseOnMsgStack()
+        public void MessageRaiseOnMsgStack(int errCode = 0)
         {
-            throw new MessageException();
+            if (errCode != 0)
+                ErrCode = errCode;
+
+            throw new MessageException(_errMsgStack);
         }
 
         /// <summary>
@@ -260,7 +253,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// <param name="textId">The text identifier.</param>
         /// <param name="Params">The optional parameters.</param>
         /// <exception cref="DomConsult.GlobalShared.Utilities.MessageException"></exception>
-        public void MessageRaise(int textId, object[] Params = null)
+        public void MessageRaise(int textId, params object[] Params)
         {
             throw new MessageException(MTSComId, textId, Params);
         }
@@ -272,7 +265,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// <param name="textId">The text identifier.</param>
         /// <param name="Params">The optional parameters.</param>
         /// <exception cref="DomConsult.GlobalShared.Utilities.MessageException">null</exception>
-        public void MessageRaise(int mtsComId, int textId, object[] Params = null)
+        public void MessageRaise(int mtsComId, int textId, params object[] Params)
         {
             throw new MessageException(mtsComId, textId, Params);
         }
@@ -295,21 +288,13 @@ namespace DomConsult.GlobalShared.Utilities
         /// Adds the MSG standard.
         /// </summary>
         /// <param name="textId">The text identifier.</param>
-        /// <param name="clearMsgStack">if set to <c>true</c> [clear MSG stack].</param>
-        /// <param name="inMtsComId">The in MTS COM identifier.</param>
+        /// <param name="Params">Optional message parameters.</param>
         /// <returns>System.Int32.</returns>
-        public int AddMsgStd(int textId, bool clearMsgStack = false, int inMtsComId = -1)
+        public int AddMsgStd(int textId, params object[] Params)
         {
             try
             {
-                if (inMtsComId > 0)
-                {
-                    TWMK.AddMessage(inMtsComId, textId, null, ref _errMsgStack, clearMsgStack);
-                }
-                else
-                {
-                    TWMK.AddMessage(MTSComId, textId, null, ref _errMsgStack, clearMsgStack);
-                }
+                TWMK.AddMessage(ref _errMsgStack, MTSComId, textId, Params);
                 return 0;
             }
             catch
@@ -321,22 +306,21 @@ namespace DomConsult.GlobalShared.Utilities
         /// <summary>
         /// Adds the MSG standard.
         /// </summary>
+        /// <param name="mtsComId">The in MTS COM identifier.</param>
         /// <param name="textId">The text identifier.</param>
-        /// <param name="Params">The parameters.</param>
-        /// <param name="clearMsgStack">if set to <c>true</c> [clear MSG stack].</param>
-        /// <param name="inMtsComId">The in MTS COM identifier.</param>
+        /// <param name="Params">Optiona; message parameters.</param>
         /// <returns>System.Int32.</returns>
-        public int AddMsgStd(int textId, object[] Params, bool clearMsgStack = false, int inMtsComId = -1)
+        public int AddMsgStd(int mtsComId, int textId, params object[] Params)
         {
             try
             {
-                if (inMtsComId > 0)
+                if (mtsComId > 0)
                 {
-                    TWMK.AddMessage(inMtsComId, textId, Params, ref _errMsgStack, clearMsgStack);
+                    TWMK.AddMessage(ref _errMsgStack, mtsComId, textId, Params);
                 }
                 else
                 {
-                    TWMK.AddMessage(MTSComId, textId, Params, ref _errMsgStack, clearMsgStack);
+                    TWMK.AddMessage(ref _errMsgStack, MTSComId, textId, Params);
                 }
                 return 0;
             }
@@ -355,7 +339,7 @@ namespace DomConsult.GlobalShared.Utilities
         {
             try
             {
-                TWMK.AddMessage(50009, 16, new object[] { Text }, ref _errMsgStack, false);
+                TWMK.AddMessage(ref _errMsgStack, 50009, 16, Text);
                 return 0;
             }
             catch
@@ -373,7 +357,7 @@ namespace DomConsult.GlobalShared.Utilities
         {
             try
             {
-                TWMK.AddMessage(50009, 6, new object[] { Text }, ref _errMsgStack, false);
+                TWMK.AddMessage(ref _errMsgStack, 50009, 6, Text);
                 return 0;
             }
             catch
@@ -391,7 +375,7 @@ namespace DomConsult.GlobalShared.Utilities
         {
             try
             {
-                TWMK.AddMessage(50009, 1, new object[] { MethodName }, ref _errMsgStack, false);
+                TWMK.AddMessage(ref _errMsgStack, 50009, 1, MethodName);
                 return 0;
             }
             catch

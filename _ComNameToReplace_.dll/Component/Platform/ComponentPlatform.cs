@@ -6,16 +6,37 @@ using DomConsult.GlobalShared.Utilities;
 
 namespace DomConsult.Platform
 {
+    /// <summary>
+    /// Class with constants used in ComponentPlatform unit.
+    /// </summary>
     public static class ComponentPlatformDef
     {
+        /// <summary>
+        /// Error number indicating missing transaction id.
+        /// </summary>
         public static int ERR_MISSING_TRANSACTION = -3;
+        /// <summary>
+        /// Error number indicating missing transaction manager
+        /// </summary>
         public static int ERR_MISSING_TRANSMANAGER = -4;
     }
 
+    /// <summary>
+    /// Transaction statuses
+    /// </summary>
     public enum TTransactionStatus
     {
+        /// <summary>
+        /// Commit of the current transaction is needed
+        /// </summary>
         ctsCommitEnabled = 0,
+        /// <summary>
+        /// Commit of the current transaction should be ignored
+        /// </summary>
         ctsCommitIgnore = 1,
+        /// <summary>
+        /// Rollback of the current transaction is required
+        /// </summary>
         ctsRollbackRequired = 2
     }
 
@@ -247,6 +268,10 @@ namespace DomConsult.Platform
             GC.SuppressFinalize(this);
         }
 #else
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             if (!_disposed)

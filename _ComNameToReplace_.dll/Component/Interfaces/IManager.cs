@@ -7,7 +7,7 @@ namespace DomConsult.Components.Interfaces
     /// Interface IManager
     /// </summary>
     [ComVisible(true)]
-    [Guid("D4AC193C-826C-44D7-AAB8-8F04F83C27FD")]
+    [Guid("3DB7A78C-5114-441D-BD6B-33CDC83998D8")]
     [InterfaceType(ComInterfaceType.InterfaceIsDual)]
     public interface IManager // IDCPlatform - using inheritance methods are invisible in COM+ console and our application :-(
     {

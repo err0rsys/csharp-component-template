@@ -1,32 +1,23 @@
-ï»¿using DomConsult.Components;
+using DomConsult.Components;
 using DomConsult.GlobalShared.Utilities;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.EnterpriseServices;
 using System.IO;
 
 namespace DomConsult.ComponentTest
 {
-    /// <summary>
-    /// Class used to store secret settings stored in devel_secret.json file localized in ApplicationData folder
-    /// </summary>
-    public class DevelSecret
-    {
-        public Dictionary<string, string> ACC { get; set; } = new Dictionary<string, string>();
-    }
-
     [TestClass]
     public class ComUnitTest
     {
         private DevelSecret Secret { get; set; }
-        private string UseACC { get; set; }  = "ACC_1";
+        private string UseAC { get; set; }  = "AC_GRANIT_MASTER_TEST";
 
-        private bool TestByComObject { get; set; } = true;
+        private bool TestByComObject { get; set; } = false;
         private bool TestByDynObject { get; set; } = false;
-        private bool TestByComClass { get; set; } = false;
+        private bool TestByComClass { get; set; } = true;
 
         public ComUnitTest()
         {
@@ -36,8 +27,8 @@ namespace DomConsult.ComponentTest
             var jsonsecreet =  File.ReadAllText(secretPath);
             Secret = JsonConvert.DeserializeObject<DevelSecret>(jsonsecreet);
             Assert.IsTrue(Secret != null);
-            Assert.IsTrue(Secret.ACC.ContainsKey(UseACC));
-            Debug.WriteLine(Secret.ACC[UseACC]);
+            Assert.IsTrue(Secret.AC.ContainsKey(UseAC));
+            Debug.WriteLine(Secret.AC[UseAC]);
 
 #if !TEST
 
@@ -49,48 +40,48 @@ namespace DomConsult.ComponentTest
         /// <summary>
         /// Test registered COM object with late binding using ComWrapper
         /// </summary>
-        [TestMethod("ComObj - Test uruchomienia nieznanej metody przez RunMethod")]
-        public void ComObject_RunMethod_UnknownMethod()
+        [TestMethod("ComObject_RunMethod_XXXXX - przyk³ad")]
+        public void ComObject_RunMethod_XXXXX()
         {
             if (!TestByComObject)
                 Assert.Inconclusive("Skip! ComObject tests are switched Off.");
 
-            ComWrapper comObject = ComUtils.CreateComInStandardCom("Component.Manager", Secret.ACC[UseACC]);
+            ComWrapper comObject = ComUtils.CreateComInStandardCom("_ComNameToReplace_.Manager", Secret.AC[UseAC]);
 
-            var rm_params = new object[] { "/XXX=1", null, null };
-            int res = ComUtils.RunMethod(comObject, "NO_METHOD", ref rm_params);
+            var rm_params = new object[] { "/PAR_XXXX=1", null, null };
+            int res = ComUtils.RunMethod(comObject, "RM_XXXXX", ref rm_params);
             //rm_params = _params as object[];
 
-            Assert.IsTrue(res < 0, "Nieznana metoda powinna zwrÃ³ciÄ‡ bÅ‚Ä…d");
+            AssertWMK.IsOK(res, "Spodziewany wynik: result > 0");
         }
 
         /// <summary>
         /// Test registered COM object using late binding without ComWrapper
         /// </summary>
-        [TestMethod("ComDynObj - Test uruchomienia nieznanej metody przez RunMethod")]
+        [TestMethod("ComDynObj - przyk³ad")]
         public void ComDynObject_RunMethod_UnknownMethod()
         {
             if (!TestByDynObject)
                 Assert.Inconclusive("Skip! ComDynObject tests are switched Off.");
 
-            Type comObjectType = Type.GetTypeFromProgID("Component.Manager", true);
+            Type comObjectType = Type.GetTypeFromProgID("_ComNameToReplace_.Manager", true);
             dynamic comDynObject = Activator.CreateInstance(comObjectType);
-            int res = comDynObject.AssignAccessCode(Secret.ACC[UseACC]);
-            Assert.IsTrue(res >= 0, "BÅ‚Ä…d przypisywania ACC do komponentu");
+            int res = comDynObject.AssignAccessCode(Secret.AC[UseAC]);
+            Assert.IsTrue(res >= 0, "B³¹d przypisywania AC do komponentu _ComNameToReplace_.Manager");
 
             var rm_params = new object[] { "/XXX=1", null, null };
             object _params = rm_params;
             res = comDynObject.RunMethod("NO_METHOD", ref _params);
             //rm_params = _params as object[];
 
-            Assert.IsTrue(res < 0, "Nieznana metoda powinna zwrÃ³ciÄ‡ bÅ‚Ä…d");
+            AssertWMK.IsOK(res, "Nieznana metoda powinna zwróciæ b³¹d");
         }
 
         /// <summary>
         /// Test unregistered COM class
         /// </summary>
-        [TestMethod("ComClass - Test uruchomienia nieznanej metody przez RunMethod")]
-        public void ComClass_RunMethod_UnknownMethod()
+        [TestMethod("ComClass - przyk³ad")]
+        public void ComClass_RunMethod_XXXXX()
         {
             if (!TestByComClass)
                 Assert.Inconclusive("Skip! ComClass tests are switched Off.");
@@ -99,15 +90,15 @@ namespace DomConsult.ComponentTest
                 Assert.Inconclusive("Skip! Can't run test over ServicedComponent.");
 
             var comClass = new Manager();
-            int res = comClass.AssignAccessCode(Secret.ACC[UseACC]);
-            Assert.IsTrue(res >= 0, "BÅ‚Ä…d przypisywania ACC do komponentu");
+            int res = comClass.AssignAccessCode(Secret.AC[UseAC]);
+            Assert.IsTrue(res >= 0, "B³¹d przypisywania AC do komponentu");
 
-            var rm_params = new object[] { "/XXX=1", null, null };
+            var rm_params = new object[] { "/PAR_XXXXX=1", null, null };
             object _params = rm_params;
-            res = comClass.RunMethod("NO_METHOD", ref _params);
+            res = comClass.RunMethod("RM_XXXXX", ref _params);
             //rm_params = _params as object[];
 
-            Assert.IsTrue(res < 0, "Nieznana metoda powinna zwrÃ³ciÄ‡ bÅ‚Ä…d");
+            AssertWMK.IsOK(res, "Spodziewany wynik: result > 0");
         }
     }
 }

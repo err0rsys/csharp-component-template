@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Collections.Concurrent;
@@ -24,8 +24,9 @@ namespace DomConsult.GlobalShared.Utilities
         public const string _STR_NULL = "";
         /// <summary>
         /// The date null
+        /// Use DateTime.FromOADate(TUniConstants._DATE_NULL) to convert
         /// </summary>
-        public const int _DATE_NULL = -53689; // = 31-12-1752 (ta data jest zbyt odlegla dla SQL Servera)
+        public const int _DATE_NULL = -53689; // = 31-12-1752
         /// <summary>
         /// The rc ok
         /// </summary>
@@ -54,27 +55,27 @@ namespace DomConsult.GlobalShared.Utilities
 
         #region DBCOM package flags
 
-        // --- staÅ‚e uÅ¼ywane przy opisie elementÃ³w paczki DBCom-a
+        // --- sta³e u¿ywane przy opisie elementów paczki DBCom-a
         /// <summary>
         /// The cp col visible
         /// </summary>
-        public const int cpColVisible = 1; // Kolumna ma byÄ‡ widoczna dla klienta
+        public const int cpColVisible = 1; // Kolumna ma byæ widoczna dla klienta
         /// <summary>
         /// The cp object identifier
         /// </summary>
-        public const int cpObjectId = 2; // Kolumna przechowuje wartoÅ›Ä‡ klucza gÅ‚Ã³wnego
+        public const int cpObjectId = 2; // Kolumna przechowuje wartoœæ klucza g³ównego
         // dla rekordu (tylko jeden kolumna w paczce)
         /// <summary>
         /// The cp object type identifier
         /// </summary>
-        public const int cpObjectTypeId = 4; // Kolumna przechowuje wartoÅ›Ä‡ okreÅ›lajÄ…ca
-        // ObjectTypeId dla bieÅ¼Ä…cego rekordu
+        public const int cpObjectTypeId = 4; // Kolumna przechowuje wartoœæ okreœlaj¹ca
+        // ObjectTypeId dla bie¿¹cego rekordu
         // (tylko jedna kolumna w paczce)
         /// <summary>
         /// The cp col first
         /// </summary>
-        public const int cpColFirst = 32; // Kolumna widoczna ktÃ³ra ma byÄ‡ pierwszÄ…
-        // kolumnÄ… w liÅ›cie prezentowanej uÅ¼ytkownikowi
+        public const int cpColFirst = 32; // Kolumna widoczna która ma byæ pierwsz¹
+        // kolumn¹ w liœcie prezentowanej u¿ytkownikowi
         // (opcjonalnie)
 
         /// <summary>
@@ -330,6 +331,81 @@ namespace DomConsult.GlobalShared.Utilities
     }
 
     /// <summary>
+    /// Enum TDisabledFunction
+    /// </summary>
+    [Flags]
+    public enum TDisabledFunction
+    {
+        /// <summary>
+        /// Disable New
+        /// </summary>
+        dfNew = 0x0001,
+        /// <summary>
+        /// Disable Edit
+        /// </summary>
+        dfEdit = 0x0002,
+        /// <summary>
+        /// Disable Save
+        /// </summary>
+        dfSave = 0x0004,
+        /// <summary>
+        /// Disable Cancel
+        /// </summary>
+        dfCancel = 0x0008,
+        /// <summary>
+        /// Disable Refresh
+        /// </summary>
+        dfRefresh = 0x0010,
+        /// <summary>
+        /// Disable Switch
+        /// </summary>
+        dfSwitch = 0x0020,
+        /// <summary>
+        /// Disable Delete
+        /// </summary>
+        dfDelete = 0x0040,
+        /// <summary>
+        /// Disable Report Print
+        /// </summary>
+        dfReportPrint = 0x0080,
+        /// <summary>
+        /// Disable Report Save
+        /// </summary>
+        dfReportSave = 0x0100,
+        /// <summary>
+        /// Disable New Hidden
+        /// </summary>
+        dfNewHide = 0x0200,
+        /// <summary>
+        /// Disable Eddit Hidden
+        /// </summary>
+        dfEditHide = 0x0400,
+        /// <summary>
+        /// Disable Save Hidden
+        /// </summary>
+        dfSaveHide = 0x0800,
+        /// <summary>
+        /// Disable Cancel Hidden
+        /// </summary>
+        dfCancelHide = 0x1000,
+        /// <summary>
+        /// Disable Refresh Hidden
+        /// </summary>
+        dfRefreshHide = 0x2000,
+        /// <summary>
+        /// Disable Delete Hidden
+        /// </summary>
+        dfDeleteHide = 0x4000,
+        /// <summary>
+        /// Disable All
+        /// </summary>
+        dfAll = dfNew | dfEdit | dfSave | dfCancel | dfRefresh |
+                dfSwitch | dfDelete |
+                dfReportPrint | dfReportSave |
+                dfNewHide | dfEditHide | dfSaveHide | dfCancelHide | dfRefreshHide | dfDeleteHide
+    }
+
+    /// <summary>
     /// Enum TConfirmResult
     /// </summary>
     public enum TConfirmResult
@@ -353,10 +429,46 @@ namespace DomConsult.GlobalShared.Utilities
     /// </summary>
     public static class TuniGlobalCache
     {
+        //KEYs' templates should be globally unique!!!
+        //Be careful defining kes for GetCustomData. Check if your data depend on DBID, LID, UID ...
+
+        /// <summary>
+        /// {0}=ParamName
+        /// </summary>
+        public const string KEY_GetSysRegParam = "SYSREG.INI/{0}";
+        /// <summary>
+        /// {0}=DBID,{1}=ParamName 
+        /// </summary>
+        public const string KEY_GetUniParam = "UNIPARAM/D={0}/{1}";
+        /// <summary>
+        /// {0}=DBID,{1}=LanguageId,{2}=SQL HASH not SQL!!!
+        /// </summary>
+        public const string KEY_GetSQLData = "SQL/D={0}/L={1}/S={2}";
+        /// <summary>
+        /// {0}=MtsComId,{1}=LanguageId,{2}=TextId
+        /// </summary>
+        public const string KEY_GetMLText = "COMTEXT/C={0}/L={1}/T={2}";
+        /// <summary>
+        /// {0}=DBID,{1}=UserId,{2}=ComFunctionId
+        /// </summary>
+        public const string KEY_CanRunComFunction = "COMFUNCTION/D={0}/U={1}/F={2}";
+        /// <summary>
+        /// {0}=DBID,{1}=Key
+        /// </summary>
+        public const string KEY_GetCustomData_DK = "DATA/D={0}/K={2}";
+        /// <summary>
+        /// {0}=DBID,{1}=UserId,{2}=Key
+        /// </summary>
+        public const string KEY_GetCustomData_DUK = "DATA/D={0}/U={1}/K={2}";
+        /// <summary>
+        /// {0}=DBID,{1}=LanguageId,{2}=UserId,{3}=Key
+        /// </summary>
+        public const string KEY_GetCustomData_DLUK = "DATA/D={0}/L={1}/U={2}/K={3}";
+
         /// <summary>
         /// The cache
         /// </summary>
-        private static ConcurrentDictionary<string, object> Cache = new ConcurrentDictionary<string, object>();
+        private static readonly ConcurrentDictionary<string, object> Cache = new ConcurrentDictionary<string, object>(StringComparer.InvariantCultureIgnoreCase);
 
         /// <summary>
         /// Gets the system reg parameter.
@@ -364,97 +476,33 @@ namespace DomConsult.GlobalShared.Utilities
         /// <param name="acc">The acc.</param>
         /// <param name="key">The key.</param>
         /// <param name="defaultValue">The default value.</param>
-        /// <param name="setDefault">if set to <c>true</c> [set default].</param>
+        /// <param name="cacheIfDefault">if set to <c>true</c> value will be cached even if defaultValue is used</param>
         /// <returns>System.Object.</returns>
-        public static object GetSysRegParam(string acc, string key, string defaultValue = "", bool setDefault = false)
+        public static object GetSysRegParam(string acc, string key, string defaultValue = "", bool cacheIfDefault = false)
         {
-            bool getOK = false;
-            object value = null;
+            string keyC = string.Format(KEY_GetSysRegParam, key).ToUpper();           
 
-            string keyC = string.Concat("sysreg.ini/", key).ToUpper();
-            bool exists = Cache.ContainsKey(keyC);
-
-            if (exists)
+            if (Cache.TryGetValue(keyC, out object value))
+                value = TUniVar.VarToStr(value, defaultValue);
+            else
             {
-                getOK = Cache.TryGetValue(keyC, out value);
+                const string EMPTY_TOKEN = "!@#$%^&*()";
+                string svalue = ComUtils.GetRegParam(key, EMPTY_TOKEN, acc);
 
-                if (getOK)
-                    value = TUniVar.VarToStr(value, defaultValue);
-            }
-
-            if (!exists || !getOK)
-            {
-                string svalue = ComUtils.GetRegParam(key, "", acc);
-
-                if (svalue.Length != 0)
-                {
-                    value = svalue;
-                }
-                else if (setDefault)
+                if (svalue.Equals(EMPTY_TOKEN))
                 {
                     value = defaultValue;
-                    svalue = defaultValue;
+                    if (cacheIfDefault)
+                        Cache.TryAdd(keyC, value);
                 }
                 else
                 {
-                    svalue = defaultValue;
-                }
-
-                if (!exists)
+                    value = svalue;
                     Cache.TryAdd(keyC, value);
+                }
             }
 
             return value;
-        }
-
-        /// <summary>
-        /// Gets the system reg parameter.
-        /// </summary>
-        /// <param name="acc">The acc.</param>
-        /// <param name="key">The key.</param>
-        /// <param name="value">The value.</param>
-        /// <param name="defaultValue">The default value.</param>
-        /// <param name="setDefault">if set to <c>true</c> [set default].</param>
-        /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public static bool GetSysRegParam(string acc, string key, ref object value, string defaultValue = "", bool setDefault = false)
-        {
-            bool getOK = false;
-            value = null;
-
-            string keyC = string.Concat("sysreg.ini/", key).ToUpper();
-            bool exists = Cache.ContainsKey(keyC);
-
-            if (exists)
-            {
-                getOK = Cache.TryGetValue(keyC, out value);
-
-                if (getOK)
-                    value = TUniVar.VarToStr(value, defaultValue);
-            }
-
-            if (!exists || !getOK)
-            {
-                string svalue = ComUtils.GetRegParam(key, "", acc);
-
-                if (svalue.Length != 0)
-                {
-                    value = svalue;
-                }
-                else if (setDefault)
-                {
-                    value = defaultValue;
-                    svalue = defaultValue;
-                }
-                else
-                {
-                    svalue = defaultValue;
-                }
-
-                if (!exists)
-                    Cache.TryAdd(keyC, value);
-            }
-
-            return getOK;
         }
 
         /// <summary>
@@ -463,40 +511,35 @@ namespace DomConsult.GlobalShared.Utilities
         /// <param name="acc">The acc.</param>
         /// <param name="key">The key.</param>
         /// <param name="defaultValue">The default value.</param>
-        /// <param name="setDefault">if set to <c>true</c> [set default].</param>
+        /// <param name="cacheIfDefault">if set to <c>true</c> value will be cached even if defaultValue is used</param>
         /// <returns>System.Object.</returns>
         /// <exception cref="Exception">AccessCode required!</exception>
-        public static object GetUniParam(string acc, string key, string defaultValue = "")
+        public static object GetUniParam(string acc, string key, string defaultValue = "", bool cacheIfDefault = false)
         {
-            bool getOK = false;
-            object value = null;
-
             int dbID = TUserSession.GetCurrentDatabaseId(acc);
             if (dbID < 0)
                 throw new Exception("AccessCode required!");
 
-            string keyC = string.Concat("dbid=",dbID.ToString(),"/uniParam/", key).ToUpper();
-            bool exists = Cache.ContainsKey(keyC);
+            string keyC = string.Format(KEY_GetUniParam, dbID.ToString(), key).ToUpper();
 
-            if (exists)
+            if (Cache.TryGetValue(keyC, out object value))
+                value = TUniVar.VarToStr(value, defaultValue);
+            else
             {
-                getOK = Cache.TryGetValue(keyC, out value);
+                const string EMPTY_TOKEN = "!@#$%^&*()";
+                string svalue = ComUtils.GetUniParam(acc, key, EMPTY_TOKEN);
 
-                if (getOK)
-                    value = TUniVar.VarToStr(value, defaultValue);
-            }
-
-            if (!exists || !getOK)
-            {
-                string svalue = ComUtils.GetUniParam(acc, key, "");
-
-                if (svalue.Length != 0)
-                    value = svalue;
-                else
+                if (svalue.Equals(EMPTY_TOKEN))
+                {
                     value = defaultValue;
-
-                if (!exists)
+                    if (cacheIfDefault)
+                        Cache.TryAdd(keyC, value);
+                }
+                else
+                {
+                    value = svalue;
                     Cache.TryAdd(keyC, value);
+                }
             }
 
             return value;
@@ -514,8 +557,6 @@ namespace DomConsult.GlobalShared.Utilities
         public static int GetSQLData(string acc, string sql, out object[,] data, int timeOut = -1)
         {
             int result = 0;
-            bool getOK = false;
-            object value = null;
             data = null;
 
             int dbID   = TUserSession.GetCurrentDatabaseId(acc);
@@ -531,39 +572,39 @@ namespace DomConsult.GlobalShared.Utilities
             if (dbID < 0)
                 throw new Exception("AccessCode required!");
 
-            string keyC = string.Format("DBID={0}/LID={1}/SQL={2}", dbID, langID, sql.GetHashCode()).ToUpper();
-            bool exists = Cache.ContainsKey(keyC);
+            string keyC = string.Format(KEY_GetSQLData, dbID, langID, sql.GetHashCode()).ToUpper();
 
-            if (exists)
+            if (Cache.TryGetValue(keyC, out object value))
             {
-                getOK = Cache.TryGetValue(keyC, out value);
+                data = value as object[,];
 
-                if (getOK)
-                {
-                    data = value as object[,];
-
-                    if (TUniVar.VarIsArray(data))
-                        result = data.GetUpperBound(0)-1;
-                }
+                if (TUniVar.VarIsArray(data))
+                    result = data.GetUpperBound(0)-1;
             }
-
-            if (!exists || !getOK)
+            else
             {
                 result = ComUtils.GetPacket(acc, sql, -1, timeOut, out data);
 
-                if (!exists && (result >= 0))
+                if (result >= 0)
                     Cache.TryAdd(keyC, data);
             }
 
             return result;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="comId"></param>
+        /// <param name="langId"></param>
+        /// <param name="textId"></param>
+        /// <param name="defaultValue"></param>
+        /// <returns></returns>
         public static string GetMLText(int comId, int langId, int textId, string defaultValue = "")
         {
-            string keyC = string.Concat("comtext/M={1}/L={0}/T={2}", comId, langId, textId).ToUpper();
-            bool getOK = Cache.TryGetValue(keyC, out object value);
+            string keyC = string.Format(KEY_GetMLText, comId, langId, textId).ToUpper();
 
-            if (!getOK)
+            if (!Cache.TryGetValue(keyC, out object value))
             {
                 value = ComUtils.GetText(comId, langId, textId);
 
@@ -572,6 +613,79 @@ namespace DomConsult.GlobalShared.Utilities
             }
 
             return TUniVar.VarToStr(value, defaultValue);
+        }
+    
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="acc"></param>
+        /// <param name="comFunctionId"></param>
+        /// <returns></returns>
+        public static bool CanRunComFunction(string acc, int comFunctionId)
+        {
+            bool result = TUserSession.GetCurrentUserIsAdmin(acc);
+
+            if (!result)
+            {
+                int dbID = TUserSession.GetCurrentDatabaseId(acc);
+                int uID = TUserSession.GetCurrentUserId(acc);
+                if ((dbID < 0) || (uID < 0))
+                    throw new Exception("AccessCode required!");
+
+            string keyC = string.Format(KEY_CanRunComFunction, dbID, uID, comFunctionId).ToUpper();
+
+                if (Cache.TryGetValue(keyC, out object value))
+                    result = (bool)value;
+                else
+                {
+                    object cf = comFunctionId;
+                    result = TUserSession.CanRunComFunction(acc, ref cf);
+                    Cache.TryAdd(keyC, result);
+                }
+            }
+            
+            return result;
+        }
+
+        /// <summary>
+        /// Method used to get data from cache or get data from source and store in cache
+        /// </summary>
+        /// <param name="key">Key value connected with the searched data</param>
+        /// <param name="getData">Method used to get data when not found in cache</param>
+        /// <param name="cacheData">Determines if data should be cached when not found in cache</param>
+        /// <returns></returns>
+        public static object GetCustomData(string key, Func<object> getData, bool cacheData = true)
+        {
+            if (!Cache.TryGetValue(key, out object value))
+            {
+                value = getData();
+
+                if (!TUniVar.VarIsNullOrEmpty(value) && cacheData)
+                    Cache.TryAdd(key, value);
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static bool DeleteData(string key, out object data)
+        {
+            return Cache.TryRemove(key, out data);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static bool CheckData(string key)
+        {
+            return Cache.ContainsKey(key);
         }
     }
 
@@ -621,6 +735,16 @@ namespace DomConsult.GlobalShared.Utilities
         }
 
         /// <summary>
+        /// Checks if current user is admin.
+        /// </summary>
+        /// <param name="accessCode">The access code.</param>
+        /// <returns>System.bool.</returns>
+        public static bool GetCurrentUserIsAdmin(string accessCode)
+        {
+            return accessCode.Contains("/ADM/", StringComparison.CurrentCultureIgnoreCase);
+        }
+
+        /// <summary>
         /// Languages the identifier to culture information.
         /// </summary>
         /// <param name="langId">The language identifier.</param>
@@ -639,6 +763,94 @@ namespace DomConsult.GlobalShared.Utilities
                 default:
                     return "pl-PL";
             }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="acc"></param>
+        /// <param name="comFunctions"> comFunctionId or vector with many comFunctionIds</param>
+        /// <param name="mulMandantId"></param>
+        /// <returns>
+        /// For vector returns True if user has rights to any of given ids.
+        /// Id in vector is OVERRITEN to 0 if user has not rights to this Id.
+        /// For single id (not vetor with single id) returns true if user has rights to this comFunction.
+        /// </returns>
+        public static bool CanRunComFunction(string acc, ref object comFunctions, int mulMandantId = 0)
+        {
+            if (comFunctions == null)
+                return false;
+
+            int result = -1;
+            bool isArray = comFunctions.GetType().IsArray;
+
+            if (mulMandantId > 0)
+            {
+                acc = string.Concat(acc, "/MID=", mulMandantId.ToString());
+                using (var rightsCom = new ComWrapper())
+                {
+                    if (rightsCom.Connect(ComUtils.CS_GKEX_ProgID))
+                    {
+                        var args = new object[] { acc, comFunctions };
+                        result = (int)rightsCom.InvokeMethod("CheckPermission", args, new bool[] { false, true });
+                    }
+                }
+            }
+
+            return isArray ? result > 0 : result >= 0;
+        }
+    
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="acc"></param>
+        /// <returns></returns>
+        public static string GetCurrentUserWinLogin(string acc)
+        {
+            string winLogin = "";
+
+            string sql = "select NazwaUzytkownikaMaszyny from LOGON_LogUzytkownik where LogUzytkownikId={0}";
+            sql = string.Format(sql, GetCurrentSessionId(acc));
+            int res = ComUtils.GetPacket(acc, sql, -1, -1, out object[,] data);
+            if (res > 0)
+            {
+                winLogin = TUniVar.VarToStr(data[1,0]);
+            }
+
+            return winLogin;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="acc"></param>
+        /// <param name="fullTempPath"></param>
+        /// <param name="relativeTempPath"></param>
+        /// <param name="winLogin"></param>
+        public static void GetExportTempFolder(string acc, out string fullTempPath, out string relativeTempPath, string winLogin = "")
+        {
+            fullTempPath = (string)TuniGlobalCache.GetUniParam(acc, @"UNI\APP\PATH\EXPORTS", "");
+            relativeTempPath = @"temp\";
+
+            int.TryParse((string)TuniGlobalCache.GetUniParam(acc, @"UNI\APP\PATH\EXPORTS", "0"), out int priv);
+
+            if (priv == 0)
+            {
+                fullTempPath = Path.Combine(fullTempPath, relativeTempPath);
+                return;
+            }
+
+            if (winLogin.Length == 0)
+                winLogin = GetCurrentUserWinLogin(acc);
+
+            if (winLogin.Contains("\\"))
+            {
+                //winLogin: DOMENA\USERNAME, COMPUTER\USERNAME
+                winLogin = winLogin.Split(new char[] { '\\' }).ReturnLastElement<string>();
+            }
+
+            relativeTempPath = string.Concat(relativeTempPath, winLogin, "\\");
+            fullTempPath = Path.Combine(fullTempPath, relativeTempPath);
         }
     }
 
@@ -778,29 +990,63 @@ namespace DomConsult.GlobalShared.Utilities
         /// <param name="ignoreCase">if set to <c>true</c> [ignore case].</param>
         /// <param name="nullValue">The null value.</param>
         /// <returns>System.Int32.</returns>
-        public static int GetParamAsInteger(string paramStr, string paramName, char[] delimiters, bool ignoreCase, int nullValue)
+        public static int GetParamAsInteger(string paramStr, string paramName, char[] delimiters, bool ignoreCase, int nullValue = TUniConstants._INT_NULL)
         {
             string lstr = "";
+
             if (GetParam(ref paramStr, paramName, ref lstr, delimiters, ignoreCase, true) == TUniConstants.rcOK)
             {
-                int _result = nullValue;
-                if (int.TryParse(lstr, out _result))
+                if (int.TryParse(lstr, out int _result))
                     return _result;
-                else
-                    return nullValue;
             }
-            else
-            {
-                return nullValue;
-            }
+
+            return nullValue;
         }
 
-        public static int GetParamsAsDic(ref string paramStr, out Dictionary<string, object> paramsDic)
+        /// <summary>
+        /// Gets the parameter as integer.
+        /// </summary>
+        /// <param name="paramStr">The parameter string.</param>
+        /// <param name="paramName">Name of the parameter.</param>
+        /// <returns>System.Int32.</returns>
+        public static string GetParamAsString(string paramStr, string paramName)
         {
-            paramsDic = new Dictionary<string, object>();
+            return GetParamAsString(paramStr, paramName, new char[] { '/', ' ' }, true, TUniConstants._STR_NULL);
+        }
+
+        /// <summary>
+        /// Gets the parameter as integer.
+        /// </summary>
+        /// <param name="paramStr">The parameter string.</param>
+        /// <param name="paramName">Name of the parameter.</param>
+        /// <param name="delimiters">The delimiters.</param>
+        /// <param name="ignoreCase">if set to <c>true</c> [ignore case].</param>
+        /// <param name="nullValue">The null value.</param>
+        /// <returns>System.Int32.</returns>
+        public static string GetParamAsString(string paramStr, string paramName, char[] delimiters, bool ignoreCase, string nullValue = TUniConstants._STR_NULL)
+        {
+            string lstr = "";
+
+            if (GetParam(ref paramStr, paramName, ref lstr, delimiters, ignoreCase, true) == TUniConstants.rcOK)
+            {
+                return lstr;
+            }
+
+            return nullValue;
+        }
+
+        /// <summary>
+        /// Converts string parameters into dictionary (string, object)
+        /// </summary>
+        /// <param name="paramStr">The parameter string.</param>
+        /// <param name="paramsDic">Output parameters' dictionary</param>
+        /// <returns></returns>
+        public static int GetParamsAsDic(string paramStr, out Dictionary<string, object> paramsDic)
+        {
+            paramsDic = new Dictionary<string, object>(StringComparer.CurrentCultureIgnoreCase);
             string tmpStr = paramStr;
 
-            //ZaÅ‚oÅ¼enie jest takie, Å¼e znaki "/=" nie wystÄ™pujÄ… w wartoÅ›ciach
+            //Za³o¿enie jest takie, ¿e znaki "/=" nie wystêpuj¹ w wartoœciach
             paramStr = "";
             while (tmpStr.Contains("/"))
             {
@@ -815,24 +1061,30 @@ namespace DomConsult.GlobalShared.Utilities
                 var len = tmpStr.IndexOf("=");
                 if (len < 0)
                 {
-                    paramStr += tmpStr;
+                    //paramStr += tmpStr;
                     break;
                 }
 
-                var paramName = tmpStr.Substring(start, len);
+                var paramName = tmpStr.Substring(start, len+1); /* /xxxx= */
                 var paramValue = string.Empty;
                 TStrParams.GetParam(ref tmpStr, paramName, ref paramValue, new char[] { '/', '=' }, true, true);
 
-                paramsDic.Add(paramName, paramValue);
+                paramsDic.Add(paramName.Substring(1, paramName.Length-2), paramValue);
             }
 
             return paramsDic.Count;
         }
 
-        public static int GetParamsAsArr(ref string paramStr, out object[,] paramsArr)
+        /// <summary>
+        /// Converts string parameters to two dim array (Name, Value)
+        /// </summary>
+        /// <param name="paramStr">String that represents input parameters</param>
+        /// <param name="paramsArr">Parameters in the form of two dim array (Name, Value)</param>
+        /// <returns></returns>
+        public static int GetParamsAsArr(string paramStr, out object[,] paramsArr)
         {
             paramsArr = null;
-            TStrParams.GetParamsAsDic(ref paramStr, out Dictionary<string, object> paramsDic);
+            TStrParams.GetParamsAsDic(paramStr, out Dictionary<string, object> paramsDic);
 
             int result = 0;
             if ((paramsDic?.Count ?? 0) > 0)
@@ -849,6 +1101,12 @@ namespace DomConsult.GlobalShared.Utilities
             return result;
         }
 
+        /// <summary>
+        /// Converts two dim packet (Name, Value) into dictionary(string, object)
+        /// </summary>
+        /// <param name="paramsArr"></param>
+        /// <param name="paramsDic"></param>
+        /// <returns></returns>
         public static int GetParamsArrAsDic(object[,] paramsArr, out Dictionary<string, object> paramsDic)
         {
             paramsDic = new Dictionary<string, object>();
@@ -903,10 +1161,10 @@ namespace DomConsult.GlobalShared.Utilities
     {
         /*
          * MS 12.12.2016
-         * Ta metoda jest wÄ…tpliwej jakoÅ›ci - chodzi o to, Å¼e sysreg w 99% przypadkÃ³w nazywa siÄ™
-         * tak jak TUniConstants.SYSREG_PATH, natomiast w przypadku jeÅ›li sÄ… partycje COMowskie
-         * nazwa sysrega jest prefixowana nazwÄ… partycji i w takim wypadku to nie zadziaÅ‚a
-         * NajbezpieczniejszÄ… metodÄ… jest niestety odpytanie komponentu system.registry
+         * Ta metoda jest w¹tpliwej jakoœci - chodzi o to, ¿e sysreg w 99% przypadków nazywa siê
+         * tak jak TUniConstants.SYSREG_PATH, natomiast w przypadku jeœli s¹ partycje COMowskie
+         * nazwa sysrega jest prefixowana nazw¹ partycji i w takim wypadku to nie zadzia³a
+         * Najbezpieczniejsz¹ metod¹ jest niestety odpytanie komponentu system.registry
          * Do tego celu jest funkcja w ComUtils GetRegParam
          */
         /// <summary>
@@ -1019,50 +1277,11 @@ namespace DomConsult.GlobalShared.Utilities
         /// <summary>
         /// Adds the message.
         /// </summary>
+        /// <param name="Messages">The messages.</param>
         /// <param name="MTSComId">The MTS COM identifier.</param>
         /// <param name="TextId">The text identifier.</param>
         /// <param name="Params">The parameters.</param>
-        /// <param name="Messages">The messages.</param>
-        /// <param name="Clear">if set to <c>true</c> [clear].</param>
         /// <returns>System.Int32.</returns>
-        public static int AddMessage(int MTSComId, int TextId, object[] Params, ref object Messages, bool Clear)
-        {
-            try
-            {
-                object[,] _msg = null;
-                if (Messages is object[,])
-                {
-                    _msg = Messages as object[,];
-                }
-                else if (Messages != null) //przypadek jesli message nie jest macieza
-                {
-                    return -2;
-                }
-
-                int index = 0;
-                if (Clear || (_msg == null))
-                {
-                    _msg = new object[3, 1];
-                }
-                else
-                {
-                    index = _msg.GetLength(1);
-                    ResizeArray(ref _msg, index + 1, _msg.GetLength(0));
-                }
-
-                _msg[0, index] = MTSComId;
-                _msg[1, index] = TextId;
-                _msg[2, index] = Params;
-
-                Messages = _msg;
-                return 0;
-            }
-            catch
-            {
-                return -1;
-            }
-        }
-
         public static int AddMessage(ref object Messages, int MTSComId, int TextId, params object[] Params)
         {
             try
@@ -1102,6 +1321,54 @@ namespace DomConsult.GlobalShared.Utilities
         }
 
         /// <summary>
+        /// Joins two stacks of messages
+        /// </summary>
+        /// <param name="Messages"></param>
+        /// <param name="NewMessages"></param>
+        /// <returns></returns>
+        public static int AddMessages(ref object Messages, object NewMessages)
+        {
+            try
+            {
+                if (Messages == null)
+                {
+                    Messages = NewMessages;
+                    return GetMessagesCount(Messages);
+                }
+                else if (NewMessages == null)
+                {
+                    return GetMessagesCount(Messages);
+                }
+                else if (!(Messages is object[,]) || !(NewMessages is object[,]))
+                {
+                    return -2;
+                }
+
+                object[,] _msg = Messages as object[,];
+                object[,] _new = NewMessages as object[,];
+
+                int index = _msg.GetLength(1);
+                int len   = _new.GetLength(1);
+
+                ResizeArray(ref _msg, index + len, _msg.GetLength(0));
+
+                for (var i=0; i<len; i++)
+                {
+                    _msg[0, index + i] = _new[0, i];
+                    _msg[1, index + i] = _new[1, i];
+                    _msg[2, index + i] = _new[2, i];
+                }
+
+                Messages = _msg;
+                return GetMessagesCount(Messages);
+            }
+            catch
+            {
+                return -1;
+            }
+        }
+
+        /// <summary>
         /// Gets the messages count.
         /// </summary>
         /// <param name="Messages">The messages.</param>
@@ -1123,6 +1390,16 @@ namespace DomConsult.GlobalShared.Utilities
                     return _msg.GetLength(1);
                 }
             }
+        }
+
+        /// <summary>
+        /// Procedure creates empty message for RunMethods that cause application to not show any message.
+        /// </summary>
+        /// <returns>System.Int32.</returns>
+        public static int CreateEmptyRunMethodMessage(out object msg)
+        {
+            msg = (object) new object[3, 1] { { "" }, { "" }, { 0 } };
+            return 1;
         }
 
         /// <summary>
@@ -1199,7 +1476,7 @@ namespace DomConsult.GlobalShared.Utilities
                                 {
                                     log?.Add("X509Certificate2 cert", true, flush);
 
-                                    //BÅ‚Ä™dne pliki bedÄ… rzucaÄ‡ wyjÄ…tkami!!!
+                                    //B³êdne pliki bed¹ rzucaæ wyj¹tkami!!!
                                     X509Certificate2 cert = new X509Certificate2(certPath);
 
                                     log?.Add("store.Certificates.Find", true, flush);
@@ -1286,7 +1563,7 @@ namespace DomConsult.GlobalShared.Utilities
     public static class TUniVar
     {
         /// <summary>
-        /// Variables the is null or empty.
+        /// Checks if value is null, DBNull
         /// </summary>
         /// <param name="value">The value.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
@@ -1295,13 +1572,19 @@ namespace DomConsult.GlobalShared.Utilities
             return (value == null) || (value is DBNull);
         }
 
+        /// <summary>
+        /// Checks if value is null, DBNull or default
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="defValue"></param>
+        /// <returns></returns>
         public static bool VarIsNullOrEmptyOrDefault(object value, object defValue)
         {
             return (value == null) || (value is DBNull) || value.Equals(defValue);
         }
 
         /// <summary>
-        /// Variables to int.
+        /// Converts object to int with optional default value assignment
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="var_null">The variable null.</param>
@@ -1309,13 +1592,11 @@ namespace DomConsult.GlobalShared.Utilities
         /// <returns>System.Int32.</returns>
         public static int VarToInt(object value, int var_null = TUniConstants._INT_NULL, bool def = true)
         {
-            int ivalue = var_null;
-
             if (VarIsNullOrEmpty(value))
             {
-                return ivalue;
+                return var_null;
             }
-            else if (int.TryParse(value.ToString(), out ivalue))
+            else if (int.TryParse(value.ToString(), out int ivalue))
             {
                 return ivalue;
             }
@@ -1325,16 +1606,16 @@ namespace DomConsult.GlobalShared.Utilities
             }
             else
             {
-                ivalue = (int)value;
-                return var_null;
+                return (int)value;
             }
         }
 
         /// <summary>
-        /// Variables to string.
+        /// Converts object to string with optional default value assignment
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="var_null">The variable null.</param>
+        /// <param name="len">Optional length of output string</param>
         /// <returns>System.String.</returns>
         public static string VarToStr(object value, string var_null = TUniConstants._STR_NULL, int len = TUniConstants._INT_NULL)
         {
@@ -1354,7 +1635,7 @@ namespace DomConsult.GlobalShared.Utilities
         }
 
         /// <summary>
-        /// Variables to SQL string.
+        /// Converts object to string with quotation and special additional adjustment for SQL statement
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="dateFormat">The date format.</param>
@@ -1362,7 +1643,7 @@ namespace DomConsult.GlobalShared.Utilities
         public static string VarToSQLStr(object value, string dateFormat = "yyyyMMdd HH:mm:ss.fff")
         {
             string res = "null";
-            NumberFormatInfo nfi = null;
+            NumberFormatInfo nfi;
             if (!VarIsNullOrEmpty(value))
             {
                 switch (value.GetType().Name.ToUpper())
@@ -1376,7 +1657,15 @@ namespace DomConsult.GlobalShared.Utilities
                             NumberDecimalSeparator = ".",
                             NumberGroupSeparator = ""
                         };
-                        res = ((string)value).ToString(nfi);
+                        res = ((decimal)value).ToString(nfi);
+                        break;
+                    case "DOUBLE":
+                        nfi = new NumberFormatInfo
+                        {
+                            NumberDecimalSeparator = ".",
+                            NumberGroupSeparator = ""
+                        };
+                        res = ((double)value).ToString(nfi);
                         break;
                     case "FLOAT":
                         nfi = new NumberFormatInfo
@@ -1397,6 +1686,12 @@ namespace DomConsult.GlobalShared.Utilities
             return res;
         }
 
+        /// <summary>
+        /// Converts object to DateTime with optional default value assignment
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="var_null">The default value.</param>
+        /// <returns></returns>
         public static DateTime VarToDateTime(object value, DateTime? var_null = null)
         {
             if (VarIsNullOrEmpty(value))
@@ -1409,6 +1704,11 @@ namespace DomConsult.GlobalShared.Utilities
             }
         }
 
+        /// <summary>
+        /// Converts object to nullable DateTime
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
         public static DateTime? VarToDateTimeN(object value)
         {
             if (VarIsNullOrEmpty(value))
@@ -1422,7 +1722,29 @@ namespace DomConsult.GlobalShared.Utilities
         }
 
         /// <summary>
-        /// Variables the is array.
+        /// Converts unseparated string date to DateTime
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns>DateTime</returns>
+        public static DateTime UnseparatedDate(string value)
+        {
+
+            if (DateTime.TryParseExact(value,
+                                       "yyyyMMdd",
+                                       CultureInfo.InvariantCulture,
+                                       DateTimeStyles.None,
+                                       out DateTime res))
+            {
+                return res;
+            }
+            else
+            {
+                return DateTime.FromOADate(TUniConstants._DATE_NULL);
+            }
+        }
+
+        /// <summary>
+        /// Checks if object is an array with apropriate amount of dimentions
         /// </summary>
         /// <param name="value">The value.</param>
         /// <param name="dimCount">The dim count.</param>
@@ -1447,8 +1769,17 @@ namespace DomConsult.GlobalShared.Utilities
         }
     }
 
+    /// <summary>
+    /// Class TUniTools
+    /// </summary>
     public static class TUniTools
     {
+        /// <summary>
+        /// Builds full string\path containing tokens %UniParamName%
+        /// </summary>
+        /// <param name="acc"></param>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public static string ResolvePath(string acc, string path)
         {
             var regExp = new Regex("%(.)+%");
@@ -1482,9 +1813,48 @@ namespace DomConsult.GlobalShared.Utilities
             return path;
         }
 
+        /// <summary>
+        /// Function checks if result value indicates error
+        /// </summary>
+        /// <param name="result_">Result to check</param>
+        /// <param name="include_csWMK">Optional switch to check WMK</param>
+        /// <returns></returns>
         public static bool ErrorDetected(int result_, bool include_csWMK = false)
         {
             return (result_ < 0) || (result_ == (int)TCSWMK.csWMK_Error) || ((result_ == (int)TCSWMK.csWMK) && include_csWMK);
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public static class TuniDebug
+    {
+        /// <summary>
+        /// Not implemented!!!
+        /// </summary>
+        /// <returns></returns>
+        public static string LogEventA()
+        {
+            return "";
+        }
+
+        /// <summary>
+        /// Not implemented!!!
+        /// </summary>
+        /// <returns></returns>
+        public static string LogEventE()
+        {
+            return "";
+        }
+
+        /// <summary>
+        /// Not implemented!!!
+        /// </summary>
+        /// <returns></returns>
+        public static string OV2HTML()
+        {
+            return "";
         }
     }
 }

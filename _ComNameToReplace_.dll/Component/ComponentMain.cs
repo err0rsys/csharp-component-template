@@ -5,13 +5,28 @@ using DomConsult.GlobalShared.Utilities;
 using DomConsult.Components.Interfaces;
 using DomConsult.Platform;
 using DomConsult.Platform.Extensions;
+using System.IO;
+using System.Xml;
+using System.Collections.Generic;
+using DomConsult.CIPHER;
+
+/*
+ * W razie problemów z zale¿noœciami uruchom w konsoli Package Manager: Update-Package -reinstall
+ * Zmieñ nazwê aplikacji COM+ (dawniej - pakietu COM+) w plikach install.bat i deploy.bat
+ * SprawdŸ listê zadañ (TODO). Je¿eli wykona³eœ zadanie wyrzuæ komentarz TODO.
+ */
 
 namespace DomConsult.Components
 {
+    /// <summary>
+    /// Opis komponentu bran¿owego
+    /// </summary>
+    /// <seealso cref="ManagerBase" />
+
 #if !TEST
     [ComVisible(true)]
-    [Guid("BEDF705E-B788-47A6-B915-2BD71DA159D4")]
-    [ProgId("Component.Manager")]
+    [Guid("3611FDAE-CA45-4EB3-A474-1783339A568A")]
+    [ProgId("_ComNameToReplace_.Manager")]
     [Transaction(TransactionOption.Disabled)]
     [JustInTimeActivation(true)]
     [ClassInterface(ClassInterfaceType.None)]
@@ -19,12 +34,7 @@ namespace DomConsult.Components
 #else
 #endif
 
-    /// <summary>
-    /// Class that contain business logic.
-    /// Implements the <see cref="ManagerBase" />
-    /// </summary>
-    /// <seealso cref="ManagerBase" />
-    public class Manager: ManagerBase, IManager
+    public partial class Manager : ManagerBase, IManager
     {
         /// <summary>
         /// Put initialization code here.
@@ -57,8 +67,8 @@ namespace DomConsult.Components
         /// </summary>
         public override void OnAssignAccessCode()
         {
-            MtsComId = ComponentDef.MtsComID;
-            MtsComName = ComponentDef.MtsComName;
+            MtsComId = ComponentDef.ComPlusID;
+            MtsComName = ComponentDef.ComPlusName;
         }
 
         /// <summary>
@@ -86,18 +96,9 @@ namespace DomConsult.Components
             }
 
             Record.Id = -1;
-            Record.TableName = "uniExample";
-            Record.KeyName = Record.TableName + "Id";
-            Record.Query = @"
-SELECT
-  uniExampleId,
-  StringValue,
-  IntegerValue,
-  FloatValue,
-  CurrencyValue,
-  DateValue
-FROM uniExample m
-WHERE m.uniExampleId = {0}";
+            //Record.TableName = "uniExample";
+            //Record.KeyName = Record.TableName + "Id";
+            //Record.Query = @"";
 
             BDW.AddModifyOther(TBDOthers.coDisabledFunction, 0);
             BDW.AddModifyOther(TBDOthers.coAddAllFieldValuesToArray, 1);
@@ -108,43 +109,6 @@ WHERE m.uniExampleId = {0}";
         /// </summary>
         public override void OnProcessInputParams()
         {
-            //TODO: OnProcessInputParams - [MP] Czy ta metoda jest do czegoœ w ogóle potrzebna
-            //                             [AM] do wczytywania i obróbki parametrów zewnêtrznych komponentu
-
-            //INFO: Analyze input parameters
-
-            if (BDW.ParamExists(Record.KeyName))
-                Record.Id = BDW.Params[Record.KeyName].AsInt();
-
-            /*
-            if (BDW.ParamExists("param_1"))
-                param1 = BDW.Params["param1"].AsInt();
-            */
-
-            if (Record.Id > 0)
-            {
-                var sql = string.Format(@"
-SELECT
-  StringValue
-FROM uniExample
-WHERE uniExampleId={0}", Record.Id);
-
-                int res = ComUtils.GetPacket(AccessCode, sql, -1, -1, out object[,] data);
-
-                if (res > 0)
-                {
-                    FormCaption = string.Format("{0}:{1}", Language.GetText(ComponentDef.TXT_A00100_ID), TUniVar.VarToStr(data[1, 0]));
-                }
-                else
-                {
-                    NewFormState = TFormState.cfsCloseBD;
-                    Err.MessageRaise(ManagerBaseDef.DIC_P2000000_ID, ManagerBaseDef.MSG_P00201_ID, new object[] { "", ""});
-                }
-            }
-            else
-            {
-                NewFormState = TFormState.cfsNew;
-            }
         }
 
         /// <summary>
@@ -156,7 +120,7 @@ WHERE uniExampleId={0}", Record.Id);
         }
 
         /// <summary>
-        /// Gets the value (method body).
+        /// Gets the value of the given field (method body).
         /// </summary>
         /// <param name="fieldName">Name of the field.</param>
         /// <param name="fieldValue">The field value.</param>
@@ -191,11 +155,7 @@ WHERE uniExampleId={0}", Record.Id);
         {
             // set the field values
 
-            BDW.AddModifyField("StringFld", null);
-            BDW.AddModifyField("IntegerFld", null);
-            BDW.AddModifyField("FloatFld", null);
-            BDW.AddModifyField("CurrencyFld", null);
-            BDW.AddModifyField("DateFld", null);
+            //BDW.AddModifyField("StringFld", null);
         }
 
         /// <summary>
@@ -207,11 +167,7 @@ WHERE uniExampleId={0}", Record.Id);
 
             if (Record.DataSize > 0)
             {
-                BDW.AddModifyField("StringFld", Record.Data[1, 1]);
-                BDW.AddModifyField("IntegerFld", Record.Data[1, 2]);
-                BDW.AddModifyField("FloatFld", Record.Data[1, 3]);
-                BDW.AddModifyField("CurrencyFld", Record.Data[1, 4]);
-                BDW.AddModifyField("DateFld", Record.Data[1, 5]);
+                //BDW.AddModifyField("StringFld", Record.Data[1, 1]);
             }
         }
 
@@ -243,6 +199,7 @@ WHERE uniExampleId={0}", Record.Id);
             int errorCount = 0;
 
             // check some save conditions
+            /*
             if (BDW.FieldExists("StringFld"))
             {
                 string value = BDW.Fields["StringFld"].AsString;
@@ -251,11 +208,12 @@ WHERE uniExampleId={0}", Record.Id);
                 {
                     errorCount++;
 
-                    //INFO: get MLText instead of static text: Language.GetText(0) 
+                    //INFO: get MLText instead of static text: Language.GetText(0)
                     errorDescription = String.Concat(errorDescription,
                         "Pole [String] powinno mieæ przynajmniej 5 znaków.", Environment.NewLine);
                 }
             }
+            */
 
             return errorCount;
         }
@@ -269,6 +227,7 @@ WHERE uniExampleId={0}", Record.Id);
         {
             // Save record accordingly to the decision of the user if any expected.
 
+            /*
             if (decision == TConfirmResult.acrYes)
             {
                 // Save record to database
@@ -297,6 +256,7 @@ WHERE uniExampleId={0}", Record.Id);
 
                 Err.Check(Record.Id, Record.ComObj);
             }
+            */
         }
 
         /// <summary>
@@ -313,6 +273,7 @@ WHERE uniExampleId={0}", Record.Id);
             int errorCount = 0;
 
             // check some delete conditions
+            /*
             if (BDW.FieldExists("IntegerFld"))
             {
                 int value = BDW.Fields["IntegerFld"].AsInt;
@@ -324,6 +285,7 @@ WHERE uniExampleId={0}", Record.Id);
                         string.Format(Language.GetText(ComponentDef.TXT_A00101_ID), "10"));
                 }
             }
+            */
 
             return errorCount;
         }
@@ -358,7 +320,23 @@ WHERE uniExampleId={0}", Record.Id);
         /// <returns>System.Int32.</returns>
         public override int OnRunMethod(string methodName, ref object param)
         {
-            return -1;
+            object data;
+            int result = -1;
+            var _params = param as object[];
+
+            methodName = methodName.ToUpper();
+            switch (methodName)
+            {
+                case ComponentDef.RM_XXXXX:
+                    result = RM_XXXXX(_params[0], out data);
+                    _params[2] = data;
+                    param = _params;
+                    break;
+                default:
+                    break;
+            }
+
+            return result;
         }
     }
 }

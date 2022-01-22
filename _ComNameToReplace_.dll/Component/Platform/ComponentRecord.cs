@@ -14,19 +14,19 @@ namespace DomConsult.Platform
         /// <summary>
         /// The object identifier
         /// </summary>
-        public string ObjectId;
+        public string ObjectId = string.Empty;
         /// <summary>
         /// The primary key name
         /// </summary>
-        public string KeyName;
+        public string KeyName = string.Empty;
         /// <summary>
         /// The table name
         /// </summary>
-        public string TableName;
+        public string TableName = string.Empty;
         /// <summary>
         /// The query
         /// </summary>
-        public string Query;
+        public string Query = string.Empty;
         /// <summary>
         /// The COM object
         /// </summary>
@@ -38,6 +38,6 @@ namespace DomConsult.Platform
         /// <summary>
         /// Data array size
         /// </summary>
-        public int DataSize;
+        public int DataSize = 0;
     }
 }

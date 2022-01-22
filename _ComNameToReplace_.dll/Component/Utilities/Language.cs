@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Runtime.InteropServices;
 using DomConsult.Platform.Extensions;
 
@@ -12,7 +12,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// <summary>
         /// The MTS COM identifier
         /// </summary>
-        private readonly int MTSComId;
+        private readonly int ComId;
         /// <summary>
         /// The language identifier
         /// </summary>
@@ -32,7 +32,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// <param name="accessCode">The access code.</param>
         public Language(int mtsComId, object accessCode)
         {
-            MTSComId = mtsComId;
+            ComId = mtsComId;
 
             //Type LangComType = Type.GetTypeFromProgID("Language.Manager", true);
             //LangManager = Activator.CreateInstance(LangComType);
@@ -49,18 +49,20 @@ namespace DomConsult.GlobalShared.Utilities
         /// </summary>
         public void Dispose()
         {
-            /* jawnie zwalniamy Coma nie czekajÄ…c na odÅ›miecanie pamiÄ™ci */
+            /* jawnie zwalniamy Coma nie czekaj¹c na odœmiecanie pamiêci */
             //while (Marshal.ReleaseComObject(LangManager) > 0) { }
         }
 
         /// <summary>
         /// Gets the text.
         /// </summary>
-        /// <param name="textId">The text identifier.</param>
+        /// <param name="textId">Id of the multilanguage text.</param>
+        /// <param name="comId">Optional Id of the dictionary.</param>
+        /// <param name="langId">Optional Id of the language.</param>
         /// <returns>System.String.</returns>
-        public string GetText(int textId, int mtsComId = -1, int langId = -1)
+        public string GetText(int textId, int comId = -1, int langId = -1)
         {
-            return TuniGlobalCache.GetMLText(mtsComId > 0 ? mtsComId : MTSComId, langId > 0 ? langId : LangId, textId);
+            return TuniGlobalCache.GetMLText(comId > 0 ? comId : ComId, langId > 0 ? langId : LangId, textId);
             //return LangManager.GetText(MTSComId, LangId, textId);
         }
     }

@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EWSoftware.SHFB.2021.11.7\build\EWSoftware.SHFB.props" Condition="Exists('..\packages\EWSoftware.SHFB.2021.11.7\build\EWSoftware.SHFB.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -9,10 +10,13 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>DomConsult.Components</RootNamespace>
-    <AssemblyName>Component</AssemblyName>
+    <AssemblyName>_ComNameToReplace_</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Test|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,12 +38,13 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <RegisterForComInterop>false</RegisterForComInterop>
+    <DocumentationFile>..\Help\_ComNameToReplace_.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;RELEASE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -63,6 +68,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ComponentDef.cs" />
+    <Compile Include="ComponentTools.cs" />
     <Compile Include="Platform\ComponentBase.cs" />
     <Compile Include="ComponentMain.cs" />
     <Compile Include="Platform\ComponentBaseDef.cs" />
@@ -71,6 +77,18 @@
     <Compile Include="Platform\Extensions\PlatformExtenstions.cs" />
     <Compile Include="Platform\Interfaces\IPlatform.cs" />
     <Compile Include="Utilities\BDWrapper.cs" />
+    <Compile Include="Utilities\Cipher\BlowfishEngine.cs" />
+    <Compile Include="Utilities\Cipher\CryptoException.cs" />
+    <Compile Include="Utilities\Cipher\DataLengthException.cs" />
+    <Compile Include="Utilities\Cipher\GeneralDigest.cs" />
+    <Compile Include="Utilities\Cipher\IBlockCipher.cs" />
+    <Compile Include="Utilities\Cipher\ICipherParameters.cs" />
+    <Compile Include="Utilities\Cipher\IDigest.cs" />
+    <Compile Include="Utilities\Cipher\KeyParameter.cs" />
+    <Compile Include="Utilities\Cipher\Pack.cs" />
+    <Compile Include="Utilities\Cipher\RipeMD256Digest.cs" />
+    <Compile Include="Utilities\Cipher\SecurityManager.cs" />
+    <Compile Include="Utilities\ComDef.cs" />
     <Compile Include="Utilities\ComLogger.cs" />
     <Compile Include="Utilities\ComUtils.cs" />
     <Compile Include="Utilities\ComWrapper.cs" />
@@ -82,8 +100,31 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Component.snk" />
+    <None Include="install.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>if $(ConfigurationName) == Release (
+    call "$(DevEnvDir)..\Tools\VsDevCmd.bat"
+    tlbexp.exe $(TargetDir)$(TargetFileName)
+    "$(SolutionDir)Deployment\deploy.bat" "$(TargetDir)" "$(ProjectDir)" "$(ProjectName)"
+)</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ComponentPath Condition="'$(ComponentPath)' == ''">$(SolutionDir)\packages\</ComponentPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SHFBROOT Condition=" '$(SHFBROOT)' == '' ">$(SolutionDir)\packages\EWSoftware.SHFB.2021.4.9\Tools\</SHFBROOT>
+  </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\EWSoftware.SHFB.2021.11.7\build\EWSoftware.SHFB.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EWSoftware.SHFB.2021.11.7\build\EWSoftware.SHFB.props'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

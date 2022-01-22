@@ -6,12 +6,12 @@ using System.EnterpriseServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Component")]
-[assembly: AssemblyDescription("Component template")]
+[assembly: AssemblyTitle("_ComNameToReplace_")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("DomConsult Sp. z o.o.")]
-[assembly: AssemblyProduct("Component")]
-[assembly: AssemblyCopyright("Copyright ©  2021 All rights reserved")]
+[assembly: AssemblyProduct("")]
+[assembly: AssemblyCopyright("Copyright © 2022 All rights reserved")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -21,7 +21,7 @@ using System.EnterpriseServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("e07b178d-34a8-4eeb-a569-f74d79de1f12")]
+[assembly: Guid("C26012BE-17D1-4497-992B-1B930E286E14")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -33,11 +33,13 @@ using System.EnterpriseServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("21.4.1.2")]
-[assembly: AssemblyFileVersion("21.4.1.2")]
+[assembly: AssemblyVersion("22.0.0.1")] //TODO: Wersja zgodna ze schematem Y.M.D.version_number
+[assembly: AssemblyFileVersion("22.0.0.1")]
 [assembly: ApplicationAccessControl(
         AccessChecksLevel = AccessChecksLevelOption.ApplicationComponent,
         Authentication = AuthenticationOption.Packet,
         ImpersonationLevel = ImpersonationLevelOption.Impersonate,
         Value = false)]
+#if RELEASE
 [assembly: ApplicationActivation(ActivationOption.Server)]
+#endif

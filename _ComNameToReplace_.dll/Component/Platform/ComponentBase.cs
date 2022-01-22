@@ -1,7 +1,7 @@
-﻿//TODO: ManagerBaseDef - [MP] Language manager vs. Cache
-//TODO: ManagerBaseDef - [MP] FormId, FormCaption, ObjectTypeId, MainObjectId, : czy set-ery tych właściwości nie powinny robić BDW.AddModifyOther?
+﻿//DEVEL: ManagerBaseDef - [MP] Language manager vs. Cache
+//DEVEL: ManagerBaseDef - [MP] FormId, FormCaption, ObjectTypeId, MainObjectId, : czy set-ery tych właściwości nie powinny robić BDW.AddModifyOther?
 //                       [AM] mogą, będzie trochę czytelniej
-//TODO: ManagerBaseDef - [MP] Trace.TraceXXX - używanie Trace jest raczej złym pomysłem. Trzeba przejść na Logger-a i ewentualnie coś co rzuca info na consolę.
+//DEVEL: ManagerBaseDef - [MP] Trace.TraceXXX - używanie Trace jest raczej złym pomysłem. Trzeba przejść na Logger-a i ewentualnie coś co rzuca info na consolę.
 //                       [AM] jakoś nie widzę w tym nic złego, Logger? Hmmm, to już nie moje klocki.
 
 using System;
@@ -105,13 +105,16 @@ namespace DomConsult.Platform
         /// <value>The error variable.</value>
         public Err Err
         {
-            get { return _err; }
-        }
+            get
+            {
+                if (!ComUtils.Assigned(_err))
+                {
+                    _err = new Err(-1);
+                }
 
-        /// <summary>
-        /// The MTS COM identifier (private)
-        /// </summary>
-        private int _mtsComId;
+                return _err; 
+            }
+        }
 
         /// <summary>
         /// Gets or sets the MTS COM identifier.
@@ -121,17 +124,12 @@ namespace DomConsult.Platform
         {
             get
             {
-                return _mtsComId;
+                return Err.MTSComId;
             }
 
             set
             {
-                _mtsComId = value;
-
-                if (!ComUtils.Assigned(_err))
-                {
-                    _err = new Err(_mtsComId);
-                }
+                Err.MTSComId = value;
             }
         }
 
@@ -218,6 +216,8 @@ namespace DomConsult.Platform
             try
             {
                 base.AssignAccessCode(accessCode);
+                Err.ErrMsgStack = null;
+                Err.ErrCode = 0;
 
                 UserFormState = TFormState.cfsNone;
                 NewFormState = TFormState.cfsNone;
@@ -256,12 +256,13 @@ namespace DomConsult.Platform
             int result = 0;
             try
             {
-                if (TUniVar.VarIsArray(param))
-                {
-                    Record.ObjectId = string.Empty;
-                    BDW.LoadMultiInOneParams(param);
-                }
-                else
+                Err.ErrMsgStack = null;
+                Err.ErrCode = 0;
+
+                Record.ObjectId = string.Empty;
+                BDW.LoadMultiInOneParams(param);
+
+                if (!TUniVar.VarIsArray(param))
                 {
                     Record.ObjectId = TUniVar.VarToStr(param);
                     BDW.LoadParams(Record.ObjectId);
@@ -623,8 +624,8 @@ namespace DomConsult.Platform
         /// <returns>System.Int32.</returns>
         public int NewRecord()
         {
-            //TODO: NewRecord - [MP] Co powinno się wydarzyć jeżeli tu wystąpi błąd?
-            //                  [AM] Chodzi o coś specjalnego?
+            //DEVEL: NewRecord - [MP] Co powinno się wydarzyć jeżeli tu wystąpi błąd?
+            //                   [AM] Chodzi o coś specjalnego?
 
             try
             {
@@ -729,7 +730,8 @@ namespace DomConsult.Platform
         /// <summary>
         /// Checks the before delete (method body).
         /// </summary>
-        /// <param name="errorDescription">The error description.</param>
+        /// <param name="errorDescription">The error description that makes delete operation impossible</param>
+        /// <param name="noDialog">Parameter determines whether delete operation should be performed without any dialog</param>
         /// <returns>System.Int32.</returns>
         public virtual int OnCheckBeforeDelete(out string errorDescription, out bool noDialog)
         {
@@ -934,6 +936,7 @@ namespace DomConsult.Platform
         /// Checks the before save (method body).
         /// </summary>
         /// <param name="errorDescription">The error description.</param>
+        /// <param name="noDialog">Parameter determines whether save operation should be performed without any dialog</param>
         /// <returns>System.Int32.</returns>
         public virtual int OnCheckBeforeSave(out string errorDescription, out bool noDialog)
         {
@@ -984,7 +987,8 @@ namespace DomConsult.Platform
         /// <summary>
         /// Saves the record (method body).
         /// </summary>
-        /// <param name="decision">State of the form.</param>
+        /// <param name="decision">Decision passed by user after dialog shown before save operation</param>
+        /// <param name="proceed">Parameter that specifies whether save operation should be proceed</param>
         /// <exception cref="NotImplementedException"></exception>
         public virtual void OnSaveRecord(TConfirmResult decision, ref bool proceed)
         {
@@ -1224,9 +1228,9 @@ namespace DomConsult.Platform
         /// <param name="result">The result to check.</param>
         private void CheckTransactionState(int result)
         {
-            //TODO: CheckTransactionState - [MP] Na podstawie czego ta metoda powinna działać: Result czy TransactionStatus?
+            //DEVEL: CheckTransactionState - [MP] Na podstawie czego ta metoda powinna działać: Result czy TransactionStatus?
             //                              [AM] Na podstawie jednego i drugiego
-            //TODO: CheckTransactionState - [MP] Gdzie i jak ta metoda powinna być wołana uwzględniając konwersacje z użytkownikiem?
+            //DEVEL: CheckTransactionState - [MP] Gdzie i jak ta metoda powinna być wołana uwzględniając konwersacje z użytkownikiem?
             //                              [AM] SupportSQL, RunMethod
 
             if (ExTransactionId > 0) // external transaction
@@ -1264,6 +1268,9 @@ namespace DomConsult.Platform
             OnInitialize();
         }
 
+        /// <summary>
+        /// Implements initialization of the component's state (method body).
+        /// </summary>
         protected virtual void OnInitialize()
         {
             //throw new NotImplementedException();
@@ -1309,6 +1316,10 @@ namespace DomConsult.Platform
             base.Dispose(disposing);
         }
 
+        /// <summary>
+        /// Implements deinitialization of the component's state (method body).
+        /// </summary>
+        /// <param name="disposing"></param>
         protected virtual void OnDeinitialize(bool disposing)
         {
             //throw new NotImplementedException();
@@ -1322,7 +1333,9 @@ namespace DomConsult.Platform
         {
             if (Err != null)
             {
-                Err.ErrMsgStack = wmk;
+                var _wmk = Err.ErrMsgStack;
+                TWMK.AddMessages(ref _wmk, wmk);
+                Err.ErrMsgStack = _wmk;
             }
         }
     }

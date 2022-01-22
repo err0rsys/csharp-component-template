@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -45,7 +45,7 @@ namespace DomConsult.GlobalShared.Utilities
         [DllImport("kernel32", ExactSpelling = true)]
         private static extern void SwitchToThread();
 
-        #region GUID constants and registry keys
+        #region ClassID & ProgID constants and registry keys
         /// <summary>
         /// The cs dbcom unique identifier
         /// </summary>
@@ -78,9 +78,14 @@ namespace DomConsult.GlobalShared.Utilities
         public const string CS_READER_GUID = "{6630571A-3668-42D0-9AFD-7711382CA53B}";
 
         /// <summary>
-        /// The cs gkex unique identifier
+        /// The GateKeeperEx.Manager classID
         /// </summary>
         public const string CS_GKEX_GUID = "{57EBF9C7-7732-43EE-91A4-4D9D93CF5C7D}";
+        /// <summary>
+        /// The GateKeeperEx.Manager progID
+        /// </summary>
+        public const string CS_GKEX_ProgID = "GateKeeperEx.Manager";
+
         /// <summary>
         /// The cs sysreg unique identifier
         /// </summary>
@@ -130,6 +135,20 @@ namespace DomConsult.GlobalShared.Utilities
         public static string ERR_MESSAGE_SQLCOMMAND = "Unexpected sql Command error.";
 
         /// <summary>
+        /// Checks if locker object is properly initialized. If not, exception is rised.
+        /// </summary>
+        /// <param name="locker"></param>
+        private static void CheckLocker(ComWrapper locker)
+        {
+            if (locker == null)
+                throw new InvalidEnumArgumentException("Empty parameter value 'locker'!");
+            else if (!locker.ClassID.Equals(DBC_LOCKER_CLASS))
+                throw new InvalidEnumArgumentException("Wrong parameter value 'locker'!");
+            else if (!locker.Connected)
+                throw new InvalidEnumArgumentException("Wrong parameter value 'locker'! Not Connected.");
+        }
+
+        /// <summary>
         /// Enum PECDataTypeFlags
         /// </summary>
         public enum PECDataTypeFlags
@@ -137,24 +156,19 @@ namespace DomConsult.GlobalShared.Utilities
             /// <summary>
             /// The cp col visible
             /// </summary>
-            cpColVisible = 1,    // Kolumna ma byÄ‡ widoczna dla klienta
+            cpColVisible = 1,   // Kolumna ma byæ widoczna dla klienta
             /// <summary>
             /// The cp object identifier
             /// </summary>
-            cpObjectId = 2,      // Kolumna przechowuje wartoÅ›Ä‡ klucza gÅ‚Ã³wnego
-                                 // dla rekordu (tylko jedna kolumna w paczce) np: '/Rok=2008/Miesiac=1/CreditId=123'
+            cpObjectId = 2,     // Kolumna przechowuje wartoœæ klucza g³ównego dla rekordu (tylko jedna kolumna w paczce) np: '/Rok=2008/Miesiac=1/CreditId=123'
             /// <summary>
             /// The cp object type identifier
             /// </summary>
-            cpObjectTypeId = 4,  // Kolumna przechowuje wartoÅ›Ä‡ okreÅ›lajÄ…ca
-                                 // ObjectTypeId dla bieÅ¼Ä…cego rekordu
-                                 // (tylko jedna kolumna w paczce)
+            cpObjectTypeId = 4, // Kolumna przechowuje wartoœæ okreœlaj¹ca ObjectTypeId dla bie¿¹cego rekordu (tylko jedna kolumna w paczce)
             /// <summary>
             /// The cp col first
             /// </summary>
-            cpColFirst = 32,     // Kolumna widoczna ktÃ³ra ma byÄ‡ pierwszÄ…
-                                 // kolumnÄ… w liÅ›cie prezentowanej uÅ¼ytkownikowi
-                                 // (opcjonalnie)
+            cpColFirst = 32,    // Kolumna widoczna która ma byæ pierwsz¹ kolumn¹ w liœcie prezentowanej u¿ytkownikowi (opcjonalnie)
 
             /// <summary>
             /// The cp date
@@ -229,14 +243,14 @@ namespace DomConsult.GlobalShared.Utilities
         /// </summary>
         public static void UseDBCSystem()
         {
-            //UWAGA: To ustawienie ma wpÅ‚yw na wszystkie instancje obiektÃ³w danego komponentu.
-            //UÅ¼ywaÄ‡ tylko jeÅ¼eli komponent danego typu ma ciÄ…gle uÅ¼ywaÄ‡ DBCom-a SYSTEM!!!
-            //PrzeÅ‚Ä…czanie w locie miÄ™dzy klasami DBC obecnie nie jest moÅ¼liwe bo C# nie pozwala dziedziczyÄ‡ po ststaycznych klasach.
-            //Trzeba by wszystko przerobiÄ‡ na klasy zwykÅ‚e co niesie dalsze konsekwencje :-(.
-            //w delphi mogliÅ›my to zrobiÄ‡ poprzez klasÄ™ statycznÄ… TDBCSystem = class(TDBC), ktÃ³ra nadpisywaÅ‚a metodÄ™ desydujÄ…ca o tym,
-            //jakÄ… klasÄ™ DBCom-a uÅ¼ywaÄ‡.
+            //UWAGA: To ustawienie ma wp³yw na wszystkie instancje obiektów danego komponentu.
+            //U¿ywaæ tylko je¿eli komponent danego typu ma ci¹gle u¿ywaæ DBCom-a SYSTEM!!!
+            //Prze³¹czanie w locie miêdzy klasami DBC obecnie nie jest mo¿liwe bo C# nie pozwala dziedziczyæ po ststaycznych klasach.
+            //Trzeba by wszystko przerobiæ na klasy zwyk³e co niesie dalsze konsekwencje :-(.
+            //w delphi mogliœmy to zrobiæ poprzez klasê statyczn¹ TDBCSystem = class(TDBC), która nadpisywa³a metodê desyduj¹ca o tym,
+            //jak¹ klasê DBCom-a u¿ywaæ.
 
-            //Mam nadziejÄ™, Å¼e COM+ nie bÄ™dzie wisiaÅ‚ na tym Lock-u
+            //Mam nadziejê, ¿e COM+ nie bêdzie wisia³ na tym Lock-u
             lock(dbcLockObj)
             {
                 if (!ComUtils.DBC_CLASS.Equals(ComUtils.CS_SYSTEM_GUID, StringComparison.CurrentCultureIgnoreCase))
@@ -272,7 +286,14 @@ namespace DomConsult.GlobalShared.Utilities
             }
         }
 
-public static object GetText(int comId, int langId, int textId)
+        /// <summary>
+        /// Gets multilanguage text for given poarameters
+        /// </summary>
+        /// <param name="comId">Id of dictionary</param>
+        /// <param name="langId">Id of language</param>
+        /// <param name="textId">Id of text</param>
+        /// <returns></returns>
+        public static object GetText(int comId, int langId, int textId)
         {
             object paramValue=null;
 
@@ -283,8 +304,7 @@ public static object GetText(int comId, int langId, int textId)
                 if (langManager.Connected)
                 {
                     object[] method_params = new object[] { comId, langId, textId };
-                    string errMsg = string.Empty;
-                    paramValue = langManager.InvokeMethod("GetText", method_params, new bool[] { false, false, false }, ref errMsg);
+                    paramValue = langManager.InvokeMethod("GetText", method_params, new bool[] { false, false, false });
                 }
             }
 
@@ -307,7 +327,7 @@ public static object GetText(int comId, int langId, int textId)
             else
                 return defaultValue;
         }
-        /* MS 27.11.2015 Metody GetRegParam nie wolno wywoÅ‚ywaÄ‡ bez AccessCode-a !!
+        /* MS 27.11.2015 Metody GetRegParam nie wolno wywo³ywaæ bez AccessCode-a !!
         public static string GetRegParam(string paramName, string defaultValue)
         {
             return GetRegParam(paramName, defaultValue, string.Empty);
@@ -331,7 +351,7 @@ public static object GetText(int comId, int langId, int textId)
             }
             else
             {
-                //KiedyÅ› moÅ¼na zrobiÄ‡ bezpoÅ›rednio ale musiaÅ‚aby siÄ™ rozpropagowaÄ‡ wersja z metodÄ… interfejsowÄ… RunMethodNet
+                //Kiedyœ mo¿na zrobiæ bezpoœrednio ale musia³aby siê rozpropagowaæ wersja z metod¹ interfejsow¹ RunMethodNet
                 //ComWrapper sysreg = CreateRemoteCom(new Guid(CS_SYSREG_GUID), accessCode);
                 sysreg = ComUtils.CreateComInStandardCom("Sysreg.Registry", accessCode, string.Empty);
             }
@@ -340,23 +360,15 @@ public static object GetText(int comId, int langId, int textId)
             {
                 if (sysreg.Connected)
                 {
-                    //woÅ‚anie GetValue przez runmethode sysrega jest specyficzne dlatego trzeba byÅ‚o stworzyÄ‡ indywidualne woÅ‚anie 
+                    //wo³anie GetValue przez runmethode sysrega jest specyficzne dlatego trzeba by³o stworzyæ indywidualne wo³anie 
                     object[] rm_params = new object[] { "GETVALUE", paramName, null };
-                    string errMsg = string.Empty;
-                    object res = sysreg.InvokeMethod("RunMethodNet", rm_params, new bool[] { false, false, true }, ref errMsg);
+                    object res = sysreg.InvokeMethod("RunMethodNet", rm_params, new bool[] { false, false, true });
 
                     int result = CheckError(res, -1);
                     if (result >= 0)
                     {
                         paramValue = Convert.ToString(rm_params[2]);
                     }
-                    /*
-                    if (result < 0 && (Params.Length == 3 && Params[2] == null))
-                    {
-                        Params[2] = "RunMethod call error: " + ErrorMessage;
-                    }
-                    */
-
                 }
             }
 
@@ -366,21 +378,17 @@ public static object GetText(int comId, int langId, int textId)
         /// <summary>
         /// Gets the uni parameter.
         /// </summary>
-        /// <param name="AccessCode">The access code.</param>
+        /// <param name="accessCode">The access code.</param>
         /// <param name="paramName">Name of the parameter.</param>
         /// <param name="defaultValue">The default value.</param>
         /// <returns>System.String.</returns>
-        public static string GetUniParam(string AccessCode, string paramName, string defaultValue)
+        public static string GetUniParam(string accessCode, string paramName, string defaultValue)
         {
-            int res = GetPacket(
-                AccessCode,
-                string.Format("SELECT paramValue " +
-                              "FROM uniParam " +
-                              "WHERE paramName = '{0}'",
-                              paramName),
-                -1,
-                -1,
-                out object[,] packet);
+            int res = GetPacket(accessCode,
+                                $"SELECT paramValue FROM uniParam WHERE paramName = '{paramName}'",
+                                -1,
+                                -1,
+                                out object[,] packet);
 
             if (res > 0)
                 return packet[1, 0].ToString();
@@ -409,11 +417,11 @@ public static object GetText(int comId, int langId, int textId)
         /// <summary>
         /// Assigneds the specified a object.
         /// </summary>
-        /// <param name="AObject">a object.</param>
+        /// <param name="anObject">a object.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public static bool Assigned(object AObject)
+        public static bool Assigned(object anObject)
         {
-            return AObject != null;
+            return anObject != null;
         }
 
         /// <summary>
@@ -450,89 +458,86 @@ public static object GetText(int comId, int langId, int textId)
         /// <summary>
         /// Checks the error.
         /// </summary>
-        /// <param name="Result">The result.</param>
-        /// <param name="ResultIfNull">The result if null.</param>
+        /// <param name="result">The result.</param>
+        /// <param name="resultIfNull">The result if null.</param>
         /// <returns>System.Int32.</returns>
-        public static int CheckError(object Result, int ResultIfNull = 0)
+        public static int CheckError(object result, int resultIfNull = 0)
         {
-            return TUniVar.VarToInt(Result, ResultIfNull, false);
+            return TUniVar.VarToInt(result, resultIfNull, false);
         }
 
         /// <summary>
         /// Checks the error with throw.
         /// </summary>
-        /// <param name="Result">The result.</param>
+        /// <param name="result">The result.</param>
         /// <param name="message">The message.</param>
         /// <exception cref="Exception"></exception>
-        public static void CheckErrorWithThrow(object Result, string message)
+        public static void CheckErrorWithThrow(object result, string message)
         {
-            if (TUniVar.VarToInt(Result, 0) < 0)
+            if (TUniVar.VarToInt(result, 0) < 0)
                 throw new Exception(message);
         }
 
         /// <summary>
         /// Gets the time out parameter value.
         /// </summary>
-        /// <param name="TimeOut">The time out.</param>
-        /// <param name="AddSeparator">if set to <c>true</c> [add separator].</param>
+        /// <param name="timeOut">The time out.</param>
+        /// <param name="addSeparator">if set to <c>true</c> [add separator].</param>
         /// <returns>System.String.</returns>
-        public static string GetTimeOutParamValue(int TimeOut, bool AddSeparator)
+        public static string GetTimeOutParamValue(int timeOut, bool addSeparator)
         {
-            string res = "";
-
-            if (TimeOut != -1)
-            {
-                if (AddSeparator)
-                    res = String.Format("&parameters=/timeout={0}", TimeOut);
-                else
-                    res = String.Format("parameters=/timeout={0}", TimeOut);
-            }
-            return res;
-        }
-
-        public static ComWrapper CreateComFromProgID(string progID, string AccessCode)
-        {
-            return CreateComFromProgID(progID, AccessCode, true);
+            return timeOut == -1 ? "" : ((addSeparator ? "&" : "") + $"parameters=/timeout={timeOut}");
         }
 
         /// <summary>
-        /// Creates the COM.
+        /// Creates COM by progID
         /// </summary>
-        /// <param name="GUID">The unique identifier.</param>
-        /// <param name="AccessCode">The access code.</param>
+        /// <param name="progID"></param>
+        /// <param name="accessCode"></param>
+        /// <returns></returns>
+        public static ComWrapper CreateComFromProgID(string progID, string accessCode)
+        {
+            return CreateComFromProgID(progID, accessCode, true);
+        }
+
+        /// <summary>
+        /// Creates COM by classID.
+        /// </summary>
+        /// <param name="classID">The unique identifier.</param>
+        /// <param name="accessCode">The access code.</param>
         /// <returns>ComWrapper.</returns>
-        public static ComWrapper CreateCom(string GUID, string AccessCode)
+        public static ComWrapper CreateCom(string classID, string accessCode)
         {
-            return CreateCom(GUID, AccessCode, true);
+            return CreateCom(classID, accessCode, true);
         }
 
         /// <summary>
-        /// Creates the COM.
+        /// Creates COM by classID
         /// </summary>
-        /// <param name="GUID">The unique identifier.</param>
-        /// <param name="AccessCode">The access code.</param>
+        /// <param name="classID">The unique identifier.</param>
+        /// <param name="accessCode">The access code.</param>
         /// <param name="assignAccessCode">if set to <c>true</c> [assign access code].</param>
         /// <returns>ComWrapper.</returns>
-        public static ComWrapper CreateCom(string GUID, string AccessCode, bool assignAccessCode)
+        public static ComWrapper CreateCom(string classID, string accessCode, bool assignAccessCode)
         {
             ComWrapper ComWrapper = new ComWrapper
             {
-                AccessCode = AccessCode
+                AccessCode = accessCode
             };
 
             /*
              * MS 03.12.2015 
-             * Z jakiegoÅ› powodu woÅ‚anie Connect(string className) zwraca bÅ‚Ä…d:
+             * Z jakiegoœ powodu wo³anie Connect(string className) zwraca b³¹d:
              * Invalid class string Exception from HRESULT: 0x800401F3 (CO_E_CLASSSTRING))
-             * Ma to zwiÄ…zek z tworzeniem typu poprzez wywoÅ‚anie Type.GetTypeFromProgID(className, true);
-             * WyjÄ…tek nie jest zgÅ‚aszany jeÅ›li typ jest tworzony przez Type.GetTypeFromCLSID stÄ…d teÅ¼ ten fix z podaniem Guid-a.
+             * Ma to zwi¹zek z tworzeniem typu poprzez wywo³anie Type.GetTypeFromProgID(className, true);
+             * Wyj¹tek nie jest zg³aszany jeœli typ jest tworzony przez Type.GetTypeFromCLSID st¹d te¿ ten fix z podaniem Guid-a.
              */
-            if (ComWrapper.Connect(new Guid(GUID)))
+            if (ComWrapper.Connect(new Guid(classID)))
             {
                 if (assignAccessCode)
                 {
                     object[] arguments = new object[1];
-                    arguments[0] = AccessCode;
+                    arguments[0] = accessCode;
                     object res = ComWrapper.InvokeMethod("AssignAccessCode", arguments, new bool[] { false });
                     if (CheckError(res, -1) >= 0)
                         return ComWrapper;
@@ -542,29 +547,37 @@ public static object GetText(int comId, int langId, int textId)
                     return ComWrapper;
                 }
             }
+
             return null;
         }
 
-public static ComWrapper CreateComFromProgID(string progID, string AccessCode, bool assignAccessCode)
+        /// <summary>
+        /// Creates COM by progID.
+        /// </summary>
+        /// <param name="progID"></param>
+        /// <param name="accessCode"></param>
+        /// <param name="assignAccessCode"></param>
+        /// <returns></returns>
+        public static ComWrapper CreateComFromProgID(string progID, string accessCode, bool assignAccessCode)
         {
             ComWrapper ComWrapper = new ComWrapper
             {
-                AccessCode = AccessCode
+                AccessCode = accessCode
             };
 
             /*
              * MS 03.12.2015 
-             * Z jakiegoÅ› powodu woÅ‚anie Connect(string className) zwraca bÅ‚Ä…d:
+             * Z jakiegoœ powodu wo³anie Connect(string className) zwraca b³¹d:
              * Invalid class string Exception from HRESULT: 0x800401F3 (CO_E_CLASSSTRING))
-             * Ma to zwiÄ…zek z tworzeniem typu poprzez wywoÅ‚anie Type.GetTypeFromProgID(className, true);
-             * WyjÄ…tek nie jest zgÅ‚aszany jeÅ›li typ jest tworzony przez Type.GetTypeFromCLSID stÄ…d teÅ¼ ten fix z podaniem Guid-a.
+             * Ma to zwi¹zek z tworzeniem typu poprzez wywo³anie Type.GetTypeFromProgID(className, true);
+             * Wyj¹tek nie jest zg³aszany jeœli typ jest tworzony przez Type.GetTypeFromCLSID st¹d te¿ ten fix z podaniem Guid-a.
              */
             if (ComWrapper.Connect(progID))
             {
                 if (assignAccessCode)
                 {
                     object[] arguments = new object[1];
-                    arguments[0] = AccessCode;
+                    arguments[0] = accessCode;
                     object res = ComWrapper.InvokeMethod("AssignAccessCode", arguments, new bool[] { false });
                     if (CheckError(res, -1) >= 0)
                         return ComWrapper;
@@ -578,7 +591,7 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         }
 
         /// <summary>
-        /// Creates the COM in standard COM.
+        /// Creates the COM in StandardCOM.
         /// </summary>
         /// <param name="comName">Name of the COM.</param>
         /// <param name="accessCode">The access code.</param>
@@ -596,31 +609,31 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         }
 
         /// <summary>
-        /// Creates the COM in standard COM.
+        /// Creates the COM in StandardCOM.
         /// </summary>
         /// <param name="comName">Name of the COM.</param>
         /// <param name="accessCode">The access code.</param>
-        /// <param name="ServerName">Name of the server.</param>
+        /// <param name="serverName">Name of the server.</param>
         /// <returns>ComWrapper.</returns>
         /// <exception cref="Exception">Error creating OLE Object \"StandardCom\"</exception>
         /// <exception cref="Exception"></exception>
         /// <exception cref="Exception"></exception>
-        public static ComWrapper CreateComInStandardCom(string comName, string accessCode, string ServerName)
+        public static ComWrapper CreateComInStandardCom(string comName, string accessCode, string serverName)
         {
             /*
              * MS 07.12.2016
-               W celu umoÅ¼liwienia debugowania standardcom-a naleÅ¼y przeÅ‚Ä…czyÄ‡ siÄ™ na standardComW
-               WiÄ™cej informacji udziela MichaÅ‚ Piotrowski
+               W celu umo¿liwienia debugowania standardcom-a nale¿y prze³¹czyæ siê na standardComW
+               Wiêcej informacji udziela Micha³ Piotrowski
              */
             ComWrapper stdCom;
 
             if (ComWrapper.ComRemoteMode)
             {
-                stdCom = CreateRemoteCom(new Guid(CS_STDCOMW_GUID), accessCode, ServerName, false);
+                stdCom = CreateRemoteCom(new Guid(CS_STDCOMW_GUID), accessCode, serverName, false);
             }
             else
             {
-                stdCom = CreateRemoteCom(new Guid(CS_STDCOM_GUID), accessCode, ServerName, false);
+                stdCom = CreateRemoteCom(new Guid(CS_STDCOM_GUID), accessCode, serverName, false);
             }
 
             if (stdCom == null)
@@ -630,12 +643,12 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
             object[] args = new object[] { comName };
             int _comRes = (int)stdCom.InvokeMethod("AssignComName", args, new bool[] { false });
             if (_comRes < 0)
-                throw new Exception(string.Format("Error creating OLE Object \"{0}\"", comName));
+                throw new Exception($"Error creating OLE Object \"{comName}\"");
 
             args[0] = accessCode;
             _comRes = (int)stdCom.InvokeMethod("AssignAccessCode", args, new bool[] { false });
             if (_comRes < 0)
-                throw new Exception(string.Format("AccessCode assign error on OLE Object \"{0}\"", comName));
+                throw new Exception($"AccessCode assign error on OLE Object \"{comName}\"");
 
             return stdCom;
         }
@@ -644,49 +657,49 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// Funkcja tworzy zdalnie obiekt COM - adres serwera zostanie pobrany z AccessCode'a
         /// </summary>
         /// <param name="classId">CLSID tworzonego COMa</param>
-        /// <param name="AccessCode">AccessCode jaki zostanie do niego przypisany</param>
+        /// <param name="accessCode">AccessCode jaki zostanie do niego przypisany</param>
         /// <returns>Utworzony obiekt COM</returns>
-        public static ComWrapper CreateRemoteCom(Guid classId, string AccessCode)
+        public static ComWrapper CreateRemoteCom(Guid classId, string accessCode)
         {
-            return CreateRemoteCom(classId, AccessCode, string.Empty, true);
+            return CreateRemoteCom(classId, accessCode, string.Empty, true);
         }
 
         /// <summary>
         /// Funkcja tworzy zdalnie obiekt COM
         /// </summary>
         /// <param name="classId">CLSID tworzonego COMa</param>
-        /// <param name="AccessCode">AccessCode jaki zostanie do niego przypisany</param>
-        /// <param name="ServerName">Nazwa serwera komponentow, gdzie jest zainstalowany komponent. Jesli zostanie podana pusta nazwa
+        /// <param name="accessCode">AccessCode jaki zostanie do niego przypisany</param>
+        /// <param name="serverName">Nazwa serwera komponentow, gdzie jest zainstalowany komponent. Jesli zostanie podana pusta nazwa
         /// nazwa zostanie pobrana z AccessCode'a</param>
         /// <returns>Utworzony obiekt COM</returns>
-        public static ComWrapper CreateRemoteCom(Guid classId, string AccessCode, string ServerName)
+        public static ComWrapper CreateRemoteCom(Guid classId, string accessCode, string serverName)
         {
-            return CreateRemoteCom(classId, AccessCode, ServerName, true);
+            return CreateRemoteCom(classId, accessCode, serverName, true);
         }
 
         /// <summary>
         /// Funkcja tworzy zdalnie obiekt COM
         /// </summary>
-        /// <param name="ClassID">The class identifier.</param>
-        /// <param name="AccessCode">AccessCode jaki zostanie do niego przypisany</param>
-        /// <param name="ServerName">Nazwa serwera komponentow, gdzie jest zainstalowany komponent. Jesli zostanie podana pusta nazwa to zostanie pobrana z AccessCode'a</param>
+        /// <param name="classID">The class identifier.</param>
+        /// <param name="accessCode">AccessCode jaki zostanie do niego przypisany</param>
+        /// <param name="serverName">Nazwa serwera komponentow, gdzie jest zainstalowany komponent. Jesli zostanie podana pusta nazwa to zostanie pobrana z AccessCode'a</param>
         /// <param name="assignAccessCode">Flaga okreslajaca czy ma byc przypisany AccessCode - przydatne podczas tunelowania wywolac przez inne komponenty</param>
         /// <returns>Utworzony obiekt COM</returns>
-        public static ComWrapper CreateRemoteCom(Guid ClassID, string AccessCode, string ServerName, bool assignAccessCode)
+        public static ComWrapper CreateRemoteCom(Guid classID, string accessCode, string serverName, bool assignAccessCode)
         {
             ComWrapper ComWrapper = new ComWrapper();
 
-            if (!string.Equals(AccessCode, "LOGON", StringComparison.OrdinalIgnoreCase))
-                ComWrapper.AccessCode = AccessCode;
+            if (accessCode.ToUpper() != "LOGON")
+                ComWrapper.AccessCode = accessCode;
 
-            string _serverName = (string.IsNullOrEmpty(ServerName)) ? ComWrapper.ServerName : ServerName;
+            string _serverName = (string.IsNullOrEmpty(serverName)) ? ComWrapper.ServerName : serverName;
 
-            if (ComWrapper.ConnectRemote(ClassID, _serverName))
+            if (ComWrapper.ConnectRemote(classID, _serverName))
             {
                 if (assignAccessCode)
                 {
                     object[] arguments = new object[1];
-                    arguments[0] = AccessCode;
+                    arguments[0] = accessCode;
                     object res = ComWrapper.InvokeMethod("AssignAccessCode", arguments, new bool[] { false });
                     if (CheckError(res, -1) >= 0)
                         return ComWrapper;
@@ -702,90 +715,78 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <summary>
         /// Runs the method.
         /// </summary>
-        /// <param name="ComWrapper">The COM wrapper.</param>
-        /// <param name="MethodName">Name of the method.</param>
-        /// <param name="Params">The parameters.</param>
+        /// <param name="comWrapper">The COM wrapper.</param>
+        /// <param name="methodName">Name of the method.</param>
+        /// <param name="params">The parameters.</param>
         /// <returns>System.Int32.</returns>
-        public static int RunMethod(ComWrapper ComWrapper, string MethodName, ref object[] Params)
+        public static int RunMethod(ComWrapper comWrapper, string methodName, ref object[] @params)
         {
-            string ErrorMessage = "";
-
-            object[] rm_params = new object[] { MethodName, Params };
-            object res = ComWrapper.InvokeMethod("RunMethod", rm_params, new bool[] { false, true }, ref ErrorMessage);
-            Params = (object[])rm_params[1];
+            object[] rm_params = new object[] { methodName, @params };
+            object res = comWrapper.InvokeMethod("RunMethod", rm_params, new bool[] { false, true });
+            @params = (object[])rm_params[1];
             int result = CheckError(res, -1);
-            if (result < 0 && (Params.Length == 3 && Params[2] == null))
-            {
-                Params[2] = "RunMethod call error: " + ErrorMessage;
-            }
             return result;
         }
 
         /// <summary>
         /// Runs the method net.
         /// </summary>
-        /// <param name="ComWrapper">The COM wrapper.</param>
-        /// <param name="MethodName">Name of the method.</param>
-        /// <param name="Params">The parameters.</param>
+        /// <param name="comWrapper">The COM wrapper.</param>
+        /// <param name="methodName">Name of the method.</param>
+        /// <param name="params">The parameters.</param>
         /// <returns>System.Int32.</returns>
-        public static int RunMethodNet(ComWrapper ComWrapper, string MethodName, ref object[] Params)
+        public static int RunMethodNet(ComWrapper comWrapper, string methodName, ref object[] @params)
         {
-            string ErrorMessage = "";
-
-            object[] rm_params = new object[] { MethodName, Params, null };
-            object res = ComWrapper.InvokeMethod("RunMethodNet", rm_params, new bool[] { false, false, true }, ref ErrorMessage);
-            Params = (object[])rm_params[2];
+            object[] rm_params = new object[] { methodName, @params, null };
+            object res = comWrapper.InvokeMethod("RunMethodNet", rm_params, new bool[] { false, false, true });
+            @params = (object[])rm_params[2];
             int result = CheckError(res, -1);
-            if (result < 0 && (Params.Length == 3 && Params[2] == null))
-            {
-                Params[2] = "RunMethod call error: " + ErrorMessage;
-            }
             return result;
         }
 
         /// <summary>
         /// Gets the packet.
         /// </summary>
-        /// <param name="AccessCode">The access code.</param>
-        /// <param name="SQL">The SQL.</param>
-        /// <param name="TransId">The trans identifier.</param>
-        /// <param name="Timeout">The timeout.</param>
-        /// <param name="Packet">The packet.</param>
+        /// <param name="accessCode">The access code.</param>
+        /// <param name="sql">The SQL.</param>
+        /// <param name="transId">The trans identifier.</param>
+        /// <param name="timeOut">The timeout.</param>
+        /// <param name="packet">The packet.</param>
         /// <param name="hWMK">The h WMK.</param>
         /// <returns>System.Int32.</returns>
-        public static int GetPacket(string AccessCode, string SQL, int TransId, int Timeout, out object[,] Packet, WMKHandler hWMK = null)
+        public static int GetPacket(string accessCode, string sql, int transId, int timeOut, out object[,] packet, WMKHandler hWMK = null)
         {
             if (ComWrapper.ComRemoteMode)
             {
-                return GetPacket(AccessCode, GetParam(AccessCode, "CSN", string.Empty), SQL, TransId, Timeout, out Packet, hWMK);
+                return GetPacket(accessCode, GetParam(accessCode, "CSN", string.Empty), sql, transId, timeOut, out packet, hWMK);
             }
             else
             {
-                return GetPacket(AccessCode, string.Empty, SQL, TransId, Timeout, out Packet, hWMK);
+                return GetPacket(accessCode, string.Empty, sql, transId, timeOut, out packet, hWMK);
             }
         }
 
         /// <summary>
         /// Gets the packet.
         /// </summary>
-        /// <param name="AccessCode">The access code.</param>
-        /// <param name="ServerName">Name of the server.</param>
-        /// <param name="SQL">The SQL.</param>
-        /// <param name="TransId">The trans identifier.</param>
-        /// <param name="Timeout">The timeout.</param>
-        /// <param name="Packet">The packet.</param>
+        /// <param name="accessCode">The access code.</param>
+        /// <param name="serverName">Name of the server.</param>
+        /// <param name="sql">The SQL.</param>
+        /// <param name="transId">The trans identifier.</param>
+        /// <param name="timeOut">The timeout.</param>
+        /// <param name="packet">The packet.</param>
         /// <param name="hWMK">The h WMK.</param>
         /// <returns>System.Int32.</returns>
-        public static int GetPacket(string AccessCode, string ServerName, string SQL, int TransId, int Timeout, out object[,] Packet, WMKHandler hWMK = null)
+        public static int GetPacket(string accessCode, string serverName, string sql, int transId, int timeOut, out object[,] packet, WMKHandler hWMK = null)
         {
             int res = -1;
-            Packet = null;
+            packet = null;
 
-            using (ComWrapper comWrapper = CreateRemoteCom(new Guid(DBC_CLASS), AccessCode, ServerName))
+            using (ComWrapper comWrapper = CreateRemoteCom(new Guid(DBC_CLASS), accessCode, serverName))
             {
                 if (Assigned(comWrapper))
                 {
-                    res = GetPacket(comWrapper, SQL, TransId, Timeout, out Packet);
+                    res = GetPacket(comWrapper, sql, transId, timeOut, out packet);
 
                     if ((hWMK != null) && (res < 0))
                     {
@@ -802,58 +803,58 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <summary>
         /// Gets the packet.
         /// </summary>
-        /// <param name="dbCom">The database COM.</param>
-        /// <param name="SQL">The SQL.</param>
-        /// <param name="Timeout">The timeout.</param>
-        /// <param name="Packet">The packet.</param>
+        /// <param name="dbc">The database COM.</param>
+        /// <param name="sql">The SQL.</param>
+        /// <param name="timeOut">The timeout.</param>
+        /// <param name="packet">The packet.</param>
         /// <returns>System.Int32.</returns>
-        public static int GetPacket(ComWrapper dbCom, string SQL, int Timeout, out object[,] Packet)
+        public static int GetPacket(ComWrapper dbc, string sql, int timeOut, out object[,] packet)
         {
-            return GetPacket(dbCom, SQL, dbCom.TransactionObject.Id, Timeout, out Packet);
+            return GetPacket(dbc, sql, dbc.TransactionObject.Id, timeOut, out packet);
         }
 
         /// <summary>
         /// Gets the packet.
         /// </summary>
-        /// <param name="dbCom">The database COM.</param>
-        /// <param name="SQL">The SQL.</param>
-        /// <param name="TransId">The trans identifier.</param>
-        /// <param name="Timeout">The timeout.</param>
-        /// <param name="Packet">The packet.</param>
+        /// <param name="dbc">The database COM.</param>
+        /// <param name="sql">The SQL.</param>
+        /// <param name="transId">The trans identifier.</param>
+        /// <param name="timeOut">The timeout.</param>
+        /// <param name="packet">The packet.</param>
         /// <returns>System.Int32.</returns>
-        public static int GetPacket(ComWrapper dbCom, string SQL, int TransId, int Timeout, out object[,] Packet)
+        public static int GetPacket(ComWrapper dbc, string sql, int transId, int timeOut, out object[,] packet)
         {
             object res = null;
-            Packet = null;
+            packet = null;
 
-            if (Assigned(dbCom))
+            if (Assigned(dbc))
             {
                 object[] arguments = new object[1];
-                arguments[0] = SQL;
-                res = dbCom.InvokeMethod("SQL", arguments, new bool[] { false });
+                arguments[0] = sql;
+                res = dbc.InvokeMethod("SQL", arguments, new bool[] { false });
 
                 if (CheckError(res, -1) >= 0)
                 {
                     arguments[0] = -1;
-                    res = dbCom.InvokeMethod("PacketSize", arguments, new bool[] { false });
+                    res = dbc.InvokeMethod("PacketSize", arguments, new bool[] { false });
 
                     if (CheckError(res, -1) >= 0)
                     {
-                        if (TransId == -1)
-                            arguments[0] = "List" + GetTimeOutParamValue(Timeout, true);
+                        if (transId == -1)
+                            arguments[0] = "List" + GetTimeOutParamValue(timeOut, true);
                         else
-                            arguments[0] = String.Format("List&Transaction={0}", TransId) + GetTimeOutParamValue(Timeout, true);
+                            arguments[0] = $"List&Transaction={transId}" + GetTimeOutParamValue(timeOut, true);
 
-                        res = dbCom.InvokeMethod("OpenA", arguments, new bool[] { false });
+                        res = dbc.InvokeMethod("OpenA", arguments, new bool[] { false });
 
                         if (CheckError(res, -1) >= 0)
                         {
                             arguments = new object[2];
                             arguments[0] = -1;
-                            res = dbCom.InvokeMethod("GetPacketNumber", arguments, new bool[] { false, true });
+                            res = dbc.InvokeMethod("GetPacketNumber", arguments, new bool[] { false, true });
                             if (CheckError(res, -1) >= 0)
                             {
-                                Packet = (object[,])arguments[1];
+                                packet = (object[,])arguments[1];
                             }
                         }
                     }
@@ -862,40 +863,40 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
 
             return CheckError(res, -1);
         }
-
+                
         /// <summary>
         /// Executes the command.
         /// </summary>
-        /// <param name="AccessCode">The access code.</param>
-        /// <param name="SQL">The SQL.</param>
-        /// <param name="TransId">The trans identifier.</param>
-        /// <param name="Timeout">The timeout.</param>
+        /// <param name="accessCode">The access code.</param>
+        /// <param name="sql">The SQL.</param>
+        /// <param name="transId">The trans identifier.</param>
+        /// <param name="timeOut">The timeout.</param>
         /// <param name="hWMK">The h WMK.</param>
         /// <returns>System.Int32.</returns>
-        public static int ExecuteCommand(string AccessCode, string SQL, int TransId, int Timeout, WMKHandler hWMK = null)
+        public static int ExecuteCommand(string accessCode, string sql, int transId, int timeOut, WMKHandler hWMK = null)
         {
-            return ExecuteCommand(AccessCode, SQL, TransId, Timeout, false, hWMK);
+            return ExecuteCommand(accessCode, sql, transId, timeOut, false, hWMK);
         }
 
         /// <summary>
         /// Executes the command.
         /// </summary>
-        /// <param name="AccessCode">The access code.</param>
-        /// <param name="SQL">The SQL.</param>
-        /// <param name="TransId">The trans identifier.</param>
-        /// <param name="Timeout">The timeout.</param>
-        /// <param name="NoRigtsSQL">if set to <c>true</c> [no rigts SQL].</param>
+        /// <param name="accessCode">The access code.</param>
+        /// <param name="sql">The SQL.</param>
+        /// <param name="transId">The trans identifier.</param>
+        /// <param name="timeOut">The timeout.</param>
+        /// <param name="noRigtsSQL">if set to <c>true</c> [no rigts SQL].</param>
         /// <param name="hWMK">The h WMK.</param>
         /// <returns>System.Int32.</returns>
-        public static int ExecuteCommand(string AccessCode, string SQL, int TransId, int Timeout, bool NoRigtsSQL, WMKHandler hWMK = null)
+        public static int ExecuteCommand(string accessCode, string sql, int transId, int timeOut, bool noRigtsSQL, WMKHandler hWMK = null)
         {
             int res = -1;
 
-            using (ComWrapper comWrapper = CreateRemoteCom(new Guid(DBC_CLASS), AccessCode, string.Empty))
+            using (ComWrapper comWrapper = CreateRemoteCom(new Guid(DBC_CLASS), accessCode, string.Empty))
             {
                 if (Assigned(comWrapper))
                 {
-                    res = ExecuteCommand(comWrapper, SQL, TransId, Timeout, NoRigtsSQL);
+                    res = ExecuteCommand(comWrapper, sql, transId, timeOut, noRigtsSQL);
 
                     if ((hWMK != null) && (res < 0))
                     {
@@ -911,71 +912,78 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <summary>
         /// Executes the command.
         /// </summary>
-        /// <param name="DBComInstance">The database COM instance.</param>
-        /// <param name="SQL">The SQL.</param>
-        /// <param name="TransId">The trans identifier.</param>
-        /// <param name="Timeout">The timeout.</param>
+        /// <param name="dbc">The database COM instance.</param>
+        /// <param name="sql">The SQL.</param>
+        /// <param name="transId">The trans identifier.</param>
+        /// <param name="timeOut">The timeout.</param>
         /// <returns>System.Int32.</returns>
-        public static int ExecuteCommand(ComWrapper DBComInstance, string SQL, int TransId, int Timeout)
+        public static int ExecuteCommand(ComWrapper dbc, string sql, int transId, int timeOut)
         {
-            return ExecuteCommand(DBComInstance, SQL, TransId, Timeout, false);
+            return ExecuteCommand(dbc, sql, transId, timeOut, false);
         }
 
         /// <summary>
         /// Executes the command.
         /// </summary>
-        /// <param name="DBComInstance">The database COM instance.</param>
-        /// <param name="SQL">The SQL.</param>
+        /// <param name="dbc">The database COM instance.</param>
+        /// <param name="sql">The SQL.</param>
         /// <param name="timeout">The timeout.</param>
         /// <returns>System.Int32.</returns>
-        public static int ExecuteCommand(ComWrapper DBComInstance, string SQL, int timeout)
+        public static int ExecuteCommand(ComWrapper dbc, string sql, int timeout)
         {
-            if (DBComInstance.TransactionObject == null)
+            if (dbc.TransactionObject == null)
             {
-                return ExecuteCommand(DBComInstance, SQL, -1, timeout);
+                return ExecuteCommand(dbc, sql, -1, timeout);
             }
             else
             {
-                return ExecuteCommand(DBComInstance, SQL, DBComInstance.TransactionObject.Id, timeout);
+                return ExecuteCommand(dbc, sql, dbc.TransactionObject.Id, timeout);
             }
         }
 
         /// <summary>
         /// Executes the command.
         /// </summary>
-        /// <param name="DBComInstance">The database COM instance.</param>
-        /// <param name="SQL">The SQL.</param>
-        /// <param name="TransId">The trans identifier.</param>
-        /// <param name="Timeout">The timeout.</param>
-        /// <param name="NoRigtsSQL">if set to <c>true</c> [no rigts SQL].</param>
+        /// <param name="dbc">The database COM instance.</param>
+        /// <param name="sql">The SQL.</param>
+        /// <param name="transId">The trans identifier.</param>
+        /// <param name="timeOut">The timeout.</param>
+        /// <param name="noRigtsSQL">if set to <c>true</c> [no rigts SQL].</param>
         /// <returns>System.Int32.</returns>
-        public static int ExecuteCommand(ComWrapper DBComInstance, string SQL, int TransId, int Timeout, bool NoRigtsSQL)
+        public static int ExecuteCommand(ComWrapper dbc, string sql, int transId, int timeOut, bool noRigtsSQL)
         {
             object res = -1;
             object[] arguments = new object[1];
 
-            if (Assigned(DBComInstance))
+            if (Assigned(dbc))
             {
-                arguments[0] = SQL;
-                string _method = (NoRigtsSQL) ? "NoRightsSQL" : "SQL";
-                res = DBComInstance.InvokeMethod(_method, arguments, new bool[] { false });
+                arguments[0] = sql;
+                string _method = (noRigtsSQL) ? "NoRightsSQL" : "SQL";
+                res = dbc.InvokeMethod(_method, arguments, new bool[] { false });
 
                 if (CheckError(res, -1) >= 0)
                 {
-                    if (TransId == -1)
-                        arguments[0] = "Execute" + GetTimeOutParamValue(Timeout, true);
+                    if (transId == -1)
+                        arguments[0] = "Execute" + GetTimeOutParamValue(timeOut, true);
                     else
-                        arguments[0] = String.Format("Execute&Transaction={0}", TransId) + GetTimeOutParamValue(Timeout, true);
+                        arguments[0] = $"Execute&Transaction={transId}" + GetTimeOutParamValue(timeOut, true);
 
-                    res = DBComInstance.InvokeMethod("OpenA", arguments, new bool[] { false });
+                    res = dbc.InvokeMethod("OpenA", arguments, new bool[] { false });
                 }
 
-                RecordClose(DBComInstance);
+                RecordClose(dbc);
             }
 
             return CheckError(res, -1);
         }
 
+        /// <summary>
+        /// Locks records in given table
+        /// </summary>
+        /// <param name="locker"></param>
+        /// <param name="lockInfo"></param>
+        /// <param name="transId"></param>
+        /// <returns></returns>
         public static int DBLock(ComWrapper locker, object[,] lockInfo, int transId = -1)
         {
             //ComWrapper comWrapper = new ComWrapper()
@@ -983,12 +991,8 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
 
             if (!TUniVar.VarIsArray(lockInfo))
                 throw new InvalidEnumArgumentException("Wrong parameter value 'lockInfo'!");
-            else if (locker == null)
-                throw new InvalidEnumArgumentException("Empty parameter value 'locker'!");
-            else if (!locker.GUID.Equals(DBC_LOCKER_CLASS))
-                throw new InvalidEnumArgumentException("Wrong parameter value 'locker'!");
-            else if (!locker.Connected)
-                throw new InvalidEnumArgumentException("Wrong parameter value 'locker'! Not Connected.");
+            else 
+                CheckLocker(locker);
 
             //LockA(TransactionId: Integer; var LockInfo, Options: OleVariant): Integer; safecall;
             object[] arguments = new object[3];
@@ -999,22 +1003,25 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
             return res;
         }
 
-        public static int DBLock(ComWrapper locker, string TableName, string RecordId, int transId = -1)
+        /// <summary>
+        /// Locks records in given table
+        /// </summary>
+        /// <param name="locker"></param>
+        /// <param name="tableName"></param>
+        /// <param name="RecordId"></param>
+        /// <param name="transId"></param>
+        /// <returns></returns>
+        public static int DBLock(ComWrapper locker, string tableName, string RecordId, int transId = -1)
         {
             //ComWrapper comWrapper = new ComWrapper()
             //comWrapper.ConnectRemote(new Guid(DBC_LOCKER_CLASS), ComWrapper.ServerName)
 
-            if (locker == null)
-                throw new InvalidEnumArgumentException("Empty parameter value 'locker'!");
-            else if (!locker.GUID.Equals(DBC_LOCKER_CLASS))
-                throw new InvalidEnumArgumentException("Wrong parameter value 'locker'!");
-            else if (!locker.Connected)
-                throw new InvalidEnumArgumentException("Wrong parameter value 'locker'! Not Connected.");
+            CheckLocker(locker);
 
             object[,] lockInfo = new object[,]
                 {
                     { "TableName", "RecordId", "OwnerState" },
-                    { TableName, RecordId, 0 },
+                    { tableName, RecordId, 0 },
                     { PECDataTypeFlags.cpString, PECDataTypeFlags.cpInteger, PECDataTypeFlags.cpInteger }
                 };
 
@@ -1027,6 +1034,13 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
             return TUniVar.VarToInt(arguments[2]);
         }
 
+        /// <summary>
+        /// Unlocks previously locked records.
+        /// </summary>
+        /// <param name="locker"></param>
+        /// <param name="lockInfo"></param>
+        /// <param name="transId"></param>
+        /// <returns></returns>
         public static int DBUnlock(ComWrapper locker, object[,] lockInfo, int transId = -1)
         {
             //ComWrapper comWrapper = new ComWrapper()
@@ -1034,12 +1048,8 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
 
             if (!TUniVar.VarIsArray(lockInfo))
                 throw new InvalidEnumArgumentException("Wrong parameter value 'lockInfo'!");
-            else if (locker == null)
-                throw new InvalidEnumArgumentException("Empty parameter value 'locker'!");
-            else if (!locker.GUID.Equals(DBC_LOCKER_CLASS))
-                throw new InvalidEnumArgumentException("Wrong parameter value 'locker'!");
-            else if (!locker.Connected)
-                throw new InvalidEnumArgumentException("Wrong parameter value 'locker'! Not Connected.");
+            else 
+                CheckLocker(locker);
 
             //LockA(TransactionId: Integer; var LockInfo, Options: OleVariant): Integer; safecall;
             object[] arguments = new object[3];
@@ -1050,22 +1060,25 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
             return res;
         }
 
-        public static int DBUnlock(ComWrapper locker, string TableName, string RecordId, int transId = -1)
+        /// <summary>
+        /// Unlocks previously locked records.
+        /// </summary>
+        /// <param name="locker"></param>
+        /// <param name="tableName"></param>
+        /// <param name="recordId"></param>
+        /// <param name="transId"></param>
+        /// <returns></returns>
+        public static int DBUnlock(ComWrapper locker, string tableName, string recordId, int transId = -1)
         {
             //ComWrapper comWrapper = new ComWrapper()
             //comWrapper.ConnectRemote(new Guid(DBC_LOCKER_CLASS), ComWrapper.ServerName)
 
-            if (locker == null)
-                throw new InvalidEnumArgumentException("Empty parameter value 'locker'!");
-            else if (!locker.GUID.Equals(DBC_LOCKER_CLASS))
-                throw new InvalidEnumArgumentException("Wrong parameter value 'locker'!");
-            else if (!locker.Connected)
-                throw new InvalidEnumArgumentException("Wrong parameter value 'locker'! Not Connected.");
+            CheckLocker(locker);
 
             object[,] lockInfo = new object[,]
                 {
                     { "TableName", "RecordId", "OwnerState" },
-                    { TableName, RecordId, 0 },
+                    { tableName, recordId, 0 },
                     { PECDataTypeFlags.cpString, PECDataTypeFlags.cpInteger, PECDataTypeFlags.cpInteger }
                 };
 
@@ -1078,11 +1091,20 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
             return TUniVar.VarToInt(arguments[2]);
         }
 
+        /// <summary>
+        /// Locks records in given table
+        /// </summary>
+        /// <param name="accessCode"></param>
+        /// <param name="tableName"></param>
+        /// <param name="recordId"></param>
+        /// <param name="baseId"></param>
+        /// <param name="tableId"></param>
+        /// <returns></returns>
         [Obsolete("DBLock(string AccessCode, ...) is deprecated, please use DBLock(ComWrapper locker, ...) instead.")]
-        public static int DBLock(string AccessCode, string TableName, string RecordId, out int BaseId, out int TableId)
+        public static int DBLock(string accessCode, string tableName, string recordId, out int baseId, out int tableId)
         {
-            BaseId = -1;
-            TableId = -1;
+            baseId = -1;
+            tableId = -1;
 
             int res = -1;
 
@@ -1092,48 +1114,57 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
                 {
                     object[] arguments = new object[6];
                     arguments[0] = ComWrapper.DBId;
-                    arguments[1] = TableName;
-                    arguments[2] = RecordId;
+                    arguments[1] = tableName;
+                    arguments[2] = recordId;
                     arguments[3] = ComWrapper.AccessCode;
                     arguments[4] = -1; // BaseId
                     arguments[5] = -1; // TableId
                     res = CheckError(ComWrapper.InvokeMethod("Lock", arguments, new bool[] { false, false, false, false, true, true }), -1);
                     if (res >= 0)
                     {
-                        BaseId = Convert.ToInt32(arguments[4]);
-                        TableId = Convert.ToInt32(arguments[5]);
+                        baseId = Convert.ToInt32(arguments[4]);
+                        tableId = Convert.ToInt32(arguments[5]);
                     }
                 }
             }
             return res;
         }
 
+        /// <summary>
+        /// Unlocks previously locked records.
+        /// </summary>
+        /// <param name="accessCode"></param>
+        /// <param name="tableName"></param>
+        /// <param name="recordId"></param>
+        /// <param name="baseId"></param>
+        /// <param name="tableId"></param>
+        /// <returns></returns>
         [Obsolete("DBUnlock(string AccessCode, ...) is deprecated, please use DBUnlock(ComWrapper locker, ...) instead or destroy 'locker' wrapper.")]
-        public static int DBUnlock(string AccessCode, string TableName, string RecordId, int BaseId, int TableId)
+        public static int DBUnlock(string accessCode, string tableName, string recordId, int baseId, int tableId)
         {
-            BaseId = -1;
-            TableId = -1;
+            baseId = -1;
+            tableId = -1;
 
             int res = -1;
 
             using (ComWrapper ComWrapper = new ComWrapper())
             {
-                ComWrapper.AccessCode = AccessCode;
+                ComWrapper.AccessCode = accessCode;
 
                 if (ComWrapper.ConnectRemote(new Guid(DBC_LOCKER_CLASS), ComWrapper.ServerName))
                 {
                     object[] arguments = new object[6];
                     arguments[0] = ComWrapper.DBId;
-                    arguments[1] = TableName;
-                    arguments[2] = RecordId;
+                    arguments[1] = tableName;
+                    arguments[2] = recordId;
                     arguments[3] = ComWrapper.AccessCode;
-                    arguments[4] = BaseId;
-                    arguments[5] = TableId;
+                    arguments[4] = baseId;
+                    arguments[5] = tableId;
                     res = CheckError(ComWrapper.InvokeMethod("Unlock", arguments, new bool[] { false, false, false, false, false, false }), -1);
                     if (res >= 0)
                     {
-                        BaseId = Convert.ToInt32(arguments[4]);
-                        TableId = Convert.ToInt32(arguments[5]);
+                        baseId = Convert.ToInt32(arguments[4]);
+                        tableId = Convert.ToInt32(arguments[5]);
                     }
                 }
             }
@@ -1150,9 +1181,9 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
             int res = -1;
             ComWrapper ComWrapper;
 
-            if (comObj.GUID.Equals(CS_DBCOM_GUID, StringComparison.CurrentCultureIgnoreCase))
+            if (comObj.ClassID.Equals(CS_DBCOM_GUID, StringComparison.CurrentCultureIgnoreCase))
                 ComWrapper = CreateRemoteCom(new Guid(CS_TRANS_GUID), comObj.AccessCode, string.Empty);
-            else if (comObj.GUID.Equals(CS_SYSTEM_GUID, StringComparison.CurrentCultureIgnoreCase))
+            else if (comObj.ClassID.Equals(CS_SYSTEM_GUID, StringComparison.CurrentCultureIgnoreCase))
                 ComWrapper = CreateRemoteCom(new Guid(CS_SYSTEMTRANS_GUID), comObj.AccessCode, string.Empty);
             else
                 ComWrapper = CreateRemoteCom(new Guid(DBC_TRANS_CLASS), comObj.AccessCode, string.Empty);
@@ -1240,35 +1271,35 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <summary>
         /// Opens the resultset.
         /// </summary>
-        /// <param name="AccessCode">The access code.</param>
-        /// <param name="SQL">The SQL.</param>
-        /// <param name="PKName">Name of the pk.</param>
-        /// <param name="TransId">The trans identifier.</param>
-        /// <param name="Timeout">The timeout.</param>
-        /// <param name="ComWrapper">The COM wrapper.</param>
+        /// <param name="accessCode">The access code.</param>
+        /// <param name="sql">The SQL.</param>
+        /// <param name="pkName">Name of the pk.</param>
+        /// <param name="transId">The trans identifier.</param>
+        /// <param name="timeOut">The timeout.</param>
+        /// <param name="comWrapper">The COM wrapper.</param>
         /// <returns>System.Int32.</returns>
-        public static int OpenResultset(string AccessCode, string SQL, string PKName, int TransId, int Timeout, out ComWrapper ComWrapper)
+        public static int OpenResultset(string accessCode, string sql, string pkName, int transId, int timeOut, out ComWrapper comWrapper)
         {
-            ComWrapper = CreateRemoteCom(new Guid(DBC_CLASS), AccessCode, string.Empty);
-            if (Assigned(ComWrapper))
+            comWrapper = CreateRemoteCom(new Guid(DBC_CLASS), accessCode, string.Empty);
+            if (Assigned(comWrapper))
             {
                 object[] arguments = new object[1];
-                arguments[0] = SQL;
-                object res = ComWrapper.InvokeMethod("SQL", arguments, new bool[] { false });
+                arguments[0] = sql;
+                object res = comWrapper.InvokeMethod("SQL", arguments, new bool[] { false });
 
                 if (CheckError(res, -1) >= 0)
                 {
-                    if (TransId == -1)
+                    if (transId == -1)
                     {
-                        arguments[0] = "PrimaryKey=" + PKName + GetTimeOutParamValue(Timeout, true);
+                        arguments[0] = "PrimaryKey=" + pkName + GetTimeOutParamValue(timeOut, true);
                     }
                     else
                     {
-                        arguments[0] = String.Format("PrimaryKey=" + PKName + "&Transaction={0}", TransId) +
-                           GetTimeOutParamValue(Timeout, true);
+                        arguments[0] = String.Format("PrimaryKey=" + pkName + "&Transaction={0}", transId) +
+                            GetTimeOutParamValue(timeOut, true);
                     }
 
-                    res = ComWrapper.InvokeMethod("OpenA", arguments, new bool[] { false });
+                    res = comWrapper.InvokeMethod("OpenA", arguments, new bool[] { false });
 
                     return CheckError(res, -1);
                 }
@@ -1279,15 +1310,15 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <summary>
         /// Get Fields values of current record in DBCOm Packet format
         /// </summary>
-        /// <param name="ComWrapper"></param>
+        /// <param name="comWrapper"></param>
         /// <param name="packet"></param>
         /// <returns></returns>
-        public static int RecordPacket(ref ComWrapper ComWrapper, out object[,] packet)
+        public static int RecordPacket(ref ComWrapper comWrapper, out object[,] packet)
         {
             packet = null;
 
             object[] arguments = new object[1];
-            object res = ComWrapper.InvokeMethod("FieldValuePacket", arguments, new bool[] { true });
+            object res = comWrapper.InvokeMethod("FieldValuePacket", arguments, new bool[] { true });
 
             if (CheckError(res, -1) >= 0)
             {
@@ -1300,19 +1331,19 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <summary>
         /// Records the edit.
         /// </summary>
-        /// <param name="ComWrapper">The COM wrapper.</param>
-        /// <param name="LockedByUserId">The locked by user identifier.</param>
+        /// <param name="comWrapper">The COM wrapper.</param>
+        /// <param name="lockedByUserId">The locked by user identifier.</param>
         /// <returns>System.Int32.</returns>
-        public static int RecordEdit(ref ComWrapper ComWrapper, out int LockedByUserId)
+        public static int RecordEdit(ref ComWrapper comWrapper, out int lockedByUserId)
         {
-            LockedByUserId = -1;
+            lockedByUserId = -1;
 
             object[] arguments = new object[1];
-            object res = ComWrapper.InvokeMethod("EditA", arguments, new bool[] { true });
+            object res = comWrapper.InvokeMethod("EditA", arguments, new bool[] { true });
 
             if (CheckError(res, -1) < 0)
             {
-                LockedByUserId = Convert.ToInt32(arguments[0]);
+                lockedByUserId = Convert.ToInt32(arguments[0]);
             }
             return 0;
         }
@@ -1320,27 +1351,27 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <summary>
         /// Records the update.
         /// </summary>
-        /// <param name="ComWrapper">The COM wrapper.</param>
-        /// <param name="Fields">The fields.</param>
-        /// <param name="Values">The values.</param>
-        /// <param name="PKName">Name of the pk.</param>
+        /// <param name="comWrapper">The COM wrapper.</param>
+        /// <param name="fields">The fields.</param>
+        /// <param name="values">The values.</param>
+        /// <param name="pkName">Name of the pk.</param>
         /// <returns>System.Int32.</returns>
-        public static int RecordUpdate(ref ComWrapper ComWrapper, object Fields, object Values, string PKName)
+        public static int RecordUpdate(ref ComWrapper comWrapper, object fields, object values, string pkName)
         {
             object FieldValue = 0;
 
             object[] arguments = new object[2];
-            arguments[0] = Fields;
-            arguments[1] = Values;
-            object res = ComWrapper.InvokeMethod("Update", arguments, new bool[] { false, false });
+            arguments[0] = fields;
+            arguments[1] = values;
+            object res = comWrapper.InvokeMethod("Update", arguments, new bool[] { false, false });
 
             if (CheckError(res, -1) >= 0)
             {
-                if (!string.IsNullOrEmpty(PKName))
+                if (!string.IsNullOrEmpty(pkName))
                 {
                     arguments = new object[1];
-                    arguments[0] = PKName;
-                    FieldValue = ComWrapper.InvokeMethod("FieldValue", arguments, new bool[] { false });
+                    arguments[0] = pkName;
+                    FieldValue = comWrapper.InvokeMethod("FieldValue", arguments, new bool[] { false });
                 }
             }
             return CheckError(FieldValue, -1);
@@ -1349,27 +1380,27 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <summary>
         /// Records the new.
         /// </summary>
-        /// <param name="ComWrapper">The COM wrapper.</param>
-        /// <param name="Fields">The fields.</param>
-        /// <param name="Values">The values.</param>
-        /// <param name="PKName">Name of the pk.</param>
+        /// <param name="comWrapper">The COM wrapper.</param>
+        /// <param name="fields">The fields.</param>
+        /// <param name="values">The values.</param>
+        /// <param name="pkName">Name of the pk.</param>
         /// <returns>System.Int32.</returns>
-        public static int RecordNew(ref ComWrapper ComWrapper, object Fields, object Values, string PKName)
+        public static int RecordNew(ref ComWrapper comWrapper, object fields, object values, string pkName)
         {
             object FieldValue = 0;
 
             object[] arguments = new object[2];
-            arguments[0] = Fields;
-            arguments[1] = Values;
-            object res = ComWrapper.InvokeMethod("AddNew", arguments, new bool[] { false, false });
+            arguments[0] = fields;
+            arguments[1] = values;
+            object res = comWrapper.InvokeMethod("AddNew", arguments, new bool[] { false, false });
 
             if (CheckError(res, -1) >= 0)
             {
-                if (!string.IsNullOrEmpty(PKName))
+                if (!string.IsNullOrEmpty(pkName))
                 {
                     arguments = new object[1];
-                    arguments[0] = PKName;
-                    FieldValue = ComWrapper.InvokeMethod("FieldValue", arguments, new bool[] { false });
+                    arguments[0] = pkName;
+                    FieldValue = comWrapper.InvokeMethod("FieldValue", arguments, new bool[] { false });
                 }
             }
             return CheckError(FieldValue, -1);
@@ -1378,13 +1409,13 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <summary>
         /// Records the new.
         /// </summary>
-        /// <param name="ComWrapper">The COM wrapper.</param>
-        /// <param name="Fields">The fields.</param>
-        /// <param name="Values">The values.</param>
+        /// <param name="comWrapper">The COM wrapper.</param>
+        /// <param name="fields">The fields.</param>
+        /// <param name="values">The values.</param>
         /// <returns>System.Int32.</returns>
-        public static int RecordNew(ref ComWrapper ComWrapper, object Fields, object Values)
+        public static int RecordNew(ref ComWrapper comWrapper, object fields, object values)
         {
-            return RecordNew(ref ComWrapper, Fields, Values, string.Empty);
+            return RecordNew(ref comWrapper, fields, values, string.Empty);
         }
 
         /// <summary>
@@ -1409,15 +1440,15 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         }
 
         /*MS 09.06.2016 zmienilem te funkcje bo to nie jest zdrowe zachowanie aby parametr przekazywany
-         przez wskaÅºnik byÅ‚ w niej w wÄ…tpliwy sposÃ³b niszczony. NaleÅ¼y uÅ¼ywaÄ‡ klauzuli using do tego!!*/
+         przez wskaŸnik by³ w niej w w¹tpliwy sposób niszczony. Nale¿y u¿ywaæ klauzuli using do tego!!*/
         /// <summary>
         /// Records the close.
         /// </summary>
-        /// <param name="ComWrapper">The COM wrapper.</param>
+        /// <param name="comWrapper">The COM wrapper.</param>
         /// <returns>System.Int32.</returns>
-        public static int RecordClose(ComWrapper ComWrapper)
+        public static int RecordClose(ComWrapper comWrapper)
         {
-            ComWrapper.InvokeMethod("Close", null, null);
+            comWrapper.InvokeMethod("Close", null, null);
             return 0;
         }
 
@@ -1480,7 +1511,7 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
                     else
                     {
                         dic.Add(inputparam, inputvalue);
-                    }
+                }
                 }
                 return dic;
             }
@@ -1503,9 +1534,8 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
                 var type = instance.GetType();
                 var property = type.GetProperty(element, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-                System.Diagnostics.Debug.Assert(
-                    property != null,
-                    String.Format("Can't find property {0} in object of type {1}.", element, type.FullName));
+                System.Diagnostics.Debug.Assert(property != null,
+                                                $"Can't find property {element} in object of type {type.FullName}.");
 
                 instance = property.GetValue(instance, null);
             }
@@ -1516,14 +1546,14 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <summary>
         /// Replaces the action parameters.
         /// </summary>
-        /// <param name="SQL">The SQL.</param>
-        /// <param name="ActionParsed">The action parsed.</param>
-        public static void ReplaceActionParams(ref string SQL, Dictionary<string, string> ActionParsed)
+        /// <param name="sql">The SQL.</param>
+        /// <param name="actionParsed">The action parsed.</param>
+        public static void ReplaceActionParams(ref string sql, Dictionary<string, string> actionParsed)
         {
             string paramName;
             string paramValue;
 
-            foreach (KeyValuePair<string, string> item in ActionParsed)
+            foreach (KeyValuePair<string, string> item in actionParsed)
             {
                 paramName = item.Key;
                 paramValue = item.Value;
@@ -1531,34 +1561,34 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
                 if (!paramName.StartsWith("@"))
                     paramName = '@' + paramName;
 
-                SQL = SQL.ReplaceWholeWords(paramName, paramValue, StringComparison.OrdinalIgnoreCase);
+                sql = sql.ReplaceWholeWords(paramName, paramValue, StringComparison.OrdinalIgnoreCase);
             }
         }
 
         /// <summary>
         /// Databases the COM parse SQL.
         /// </summary>
-        /// <param name="AccessCode">The access code.</param>
-        /// <param name="SQL">The SQL.</param>
-        /// <param name="ParseData">The parse data.</param>
+        /// <param name="accessCode">The access code.</param>
+        /// <param name="sql">The SQL.</param>
+        /// <param name="parseData">The parse data.</param>
         /// <returns>System.Int32.</returns>
-        public static int DBComParseSQL(string AccessCode, ref string SQL, ref object ParseData)
+        public static int DBComParseSQL(string accessCode, ref string sql, ref object parseData)
         {
             int res = -1;
 
-            using (ComWrapper ComWrapper = ComUtils.CreateRemoteCom(new Guid(ComUtils.CS_READER_GUID), AccessCode, string.Empty))
+            using (ComWrapper ComWrapper = ComUtils.CreateRemoteCom(new Guid(ComUtils.CS_READER_GUID), accessCode, string.Empty))
             {
                 if (ComUtils.Assigned(ComWrapper))
                 {
                     object[] arguments = new object[2];
-                    arguments[0] = SQL;
-                    arguments[1] = ParseData;
+                    arguments[0] = sql;
+                    arguments[1] = parseData;
                     res = ComUtils.RunMethod(ComWrapper, "ParseSQL", ref arguments);
 
                     if (res >= 0)
                     {
-                        SQL = arguments[0].ToString();
-                        ParseData = arguments[1];
+                        sql = arguments[0].ToString();
+                        parseData = arguments[1];
                     }
                 }
             }
@@ -1609,16 +1639,15 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <summary>
         /// Gets the name of the current database.
         /// </summary>
-        /// <param name="AccessCode">The access code.</param>
+        /// <param name="accessCode">The access code.</param>
         /// <returns>System.String.</returns>
-        public static string GetCurrentDatabaseName(string AccessCode)
+        public static string GetCurrentDatabaseName(string accessCode)
         {
             int res = GetPacket(
-                AccessCode,
-                string.Format("SELECT ISNULL(Nazwa + ' (' + Opis + ')','???') " +
-                              "FROM LOGON_BazaDanychRzeczywista " +
-                              "WHERE BazaDanychRzeczywistaId = {0}",
-                              GetParam(AccessCode, "DBID", "-1")),
+                accessCode,
+                "SELECT ISNULL(Nazwa + ' (' + Opis + ')','???') " +
+                "FROM LOGON_BazaDanychRzeczywista " +
+                "WHERE BazaDanychRzeczywistaId = " + GetParam(accessCode, "DBID", "-1"),
                 -1,
                 -1,
                 out object[,] packet);
@@ -1632,16 +1661,15 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <summary>
         /// Gets the name of the current user.
         /// </summary>
-        /// <param name="AccessCode">The access code.</param>
+        /// <param name="accessCode">The access code.</param>
         /// <returns>System.String.</returns>
-        public static string GetCurrentUserName(string AccessCode)
+        public static string GetCurrentUserName(string accessCode)
         {
             int res = GetPacket(
-                AccessCode,
-                string.Format("SELECT ISNULL(Imie_Nazwisko,'???') " +
-                              "FROM OpisUzytkownika " +
-                              "WHERE uprUzytkownikId = {0}",
-                              GetParam(AccessCode, "UID", "-1")),
+                accessCode,
+                "SELECT ISNULL(Imie_Nazwisko,'???') " +
+                "FROM OpisUzytkownika " +
+                "WHERE uprUzytkownikId = " + GetParam(accessCode, "UID", "-1"),
                 -1,
                 -1,
                 out object[,] packet);
@@ -1655,12 +1683,12 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
         /// <summary>
         /// Gets the culture by language identifier.
         /// </summary>
-        /// <param name="LangId">The language identifier.</param>
+        /// <param name="langId">The language identifier.</param>
         /// <returns>CultureInfo.</returns>
-        public static CultureInfo GetCultureByLangId(int LangId)
+        public static CultureInfo GetCultureByLangId(int langId)
         {
-            LangId %= 100;
-            switch (LangId)
+            langId %= 100;
+            switch (langId)
             {
                 case 2:
                     return CultureInfo.CreateSpecificCulture("de"); // de-DE
@@ -1799,9 +1827,9 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
             DateTime td = DateTime.Today;
 
             return "DD" +
-                td.DayOfWeek.ToString().Substring(0, 3).Reverse().ToUpper() +
-                Convert.ToString(100 - td.Day) +
-                td.ToString("MMMM", CultureInfo.InvariantCulture).Substring(0, 1).ToUpper();
+                    td.DayOfWeek.ToString().Substring(0, 3).Reverse().ToUpper() +
+                    Convert.ToString(100 - td.Day) +
+                    td.ToString("MMMM", CultureInfo.InvariantCulture).Substring(0, 1).ToUpper();
         }
 
         /// <summary>
@@ -2033,7 +2061,7 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
             return Char.IsLetterOrDigit(c) || c == '_' || c == '@';
         }
 
-        #region String extension methods
+#region String extension methods
         /// <summary>
         /// Determines whether this instance contains the object.
         /// </summary>
@@ -2143,9 +2171,9 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
 
             return result.ToString();
         }
-        #endregion
+#endregion
 
-        #region ForEach extensions
+#region ForEach extensions
 
         /// <summary>
         /// Fors the each.
@@ -2192,9 +2220,9 @@ public static ComWrapper CreateComFromProgID(string progID, string AccessCode, b
                 i++;
             }
         }
-        #endregion
+#endregion
 
-        #region Helper functions
+#region Helper functions
         /// <summary>
         /// Returns the last element.
         /// </summary>

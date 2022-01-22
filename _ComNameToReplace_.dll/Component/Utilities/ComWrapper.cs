@@ -1,4 +1,4 @@
-Ôªøusing System;
+using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.IO;
@@ -15,6 +15,10 @@ namespace DomConsult.GlobalShared.Utilities
     /// <seealso cref="System.IDisposable" />
     public sealed class ComWrapper : IDisposable
     {
+        /// <summary>
+        /// Field that determine if unit should work in Remote Mode.
+        /// Only executables that uses this unit should set this field for True once on start.
+        /// </summary>
         public static bool ComRemoteMode = false;
 
         /// <summary>
@@ -102,17 +106,38 @@ namespace DomConsult.GlobalShared.Utilities
         /// <summary>
         /// The m unique identifier
         /// </summary>
-        private string m_GUID = "";
+        private string m_ClassID = "";
+        /// <summary>
+        /// Class name of the component
+        /// </summary>
+        private string m_ProgID = "";
 
         #endregion
 
         /// <summary>
-        /// Gets the unique identifier.
+        /// Gets the classID of the component.
         /// </summary>
         /// <value>The unique identifier.</value>
+        [Obsolete("Use ClassID instead")]
         public string GUID
         {
-            get { return m_GUID; }
+            get { return m_ClassID; }
+        }
+
+        /// <summary>
+        /// Gets the classID of the component.
+        /// </summary>
+        public string ClassID
+        {
+            get { return m_ClassID; }
+        }
+
+        /// <summary>
+        /// Gets the progID of the component.
+        /// </summary>
+        public string ProgID
+        {
+            get { return m_ProgID; }
         }
 
         /// <summary>
@@ -137,6 +162,9 @@ namespace DomConsult.GlobalShared.Utilities
             set { m_serverName = value; }
         }
 
+        /// <summary>
+        /// Gets ServerName read from AccessCode
+        /// </summary>
         public string ServerNameAC
         {
             get
@@ -360,26 +388,28 @@ namespace DomConsult.GlobalShared.Utilities
         /// <summary>
         /// Connects the specified class name.
         /// </summary>
-        /// <param name="className">Name of the class.</param>
+        /// <param name="progID">Name of the class.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
-        public bool Connect(string className)
+        public bool Connect(string progID)
         {
             try
             {
-                comType = Type.GetTypeFromProgID(className, true);
-                m_GUID = comType.GUID.ToString();
+                comType = Type.GetTypeFromProgID(progID, true);
+                m_ClassID = comType.GUID.ToString();
+                m_ProgID = progID;
                 return ConnectRemote(comType.GUID, ServerName);
             }
             catch (COMException ex)
             {
-                m_GUID = "";
+                m_ClassID = "";
+                m_ProgID = "";
                 System.Diagnostics.Debug.WriteLine("ComWrapper.Connect error: ", ex.Message);
                 throw;
             }
         }
 
         /// <summary>
-        /// Connects the specified CLSID.
+        /// Connects to the component with specified CLSID.
         /// </summary>
         /// <param name="clsid">The CLSID.</param>
         /// <returns><c>true</c> if XXXX, <c>false</c> otherwise.</returns>
@@ -387,17 +417,24 @@ namespace DomConsult.GlobalShared.Utilities
         {
             try
             {
-                m_GUID = clsid.ToString();
+                m_ClassID = clsid.ToString();
                 return ConnectRemote(clsid, ServerName);
             }
             catch (COMException ex)
             {
-                m_GUID = "";
+                m_ClassID = "";
+                m_ProgID = "";
                 System.Diagnostics.Debug.WriteLine("ComWrapper.Connect error: ", ex.Message);
                 throw;
             }
         }
 
+        /// <summary>
+        /// Connects to the component with specified progID and partition.
+        /// </summary>
+        /// <param name="progID"></param>
+        /// <param name="COMPartition"></param>
+        /// <returns></returns>
         public bool Connect(string progID, Guid COMPartition)
         {
             try
@@ -420,14 +457,17 @@ namespace DomConsult.GlobalShared.Utilities
                 }
 
                 comObject = Marshal.BindToMoniker(moniker);
-                m_GUID = classID.ToString();
+                m_ClassID = classID.ToString();
                 comType = Type.GetTypeFromCLSID(classID, "127.0.0.1", true); //Tylko localhost
+                if (m_ProgID.Length == 0)
+                    m_ProgID = comType.Name;
                 Connected = true;
                 return true;
             }
             catch (COMException ex)
             {
-                m_GUID = "";
+                m_ClassID = "";
+                m_ProgID = "";
                 System.Diagnostics.Debug.WriteLine("ComWrapper.Connect error: ", ex.Message);
                 throw;
             }
@@ -458,20 +498,29 @@ namespace DomConsult.GlobalShared.Utilities
                 }
 
                 comObject = Marshal.BindToMoniker(moniker);
-                //comType = Type.GetTypeFromCLSID(classID); W tym przypadku to nie dzia≈Ça prawid≈Çowo!!!
-                m_GUID = classID.ToString();
+                //comType = Type.GetTypeFromCLSID(classID); W tym przypadku to nie dzia≥a prawid≥owo!!!
+                m_ClassID = classID.ToString();
                 comType = Type.GetTypeFromCLSID(classID, "127.0.0.1", true); //Tylko localhost
+                if (m_ProgID.Length == 0)
+                    m_ProgID = comType.Name;
                 Connected = true;
                 return true;
             }
             catch (COMException ex)
             {
-                m_GUID = "";
+                m_ClassID = "";
+                m_ProgID = "";
                 System.Diagnostics.Debug.WriteLine("ComWrapper.Connect error: ", ex.Message);
                 throw;
             }
         }
 
+        /// <summary>
+        /// Connects to remote component with the specified progID.
+        /// </summary>
+        /// <param name="progID"></param>
+        /// <param name="serverNameOrIP"></param>
+        /// <returns></returns>
         public bool ConnectRemote(string progID, string serverNameOrIP)
         {
             if (string.Equals(serverNameOrIP, "127.0.0.1") || string.Equals(serverNameOrIP, "localhost"))
@@ -484,17 +533,17 @@ namespace DomConsult.GlobalShared.Utilities
                 {
                     if (comType != null || comObject != null)
                         Disconnect();
-                    //comType = Type.GetTypeFromCLSID(classID, serverNameOrIP, true);
-                    //m_GUID = classID.ToString();
                     comType = Type.GetTypeFromProgID(progID, serverNameOrIP, true);
-                    m_GUID = comType.GUID.ToString();
+                    m_ClassID = comType.GUID.ToString();
+                    m_ProgID = progID;
                     comObject = Activator.CreateInstance(comType);
                     Connected = true;
                     return true;
                 }
                 catch (COMException ex)
                 {
-                    m_GUID = "";
+                    m_ClassID = "";
+                    m_ProgID = "";
                     System.Diagnostics.Debug.WriteLine("ComWrapper.ConnectRemote error: " + ex.Message);
                     throw;
                 }
@@ -520,19 +569,22 @@ namespace DomConsult.GlobalShared.Utilities
                     if (comType != null || comObject != null)
                         Disconnect();
                     comType = Type.GetTypeFromCLSID(classID, serverNameOrIP, true);
-                    m_GUID = classID.ToString();
+                    m_ClassID = classID.ToString();
+                    if (m_ProgID.Length == 0)
+                        m_ProgID = comType.Name;
                     comObject = Activator.CreateInstance(comType);
                     Connected = true;
                     return true;
                 }
                 catch (COMException ex)
                 {
-                    m_GUID = "";
+                    m_ClassID = "";
+                    m_ProgID = "";
                     System.Diagnostics.Debug.WriteLine("ComWrapper.ConnectRemote error: " + ex.Message);
                     throw;
                 }
             }
-    }
+        }
 
         /// <summary>
         /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
@@ -549,7 +601,8 @@ namespace DomConsult.GlobalShared.Utilities
         {
             try
             {
-                m_GUID = "";
+                m_ClassID = "";
+                m_ProgID = "";
                 //if (comObject != null) - http://www.dotnetperls.com/tester-doer
                 Marshal.FinalReleaseComObject(comObject);
             }
@@ -573,27 +626,13 @@ namespace DomConsult.GlobalShared.Utilities
         }
 
         /// <summary>
-        /// Invokes the method.
+        /// Invokes method specified in parameters.
         /// </summary>
         /// <param name="methodName">Name of the method.</param>
-        /// <param name="arguments">The arguments.</param>
-        /// <param name="argsByRef">The arguments by reference.</param>
+        /// <param name="arguments">The array of arguments.</param>
+        /// <param name="argsByRef">The array of flags determines which arguments are passing by reference.</param>
         /// <returns>System.Object.</returns>
         public object InvokeMethod(string methodName, object[] arguments, bool[] argsByRef)
-        {
-            string exception = "";
-            return InvokeMethod(methodName, arguments, argsByRef, ref exception);
-        }
-
-        /// <summary>
-        /// Invokes the method.
-        /// </summary>
-        /// <param name="methodName">Name of the method.</param>
-        /// <param name="arguments">The arguments.</param>
-        /// <param name="argsByRef">The arguments by reference.</param>
-        /// <param name="exception">The exception.</param>
-        /// <returns>System.Object.</returns>
-        public object InvokeMethod(string methodName, object[] arguments, bool[] argsByRef, ref string exception)
         {
             if (arguments != null)
             {
