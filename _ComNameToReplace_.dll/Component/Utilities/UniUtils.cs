@@ -49,6 +49,11 @@ namespace DomConsult.GlobalShared.Utilities
         public readonly static string SYSREG_PATH = System.IO.Path.Combine(Environment.SystemDirectory, "SysReg_{63AFD5B1-49BA-11D5-9AA5-00105A72C191}.ini");
 
         /// <summary>
+        /// Obligatory for executing SQL multipart script
+        /// </summary>
+        public const string CS_NO_COUNT = "SET NOCOUNT ON; SET XACT_ABORT ON; \r\n";
+
+        /// <summary>
         /// The cs WMK
         /// </summary>
         public const int csWMK = 2147480647;
