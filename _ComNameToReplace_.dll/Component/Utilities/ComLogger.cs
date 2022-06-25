@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using DomConsult.GlobalShared.Utilities.Interfaces;
 
 namespace DomConsult.GlobalShared.Utilities
 {
     /// <summary>
     /// Class ComLogger.
     /// </summary>
-    public class ComLogger
+    public class ComLogger : IComLogger
     {
         /// <summary>
         /// The this lock
@@ -88,7 +89,10 @@ namespace DomConsult.GlobalShared.Utilities
                     System.Reflection.AssemblyTitleAttribute title = System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Reflection.AssemblyTitleAttribute), false)[0] as System.Reflection.AssemblyTitleAttribute;
                     logFilePrefix = title.Title;
                 }
-                catch { }
+                catch
+                {
+                    // not important
+                }
             }
             else
             {
@@ -150,7 +154,10 @@ namespace DomConsult.GlobalShared.Utilities
                 m_debug.Add(elapsedTime + message);
                 m_StopWatch.Start();
             }
-            catch { }
+            catch
+            {
+                // not important
+            }
         }
 
         /// <summary>
@@ -181,7 +188,10 @@ namespace DomConsult.GlobalShared.Utilities
                 m_debug.Add($"ElapsedTime[ms]:{m_StopWatch.ElapsedMilliseconds} - {_msg}");
                 m_StopWatch.Start();
             }
-            catch { }
+            catch
+            {
+                // not important
+            }
         }
 
         /// <summary>
@@ -219,17 +229,102 @@ namespace DomConsult.GlobalShared.Utilities
                 }
                 m_StopWatch.Start();
             }
-            catch { }
+            catch
+            {
+                // not important
+            }
+        }
+
+        /// <summary>
+        /// Add the specified params array to log
+        /// </summary>
+        /// <param name="params"></param>
+        /// <param name="printPasswords"></param>
+        public void AddParamsArray(object @params, bool printPasswords = false)
+        {
+            try
+            {
+                Add("AddParamsArray");
+
+                string key = "?";
+                object[,] _params = @params as object[,];
+
+                if (!TUniVar.VarIsArray(_params))
+                    return;
+
+                for (var i=0; i< _params.GetUpperBound(0); i++)
+                {
+                    try
+                    {
+                        key = TUniVar.VarToStr(_params[i, 0]).ToUpper();
+                        if (!printPasswords && (key.Contains("PASSWORD") || key.Contains("PWD")))
+                        {
+                            Add(string.Format("[{0}]=[***]", key), false);
+                        }
+                        else
+                        {
+                            Add(string.Format("[{0}]=[{1}]", key, TUniVar.VarToStr(_params[i, 1])), false);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Add(string.Format("[{0}]=exception:{1}", key, ex.Message), false);
+                    }
+                }
+            }
+            catch
+            {
+                // not important
+            }
+        }
+
+        /// <summary>
+        /// Add the specified dictionary to log
+        /// </summary>
+        /// <param name="dict"></param>
+        /// <param name="printPasswords"></param>
+        public void AddDictionary(Dictionary<string, object> dict, bool printPasswords = false)
+        {
+            try
+            {
+                Add("AddDictionary");
+
+                string key = "?";
+                foreach (var item in dict)
+                {
+                    try
+                    {
+                        key = Convert.ToString(item.Key).ToUpper();
+                        if (!printPasswords && (key.Contains("PASSWORD") || key.Contains("PWD")))
+                        {
+                            Add(string.Format("[{0}]=[***]", item.Key), false);
+                        }
+                        else
+                        {
+                            Add(string.Format("[{0}]=[{1}]", item.Key, TUniVar.VarToStr(item.Value)), false);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Add(string.Format("[{0}]=exception: {1}", key, ex.Message));
+                    }
+                }
+            }
+            catch
+            {
+                // not important
+            }
         }
 
         /// <summary>
         /// Saves the log.
         /// </summary>
-        public void SaveLog()
+        /// <param name="force"></param>
+        public void SaveLog(bool force = false)
         {
             try
             {
-                if (AllowDebug)
+                if (AllowDebug || force)
                 {
                     if (string.IsNullOrEmpty(LogDir))
                     {
@@ -269,7 +364,10 @@ namespace DomConsult.GlobalShared.Utilities
                 m_debug.Clear();
                 LogFileName = "";
             }
-            catch { }
+            catch
+            {
+                // not important
+            }
         }
     }
 }

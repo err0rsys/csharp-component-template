@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 
 using DomConsult.Org.BouncyCastle.Crypto.Parameters;
 using DomConsult.Org.BouncyCastle.Crypto.Utilities;

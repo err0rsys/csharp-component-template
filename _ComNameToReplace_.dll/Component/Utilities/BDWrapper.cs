@@ -7,6 +7,7 @@ namespace DomConsult.GlobalShared.Utilities
     /// <summary>
     /// Enum TFormState
     /// </summary>
+    [Flags]
     public enum TFormState
     {
         /// <summary>
@@ -75,165 +76,459 @@ namespace DomConsult.GlobalShared.Utilities
     public enum TBDFieldProps
     {
         /// <summary>
-        /// The c cell hint
+        /// dummy
         /// </summary>
-        cCellHint,
+        cDummy = 0,
 
         /// <summary>
-        /// The c cell read only
+        /// The modify status
         /// </summary>
-        cCellReadOnly,
+        cModifyStatus = 1,
 
         /// <summary>
-        /// The c cell value
+        /// The input status
         /// </summary>
-        cCellValue,
+        cInputStatus = 2,
 
         /// <summary>
-        /// The c color editable
+        /// dummy
         /// </summary>
-        cColorEditable,
+        cDummy2 = 3,
 
         /// <summary>
-        /// The c color read only
+        /// The font name
         /// </summary>
-        cColorReadOnly,
+        cFontName = 4,
 
         /// <summary>
-        /// The c columns information
+        /// The font size
         /// </summary>
-        cColumnsInfo,
+        cFontSize = 5,
 
         /// <summary>
-        /// The c data type
+        /// The font color
         /// </summary>
-        cDataType,
+        cFontColor = 6,
 
         /// <summary>
-        /// The c dummy
+        /// The font style
         /// </summary>
-        cDummy,
+        cFontStyle = 7,
 
         /// <summary>
-        /// The c dummy2
+        /// The editable color
         /// </summary>
-        cDummy2,
+        cColorEditable = 8,
 
         /// <summary>
-        /// The c dummy3
+        /// The readonly color
         /// </summary>
-        cDummy3,
+        cColorReadOnly = 9,
 
         /// <summary>
-        /// The c dummy4
+        /// The password character
         /// </summary>
-        cDummy4,
+        cPasswordChar = 10,
 
         /// <summary>
-        /// The c dummy5
+        /// dummy
         /// </summary>
-        cDummy5,
+        cDummy3 = 11,
 
         /// <summary>
-        /// The c enabled
+        /// The object type
         /// </summary>
-        cEnabled,
+        cObjectTypeId = 12,
 
         /// <summary>
-        /// The c font color
+        /// The tool identifier
         /// </summary>
-        cFontColor,
+        cToolId = 13,
 
         /// <summary>
-        /// The c font name
+        /// The field visible
         /// </summary>
-        cFontName,
+        cVisible = 14,
 
         /// <summary>
-        /// The c font size
+        /// The field maximal length
         /// </summary>
-        cFontSize,
+        cMaxLength = 15,
 
         /// <summary>
-        /// The c font style
+        /// The field data type
         /// </summary>
-        cFontStyle,
+        cDataType = 16,
 
         /// <summary>
-        /// The c grid column
+        /// The field enabled
         /// </summary>
-        cGridColumn,
+        cEnabled = 17,
 
         /// <summary>
-        /// The c grid row
+        /// The field hint
         /// </summary>
-        cGridRow,
+        cHint = 18,
 
         /// <summary>
-        /// The c hint
+        /// The multiple selection
         /// </summary>
-        cHint,
+        cMultiSelection = 19,
 
         /// <summary>
-        /// The c hint map
+        /// The info for column
         /// </summary>
-        cHintMap,
+        cColumnsInfo = 20,
 
         /// <summary>
-        /// The c input status
+        /// The SQL
         /// </summary>
-        cInputStatus,
+        cSQL = 21,
 
         /// <summary>
-        /// The c maximum length
+        /// The SQL sorting
         /// </summary>
-        cMaxLength,
+        cSQLSortBy = 22,
 
         /// <summary>
-        /// The c modify status
+        /// The grid row
         /// </summary>
-        cModifyStatus,
+        cGridRow = 23,
 
         /// <summary>
-        /// The c multi selection
+        /// The grid column
         /// </summary>
-        cMultiSelection,
+        cGridColumn = 24,
 
         /// <summary>
-        /// The c object type identifier
+        /// The caption
         /// </summary>
-        cObjectTypeId,
+        cCaption = 25,
 
         /// <summary>
-        /// The c password character
+        /// The cell value
         /// </summary>
-        cPasswordChar,
+        cCellValue = 26,
 
         /// <summary>
-        /// The c read only map
+        /// The cell readonly
         /// </summary>
-        cReadOnlyMap,
+        cCellReadOnly = 27,
 
         /// <summary>
-        /// The c SQL
+        /// The radio items
         /// </summary>
-        cSQL,
+        cRadioItems = 28,
 
         /// <summary>
-        /// The c SQL sort by
+        /// The readonly map
         /// </summary>
-        cSQLSortBy,
+        cReadOnlyMap = 29,
 
         /// <summary>
-        /// The c tool identifier
+        /// The hint map
         /// </summary>
-        cToolId,
+        cHintMap = 30,
 
         /// <summary>
-        /// The c visible
+        /// The cell hint
         /// </summary>
-        cVisible
+        cCellHint = 31,
+
+        /// <summary>
+        /// The cell value incorrect
+        /// </summary>
+        cCellValueIncorrect = 32,
+
+        /// <summary>
+        /// The quick filters
+        /// </summary>
+        cQuickFilters = 33,
+
+        /// <summary>
+        /// The DDButton to click
+        /// </summary>
+        cDDButtonToClick = 34,
+
+        /// <summary>
+        /// The columns visibility
+        /// </summary>
+        cColumnsVisibility = 35,
+
+        /// <summary>
+        /// The columns info version
+        /// </summary>
+        cColumnsInfoVersion = 36,
+
+        /// <summary>
+        /// The actualization
+        /// </summary>
+        cActualization = 37,
+
+        /// <summary>
+        /// The tool extra column
+        /// Dla pól dynamicznych. Wartoœæ to jest to samo, co siê wpisuje do ToolExtraColumnName podczas projektowania formularza
+        /// </summary>
+        cToolExtraColumn = 38,
+
+        /// <summary>
+        /// The grid last row - readonly
+        /// W niektórych przypadkach DDGrid ustawia te w³asnoœci, gdy przechodzi siê kursorem z jednej komórki na drug¹.Wtedy te
+        /// dwie w³asnoœci okreœlaj¹ z jakiej komórki zosta³ przemieszczony kursor, a PROP_GRIDROW(23) i PROP_GRIDCOLUMN(24)
+        /// okreœlaj¹ w jakiej komórce kursor siê znajduje obecnie.
+        /// </summary>
+        cGridLastRow = 39,
+
+        /// <summary>
+        /// The grid last column - readonly
+        /// W niektórych przypadkach DDGrid ustawia te w³asnoœci, gdy przechodzi siê kursorem z jednej komórki na drug¹.Wtedy te
+        /// dwie w³asnoœci okreœlaj¹ z jakiej komórki zosta³ przemieszczony kursor, a PROP_GRIDROW(23) i PROP_GRIDCOLUMN(24)
+        /// okreœlaj¹ w jakiej komórce kursor siê znajduje obecnie.
+        /// </summary>
+        cGridLastColumn = 40,
+
+        /// <summary>
+        /// The value not set - readonly
+        /// DDList ustawia t¹ w³asnoœæ podczas programowego przechodzenia po rekordach (za pomoc¹ OTHERa 61) w przypadku,
+        /// gdy nie uda siê przejœæ do poprzedniego/nastêpnego rekordu (z pierwszego na poprzedni, z ostatniego na nastêpny).
+        /// Na razie tylko DDList u¿ywa tej w³asnoœci.
+        /// </summary>
+        cValueNotSet = 41,
+
+        /// <summary>
+        /// The command
+        /// Umo¿liwia wys³anie do danej kontrolki pojedynczego polecenia w formacie wektora olevariantowego:
+        /// Value[0] - polecenie
+        /// Value[1] - argumenty polecenia
+        /// </summary>
+        cCommand = 42,
+
+        /// <summary>
+        /// The highlighter
+        /// Typ podœwietlania sk³adni dla kontrolki DDMemoEx (spNone, spUser, spHtml, spSql)
+        /// </summary>
+        cHighlighter = 43,
+
+        /// <summary>
+        /// The file name
+        /// 44 i 45 s¹ dla DDButtona typu btFileOpenDialog.S¹ w³asnoœciami, które wysy³a aplikacja do komponentu,
+        /// a których nie interpretuje, gdy ustawia je komponent.
+        /// W tych w³asnoœciach s¹ przekazywane komponentowi, odpowiednio:
+        /// nazwa wskazanego/wczytanego pliku oraz, jeœli jest dostêpna, miniatura tego pliku.
+        /// </summary>
+        cFileName = 44,
+
+        /// <summary>
+        /// The thumbnail
+        /// 44 i 45 s¹ dla DDButtona typu btFileOpenDialog.S¹ w³asnoœciami, które wysy³a aplikacja do komponentu,
+        /// a których nie interpretuje, gdy ustawia je komponent.
+        /// W tych w³asnoœciach s¹ przekazywane komponentowi, odpowiednio:
+        /// nazwa wskazanego/wczytanego pliku oraz, jeœli jest dostêpna, miniatura tego pliku.
+        /// </summary>
+        cThumbnail = 45,
+
+        /// <summary>
+        /// The custom control properties
+        /// Za pomoc¹ tej w³asnoœci mo¿na sterowaæ dowolnymi w³asnoœciami kontrolek.
+        /// W³asnoœci te musz¹ siê znajdowaæ w sekcji "published" danej kontrolki, czyli w uproszczeniu
+        /// s¹ to te w³asnoœci, które s¹ zapisywane w pliku .dfm
+        /// Wartoœci¹ cCustomControlProps jest tablica olevariantowa o postaci:
+        /// 
+        /// +------------------+-------------------+
+        /// | nazwa w³asnoœci  | wartoœæ w³asnoœci |
+        /// +------------------+-------------------+
+        /// | nazwa w³asnoœci  | wartoœæ w³asnoœci |
+        /// +------------------+-------------------+
+        /// | ...              | ...               |
+        /// +------------------+-------------------+
+        ///
+        /// Przyk³adowo:
+        /// +------------------+-------------------+
+        /// | Top  | 10 |
+        /// +------------------+-------------------+
+        /// | Left | 16 |
+        /// +------------------+-------------------+
+        ///
+        /// Uwaga: od wersji granitxp 7.3.1.425 nazwa w³asnoœci mo¿e byæ z³o¿ona, np. Font.Name
+        /// (poprzednia wersja aplikacji klienckiej po prostu pomija takie w³asnoœci).
+        /// </summary>
+        cCustomControlProps = 46,
+
+        /// <summary>
+        /// The node text changed
+        /// This property is for DDTreeView.It carries the new value of the node text, when changed.
+        /// </summary>
+        cNodeTextChanged = 47,
+
+        /// <summary>
+        /// The actualization
+        /// (not used)
+        /// </summary>
+        __dummy48 = 48,
+
+        /// <summary>
+        /// The cell color map
+        /// These two properties are for TDDGrid - you can use them to change color of individual cells
+        /// (excluding the cells belonging to fixed rows and fixed columns).
+        /// The data format for these properties is similar to that of cHintMap and cCellHint, respectively.
+        /// </summary>
+        cCellColorMap = 49,
+
+        /// <summary>
+        /// The cell color map
+        /// These two properties are for TDDGrid - you can use them to change color of individual cells
+        /// (excluding the cells belonging to fixed rows and fixed columns).
+        /// The data format for these properties is similar to that of cHintMap and cCellHint, respectively.
+        /// </summary>
+        cCellColor = 50,
+
+        /// <summary>
+        /// The enter pressed
+        /// Presence of this property indicates, that Enter key was pressed in the control
+        /// (this actually works only for DDGrid and DDEdit controls, depending on their properties)
+        /// </summary>
+        cEnterPressed = 51,
+        
+        /// <summary>
+        /// The control text
+        /// This property holds the control text(which may be different from FieldValue). Itis added for DDEdit,
+        /// DDLookupComboBox and DDCheckBox controls.
+        /// For DDCheckBox this property holds the control caption, and is added only when the control is checked.
+        /// </summary>
+        cControlText = 52,
+
+        /// <summary>
+        /// The filter definition - readonly
+        /// Ta w³asnoœæ zawiera definicjê bie¿¹cego filtra(dla kontrolki DDList).
+        /// </summary>
+        cFilterDefinition = 53,
+
+        /// <summary>
+        /// The cell combo items
+        /// (dla kontrolki DDGrid) Dziêki tej w³asnoœci mo¿na definiowaæ inny zestaw pozycji
+        /// dla ka¿dego pola combo na gridzie.
+        /// </summary>
+        cCellComboItems = 54,
+
+        /// <summary>
+        /// reserved
+        /// </summary>
+        __dummy55 = 55,
+
+        /// <summary>
+        /// The delete row request
+        /// (obie w³asnoœci s¹ dla kontrolki DDGrid). Wyst¹pienie którejœ z nich oznacza, ¿e u¿ytkownik
+        /// formularza wcisn¹³ kombinacjê klawiszy odpowiadaj¹c¹ za usuniêcie lub dodanie wiersza(tylko w trybie gomGrid).
+        /// Aplikacja sama nie usuwa ani nie dodaje wiersza, tylko wysy³a odpowiedni¹ informacjê do komponentu bran¿owego.
+        /// Wartoœci¹ ka¿dej z tych w³asnoœci jest numer wiersza, który u¿ytkownik chce usun¹æ lub dodaæ.
+        /// </summary>
+        cDeleteRowRequest = 56,
+
+        /// <summary>
+        /// The insert row request
+        /// (obie w³asnoœci s¹ dla kontrolki DDGrid). Wyst¹pienie którejœ z nich oznacza, ¿e u¿ytkownik
+        /// formularza wcisn¹³ kombinacjê klawiszy odpowiadaj¹c¹ za usuniêcie lub dodanie wiersza(tylko w trybie gomGrid).
+        /// Aplikacja sama nie usuwa ani nie dodaje wiersza, tylko wysy³a odpowiedni¹ informacjê do komponentu bran¿owego.
+        /// Wartoœci¹ ka¿dej z tych w³asnoœci jest numer wiersza, który u¿ytkownik chce usun¹æ lub dodaæ.
+        /// </summary>
+        cInsertRowRequest = 57,
+
+        /// <summary>
+        /// reserved
+        /// </summary>
+        cSchedulerEventSQL = 58,
+
+        /// <summary>
+        /// The scheduler event resources SQL
+        /// </summary>
+        cSchedulerEventResourcesSQL = 59,
+
+        /// <summary>
+        /// The scheduler resources list
+        /// </summary>
+        cSchedulerResourcesList = 60,
+
+        /// <summary>
+        /// The scheduler event types list
+        /// </summary>
+        cSchedulerEventTypesList = 61,
+
+        /// <summary>
+        /// reserved
+        /// </summary>
+        __dummy62 = 62,
+
+        /// <summary>
+        /// reserved
+        /// </summary>
+        __dummy63 = 63,
+
+        /// <summary>
+        /// The enable remove row map
+        /// (dla kontrolki DDGrid) dziêki tej w³asnoœci mo¿na zdefiniowaæ mapê wierszy,
+        /// które nie mog¹ byæ usuniête przyciskiem "usuñ" znajduj¹cym siê na kontrolce
+        /// </summary>
+        cEnableRemoveRowMap = 64,
+
+        /// <summary>
+        /// The auto fill
+        /// Gdy kontrolka DDList ma wskazanie na automatyczne wype³nienie danymi pewnego pola,
+        /// to w momencie takiego automatycznego wype³nienia pole to otrzyma tê w³asnoœæ
+        /// </summary>
+        cAutoFill = 65,          
+
+        /// <summary>
+        /// The auto fill record
+        /// Gdy kontrolka DDList ma wskazanie na automatyczne wype³nienie danymi pewnego pola,
+        /// to w momencie takiego automatycznego wype³nienia kontrolka DDList otrzyma tê w³asnoœæ,
+        /// która zawiera bie¿¹cy rekord tak jak jest widoczny, z czego w kolumnie[0] jest ObjectId danego rekordu.
+        /// W³asnoœæ ta zawiera tablicê wariantow¹, gdzie wiersz[0] to nazwy kolumn,
+        /// wiersz[1] to wartoœci, a wiersz[2] to flagi typów danych
+        /// </summary>
+        cAutoFillRecord = 66
     }
+
+    /// <summary>
+    /// Enum TBDModifyFlags
+    /// </summary>
+    public enum TBDModifyFlags
+    {
+        /// <summary>
+        /// Modify status - editable
+        /// </summary>
+        cPropModifyEditable = 0,
+
+        /// <summary>
+        /// Modify status - readonly
+        /// </summary>
+        cPropModifyReadOnly = 1
+    };
+
+    /// <summary>
+    /// Enum TBDModifyFlags
+    /// </summary>
+    public enum TBDInputFlags
+    {
+        /// <summary>
+        /// Input obligatory
+        /// </summary>
+        cPropInputRequired = 0,
+
+        /// <summary>
+        /// Input optional
+        /// </summary>
+        cPropInputOptional = 1,
+
+        /// <summary>
+        /// Input disabled
+        /// </summary>
+        cPropInputViewOnly = 2,
+
+        /// <summary>
+        /// Input original 
+        /// </summary>
+        cPropInputOriginal = 3
+    };
 
     /// <summary>
     /// Enum TBDOthers
@@ -871,15 +1166,22 @@ namespace DomConsult.GlobalShared.Utilities
         /// <summary>
         /// Properties of the field
         /// </summary>
-        public Dictionary<int, object> Properties { get; } = new Dictionary<int, object>();
+        public Dictionary<TBDFieldProps, object> Properties { get; } = new Dictionary<TBDFieldProps, object>();
+
         /// <summary>
         /// The field name
         /// </summary>
-        public string FieldName;
+        public string FieldName { get; set; }
+
         /// <summary>
         /// The field value
         /// </summary>
-        public object FieldValue;
+        public object FieldValue { get; set; }
+
+        /// <summary>
+        /// Default field value
+        /// </summary>
+        public object DefaultValue { get; set; }
 
         /// <summary>
         /// Gets the properties.
@@ -898,7 +1200,7 @@ namespace DomConsult.GlobalShared.Utilities
 
             for (int i = 0; i < Properties.Count; i++)
             {
-                prop[i, 0] = Properties.ElementAt(i).Key;
+                prop[i, 0] = (int)Properties.ElementAt(i).Key;
                 prop[i, 1] = Properties.ElementAt(i).Value;
             }
 
@@ -908,41 +1210,39 @@ namespace DomConsult.GlobalShared.Utilities
         /// <summary>
         /// The dictionary
         /// </summary>
-        public object Dictionary;
+        public object Dictionary { get; set; }
 
         /// <summary>
         /// Gets as string.
         /// </summary>
         /// <value>As string.</value>
-        public string AsString
+        public string AsString(string var_null = TUniConstants._STR_NULL)
         {
-            get
-            {
-                return TUniVar.VarToStr(FieldValue);
-            }
+            return TUniVar.VarToStr(FieldValue, var_null);
         }
 
         /// <summary>
         /// Gets as int.
         /// </summary>
         /// <value>As int.</value>
-        public int AsInt
+        public int AsInt(int var_null = TUniConstants._INT_NULL)
         {
-            get
-            {
-                return TUniVar.VarToInt(FieldValue);
-            }
+            return TUniVar.VarToInt(FieldValue, var_null);
         }
 
         /// <summary>
         /// Gets as datetime.
         /// </summary>
         /// <value>As datetime.</value>
-        public DateTime AsDateTime
+        public DateTime AsDateTime(double? var_null = TUniConstants._DATE_NULL)
         {
-            get
+            if (TUniVar.VarIsNullOrEmpty(var_null))
             {
-                return TUniVar.VarToDateTime(FieldValue, DateTime.FromOADate(TUniConstants._DATE_NULL));
+                return TUniVar.VarToDateTime(FieldValue, null);
+            }
+            else
+            {
+                return TUniVar.VarToDateTime(FieldValue, DateTime.FromOADate((double)var_null));
             }
         }
 
@@ -950,12 +1250,9 @@ namespace DomConsult.GlobalShared.Utilities
         /// Gets as variable.
         /// </summary>
         /// <value>As variable.</value>
-        public object AsVar
+        public object AsVar()
         {
-            get
-            {
-                return FieldValue;
-            }
+            return FieldValue;
         }
 
         /// <summary>
@@ -963,12 +1260,200 @@ namespace DomConsult.GlobalShared.Utilities
         /// </summary>
         /// <param name="id">The property identifier.</param>
         /// <param name="PropValue">The property value.</param>
-        public void AddModifyProperty(int id, object PropValue)
+        public void AddModifyProperty(TBDFieldProps id, object PropValue)
         {
             if (Properties.ContainsKey(id))
-                Properties.Add(id, PropValue);
-            else
+            {
                 Properties[id] = PropValue;
+            }
+            else
+            {
+                Properties.Add(id, PropValue);
+            }
+        }
+
+        /// <summary>
+        /// Set form field to disabled input state
+        /// </summary>
+        public void SetInputDisabled()
+        {
+            AddModifyProperty(TBDFieldProps.cInputStatus,
+                (int)TBDInputFlags.cPropInputViewOnly);
+        }
+
+        /// <summary>
+        /// Set form field to original input state
+        /// </summary>
+        public void SetInputOriginal()
+        {
+            AddModifyProperty(TBDFieldProps.cInputStatus,
+                (int)TBDInputFlags.cPropInputOriginal);
+        }
+
+        /// <summary>
+        /// Set form field to optional input state
+        /// </summary>
+        public void SetInputOptional()
+        {
+            AddModifyProperty(TBDFieldProps.cInputStatus,
+                (int)TBDInputFlags.cPropInputOptional);
+        }
+
+        /// <summary>
+        /// Set form field to obligatory input state
+        /// </summary>
+        public void SetInputObligatory()
+        {
+            AddModifyProperty(TBDFieldProps.cInputStatus,
+                (int)TBDInputFlags.cPropInputRequired);
+        }
+    }
+
+    /// <summary>
+    /// Class BDOther.
+    /// </summary>
+    public class BDOther
+    {
+        /// <summary>
+        /// The field name
+        /// </summary>
+        public TBDOthers OtherId { get; set; }
+
+        /// <summary>
+        /// The field value
+        /// </summary>
+        public object OtherValue { get; set; }
+
+        /// <summary>
+        /// Gets as string.
+        /// </summary>
+        /// <value>As string.</value>
+        public string AsString(string var_null = TUniConstants._STR_NULL)
+        {
+            return TUniVar.VarToStr(OtherValue, var_null);
+        }
+
+        /// <summary>
+        /// Gets as int.
+        /// </summary>
+        /// <value>As int.</value>
+        public int AsInt(int var_null = TUniConstants._INT_NULL)
+        {
+            return TUniVar.VarToInt(OtherValue, var_null);
+        }
+
+        /// <summary>
+        /// Gets as datetime.
+        /// </summary>
+        /// <value>As datetime.</value>
+        public DateTime AsDateTime(double var_null = TUniConstants._DATE_NULL)
+        {
+            return TUniVar.VarToDateTime(OtherValue, DateTime.FromOADate(var_null));
+        }
+
+        /// <summary>
+        /// Gets as variable.
+        /// </summary>
+        /// <value>As variable.</value>
+        public object AsVar()
+        {
+            return OtherValue;
+        }
+    }
+
+    /// <summary>
+    /// Class BDParam.
+    /// </summary>
+    public class BDParam
+    {
+        /// <summary>
+        /// The field name
+        /// </summary>
+        public string ParamName { get; set; }
+
+        /// <summary>
+        /// The field value
+        /// </summary>
+        public object ParamValue { get; set; }
+
+        /// <summary>
+        /// The tag value
+        /// </summary>
+        public int Tag { get; set; }
+
+        /// <summary>
+        /// Check value is empty or null.
+        /// </summary>
+        /// <value>Bool.</value>        
+        public bool IsNullEmpty
+        {
+            get
+            {
+                return TUniVar.VarIsNullOrEmpty(ParamValue);
+            }
+        }
+
+        /// <summary>
+        /// Check value is an array.
+        /// </summary>
+        /// <value>Bool.</value> 
+        public bool IsTableOrVector()
+        {
+            return TUniVar.VarIsArray(ParamValue);
+        }
+
+        /// <summary>
+        /// Check value is a vector.
+        /// </summary>
+        /// <value>Bool.</value> 
+        public bool IsVector()
+        {
+            return TUniVar.VarIsArray(ParamValue, 1);
+        }
+
+        /// <summary>
+        /// Check value is a table.
+        /// </summary>
+        /// <value>Bool.</value> 
+        public bool IsTable(int dimCount = 2)
+        {
+            return TUniVar.VarIsArray(ParamValue, dimCount);
+        }
+
+        /// <summary>
+        /// Gets as string.
+        /// </summary>
+        /// <value>As string.</value>
+        public string AsString(string var_null = TUniConstants._STR_NULL)
+        {
+            return TUniVar.VarToStr(ParamValue, var_null);
+        }
+
+        /// <summary>
+        /// Gets as int.
+        /// </summary>
+        /// <value>As int.</value>
+        public int AsInt(int var_null = TUniConstants._INT_NULL)
+        {
+            return TUniVar.VarToInt(ParamValue, var_null);
+        }
+
+        /// <summary>
+        /// Gets as datetime.
+        /// </summary>
+        /// <value>As datetime.</value>
+        public DateTime AsDateTime(double var_null = TUniConstants._DATE_NULL)
+        {
+            return TUniVar.VarToDateTime(ParamValue, DateTime.FromOADate(var_null));
+        }
+
+        /// <summary>
+        /// Gets as variable.
+        /// </summary>
+        /// <value>As variable.</value>
+        public object AsVar()
+        {
+            return ParamValue;
         }
     }
 
@@ -976,17 +1461,17 @@ namespace DomConsult.GlobalShared.Utilities
     /// Class BDWrapper.
     /// </summary>
     public class BDWrapper
-    {
+{
         private readonly StringComparer _comparer = StringComparer.OrdinalIgnoreCase;
 
         /// <summary>
         /// G³ówny konstruktor klasy
         /// </summary>
-        public BDWrapper():base()
+        public BDWrapper()
         {
             Fields = new Dictionary<string, BDField>(_comparer);
-            Others = new Dictionary<TBDOthers, object>();
-            Params = new Dictionary<string, object>(_comparer);
+            Others = new Dictionary<TBDOthers, BDOther>();
+            Params = new Dictionary<string, BDParam>(_comparer);
 
             MultiInOneParams = new List<string>();
         }
@@ -995,18 +1480,67 @@ namespace DomConsult.GlobalShared.Utilities
         /// The field list
         /// </summary>
         public Dictionary<string, BDField> Fields { get; }
+
+        /// <summary>
+        /// Combination of Fields[] and AddModifyField()
+        /// </summary>
+        public BDField FieldsDef(string key, object def_value)
+        {
+            if (Fields.ContainsKey(key))
+            {
+                return Fields[key];
+            }
+            else
+            {
+                return this.AddModifyField(key, def_value);
+            }
+        }
+
         /// <summary>
         /// The other list
         /// </summary>
-        public Dictionary<TBDOthers, object> Others { get; }
+        public Dictionary<TBDOthers, BDOther> Others { get; }
+
+        /// <summary>
+        /// Combination of Others[] and AddModifyOther()
+        /// </summary>
+        public BDOther OthersDef(TBDOthers id, object def_value)
+        {
+            if (Others.ContainsKey(id))
+            {
+                return Others[id];
+            }
+            else
+            {
+                return this.AddModifyOther(id, def_value);
+            }
+        }
+
         /// <summary>
         /// The parameter list
         /// </summary>
-        public Dictionary<string, object> Params { get; }
+        public Dictionary<string, BDParam> Params { get; }
+
+        /// <summary>
+        /// Combination of Params[] and AddModifyParam()
+        /// </summary>
+        public BDParam ParamsDef(string key, object def_value)
+        {
+            if (Params.ContainsKey(key))
+            {
+                return Params[key];
+            }
+            else
+            {
+                return this.AddModifyParam(key, def_value);
+            }
+        }
+
         /// <summary>
         /// The MultiInOne parameter list
         /// </summary>
         public List<string> MultiInOneParams { get; }
+
         /// <summary>
         /// Adds the modify field.
         /// </summary>
@@ -1044,21 +1578,42 @@ namespace DomConsult.GlobalShared.Utilities
         /// <summary>
         /// Adds the modify other.
         /// </summary>
-        /// <param name="id">The other identifier.</param>
-        /// <param name="value">The other value.</param>
-        public void AddModifyOther(TBDOthers id, object value)
+        /// <param name="otherId">The other identifier.</param>
+        /// <param name="otherValue">The other value.</param>
+        /// <returns>BDOther.</returns>
+        public BDOther AddModifyOther(TBDOthers otherId, object otherValue)
         {
-            Others[id] = value;
+            if (!Others.TryGetValue(otherId, out BDOther other))
+            {
+                other = new BDOther
+                {
+                    OtherId = otherId
+                };
+                Others.Add(otherId, other);
+            }
+
+            other.OtherValue = otherValue;
+            return other;
         }
 
         /// <summary>
         /// Adds the modify parameter.
         /// </summary>
-        /// <param name="name">Name of the parameter.</param>
-        /// <param name="value">The parameter value.</param>
-        public void AddModifyParam(string name, object value)
+        /// <param name="paramName">Name of the parameter.</param>
+        /// <param name="paramValue">The parameter value.</param>
+        public BDParam AddModifyParam(string paramName, object paramValue)
         {
-            Params[name] = value;
+            if (!Params.TryGetValue(paramName, out BDParam param))
+            {
+                param = new BDParam
+                {
+                    ParamName = paramName
+                };
+                Params.Add(paramName, param);
+            }
+
+            param.ParamValue = paramValue;
+            return param;
         }
 
         /// <summary>
@@ -1163,7 +1718,8 @@ namespace DomConsult.GlobalShared.Utilities
         /// </summary>
         /// <param name="fields">The fields.</param>
         /// <param name="clear">if set to <c>true</c> [clear].</param>
-        public void LoadFields(object fields, bool clear = true)
+        /// <param name="asDefaults">Load fields as defaults.</param>
+        public void LoadFields(object fields, bool clear = true, bool asDefaults = false)
         {
             if (clear)
             {
@@ -1178,10 +1734,33 @@ namespace DomConsult.GlobalShared.Utilities
             object[,] fieldArray = (object[,])fields;
 
             int count = fieldArray.GetUpperBound(0) + 1;
+            int dim = fieldArray.GetUpperBound(1);
 
             for (int i = 0; i < count; i++)
             {
-                AddModifyField(fieldArray[i, 0].ToString(), fieldArray[i, 1], fieldArray[i, 2]);
+                string fieldName = fieldArray[i, 0].ToString();
+
+                if (dim == 2)
+                {
+                    AddModifyField(fieldName, fieldArray[i, 1], fieldArray[i, 2]);
+                }
+                else
+                {
+                    if (asDefaults)
+                    {
+                        if (!Fields.TryGetValue(fieldName, out BDField field))
+                        {
+                            field = new BDField { FieldName = fieldName };
+                            Fields.Add(fieldName, field);
+                        }
+
+                        field.DefaultValue = fieldArray[i, 1];
+                    }
+                    else
+                    {
+                        AddModifyField(fieldName, fieldArray[i, 1]);
+                    }
+                }
             }
         }
 
@@ -1205,10 +1784,13 @@ namespace DomConsult.GlobalShared.Utilities
             object[,] otherArray = (object[,])others;
 
             int count = otherArray.GetUpperBound(0) + 1;
-
+            
             for (int i = 0; i < count; i++)
             {
-                AddModifyOther((TBDOthers)otherArray[i, 0], otherArray[i, 1]);
+                if (otherArray[i, 0] != null)
+                {
+                    AddModifyOther((TBDOthers)otherArray[i, 0], otherArray[i, 1]);
+                }
             }
         }
 
@@ -1232,9 +1814,9 @@ namespace DomConsult.GlobalShared.Utilities
                 param = paramsTable[i].Split(separators, StringSplitOptions.RemoveEmptyEntries);
 
                 if (param.GetUpperBound(0) > 0)
-                    Params[param[0]] = param[1];
+                    AddModifyParam(param[0], param[1]);
                 else
-                    Params[param[0]] = null;
+                    AddModifyParam(param[0], null);
             }
         }
 
@@ -1267,28 +1849,90 @@ namespace DomConsult.GlobalShared.Utilities
 
             for (int i = 0; i < count; i++)
             {
-                Params[(string)paramArray[i, 0]] = paramArray[i, 1];
+                AddModifyParam((string)paramArray[i, 0], paramArray[i, 1]);
             }
+        }
+
+        /// <summary>
+        /// GetFields method options
+        /// </summary>
+        [Flags]
+        public enum GetFieldsOptions : short
+        {
+            /// <summary>
+            /// Without options
+            /// </summary>
+            None = 0,
+
+            /// <summary>
+            /// Only values
+            /// </summary>
+            gfoValuesOnly = 1,
+
+            /// <summary>
+            /// Without empty values
+            /// </summary>
+            gfoNotEmpty = 2,
+
+            /// <summary>
+            /// With default values
+            /// </summary>
+            gfoWithDefault = 4
         }
 
         /// <summary>
         /// Gets the fields.
         /// </summary>
+        /// <param name="options">method options.</param>
         /// <returns>System.Object.</returns>
-        public object GetFields()
+        public object GetFields(GetFieldsOptions options = GetFieldsOptions.None)
         {
             object[,] fields = null;
 
-            if (Fields.Count > 0)
-            {
-                fields = new object[Fields.Count, 4];
+            int count = Fields.Count;
 
-                for (int i = 0; i < Fields.Count; i++)
+            if (count > 0)
+            {
+                // define dimension of fields array
+                foreach (BDField field in Fields.Values)
                 {
-                    fields[i, 0] = Fields.ElementAt(i).Value.FieldName;
-                    fields[i, 1] = Fields.ElementAt(i).Value.FieldValue;
-                    fields[i, 2] = Fields.ElementAt(i).Value.Dictionary;
-                    fields[i, 3] = Fields.ElementAt(i).Value.Properties;
+                    if ((options.HasFlag(GetFieldsOptions.gfoNotEmpty) && TUniVar.VarIsNullOrEmpty(field.FieldValue)) ||
+                        (options.HasFlag(GetFieldsOptions.gfoWithDefault) && TUniVar.VarIsNullOrEmpty(field.DefaultValue)))
+                    {
+                        count--;
+                    }
+                }
+
+                if (count > 0)
+                {
+                    fields = new object[count, options.HasFlag(GetFieldsOptions.gfoValuesOnly) ? 2 : 4];
+
+                    bool take;
+
+                    for (int i = 0; i < Fields.Count; i++)
+                    {
+                        BDField field = Fields.ElementAt(i).Value;
+
+                        take = true;
+
+                        if ((options.HasFlag(GetFieldsOptions.gfoNotEmpty) && TUniVar.VarIsNullOrEmpty(field.FieldValue)) ||
+                            (options.HasFlag(GetFieldsOptions.gfoWithDefault) && TUniVar.VarIsNullOrEmpty(field.DefaultValue)))
+                        {
+                            take = false;
+                        }
+
+                        if (take)
+                        { 
+                            fields[i, 0] = field.FieldName;
+                            fields[i, 1] = field.FieldValue;
+
+                            if (!options.HasFlag(GetFieldsOptions.gfoValuesOnly))
+                            {
+                                fields[i, 2] = field.Dictionary;
+                                fields[i, 3] = field.GetProperties();
+                            }
+                        }
+                    }
                 }
             }
 
@@ -1309,8 +1953,10 @@ namespace DomConsult.GlobalShared.Utilities
 
                 for (int i = 0; i < Others.Count; i++)
                 {
-                    others[i, 0] = (int)Others.ElementAt(i).Key;
-                    others[i, 1] = Others.ElementAt(i).Value;
+                    BDOther other = Others.ElementAt(i).Value;
+
+                    others[i, 0] = other.OtherId;
+                    others[i, 1] = other.OtherValue;
                 }
             }
 
@@ -1321,7 +1967,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// Loads the parameters from multi in one param array.
         /// </summary>
         /// <param name="param">The parameters array.</param>
-        internal void LoadMultiInOneParams(object param)
+        public void LoadMultiInOneParams(object param)
         {
             MultiInOneParams.Clear();
 
@@ -1348,6 +1994,12 @@ namespace DomConsult.GlobalShared.Utilities
 
             int idx1 = s.IndexOf('[');
             int idx2 = s.IndexOf(']', idx1 + 1);
+
+            if ((idx1 < 0) || (idx2 < 0))
+            {
+                MultiInOneParams.Add(s);
+                return;
+            }
 
             string separator = s.Substring(idx1 + 1, idx2 - idx1 - 1);
 

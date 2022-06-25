@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.EnterpriseServices;
 using DomConsult.GlobalShared.Utilities;
+using DomConsult.Components.Extensions;
 using DomConsult.Components.Interfaces;
 using DomConsult.Platform;
 using DomConsult.Platform.Extensions;
@@ -10,30 +11,32 @@ using System.Xml;
 using System.Collections.Generic;
 using DomConsult.CIPHER;
 
-/*
- * W razie problemów z zale¿noœciami uruchom w konsoli Package Manager: Update-Package -reinstall
- * Zmieñ nazwê aplikacji COM+ (dawniej - pakietu COM+) w plikach install.bat i deploy.bat
- * SprawdŸ listê zadañ (TODO). Je¿eli wykona³eœ zadanie wyrzuæ komentarz TODO.
- */
+/****************************************************************************************************
+ *
+ *  1. For dependency issues, run Package Manager Console: Update-Package -reinstall
+ *  2. Check the Task List (TO DO). If you have completed the task, throw out the TO DO comment.
+ *
+ ****************************************************************************************************/
 
 namespace DomConsult.Components
 {
+    //TODO: enter the component description here
     /// <summary>
-    /// Opis komponentu bran¿owego
+    /// Component description
     /// </summary>
     /// <seealso cref="ManagerBase" />
 
 #if !TEST
+    [EventTrackingEnabled]
+    [JustInTimeActivation]
     [ComVisible(true)]
     [Guid("3611FDAE-CA45-4EB3-A474-1783339A568A")]
     [ProgId("_ComNameToReplace_.Manager")]
-    [Transaction(TransactionOption.Disabled)]
-    [JustInTimeActivation(true)]
+    [Transaction(TransactionOption.NotSupported)]
     [ClassInterface(ClassInterfaceType.None)]
     [ComDefaultInterface(typeof(IManager))]
 #else
 #endif
-
     public partial class Manager : ManagerBase, IManager
     {
         /// <summary>
@@ -54,6 +57,10 @@ namespace DomConsult.Components
         {
             if (disposing)
             {
+
+                Logger.SaveLog(true);
+                Logger = null;
+
                 //INFO: free managed resources here
             }
 
@@ -67,7 +74,7 @@ namespace DomConsult.Components
         /// </summary>
         public override void OnAssignAccessCode()
         {
-            MtsComId = ComponentDef.ComPlusID;
+            MtsComId   = ComponentDef.ComPlusID;
             MtsComName = ComponentDef.ComPlusName;
         }
 
@@ -95,10 +102,12 @@ namespace DomConsult.Components
                     break;
             }
 
-            Record.Id = -1;
-            //Record.TableName = "uniExample";
-            //Record.KeyName = Record.TableName + "Id";
-            //Record.Query = @"";
+            // entity example
+
+            //Record.TableName = "uniExample"
+            //Record.ViewName  = "uniExampleView"
+            //Record.Query     = $"SELECT * FROM {Record.TableName} WHERE {Record.KeyName} = {{0}}"
+            //Record.ViewQuery = $"SELECT StringFld, IntegerFld, ... FROM {Record.ViewName} WHERE {Record.KeyName} = {{0}}"
 
             BDW.AddModifyOther(TBDOthers.coDisabledFunction, 0);
             BDW.AddModifyOther(TBDOthers.coAddAllFieldValuesToArray, 1);
@@ -109,6 +118,14 @@ namespace DomConsult.Components
         /// </summary>
         public override void OnProcessInputParams()
         {
+            // set up input parameters
+            //if (BDW.ParamExists("ParamId"))
+            //    Record.Id = BDW.Params["ParamId"].AsInt();
+
+            if (Record.Id < 0)
+            {
+                NewFormState = TFormState.cfsNew;
+            }
         }
 
         /// <summary>
@@ -142,8 +159,8 @@ namespace DomConsult.Components
         /// <summary>
         /// Buttons pressed (method body).
         /// </summary>
-        /// <param name="buttonName">Name of the field.</param>
-        public override void OnButtonPressed(string buttonName)
+        /// <param name="fieldName">Name of the field.</param>
+        public override void OnButtonPressed(string fieldName)
         {
             // check field values
         }
@@ -155,7 +172,7 @@ namespace DomConsult.Components
         {
             // set the field values
 
-            //BDW.AddModifyField("StringFld", null);
+            //BDW.AddModifyField("StringFld", null)
         }
 
         /// <summary>
@@ -167,7 +184,10 @@ namespace DomConsult.Components
 
             if (Record.DataSize > 0)
             {
-                //BDW.AddModifyField("StringFld", Record.Data[1, 1]);
+                for (int i = 0; i < Record.Data.GetLength(1); i++)
+                {
+                    BDW.AddModifyField(Record.Data[0, i].ToString(), Record.Data[1, i]);
+                }
             }
         }
 
@@ -176,6 +196,7 @@ namespace DomConsult.Components
         /// </summary>
         public override void OnEditRecord()
         {
+            // on edit code
         }
 
         /// <summary>
@@ -183,6 +204,7 @@ namespace DomConsult.Components
         /// </summary>
         public override void OnCancelRecord()
         {
+            // on cancel code
         }
 
         /// <summary>
@@ -199,6 +221,7 @@ namespace DomConsult.Components
             int errorCount = 0;
 
             // check some save conditions
+
             /*
             if (BDW.FieldExists("StringFld"))
             {
@@ -250,11 +273,34 @@ namespace DomConsult.Components
                 };
 
                 if (UserFormState == TFormState.cfsNew) // or (Record.Id < 0)
-                    Record.Id = ComUtils.RecordNew(ref Record.ComObj, fields, values, Record.KeyName);
-                else
-                    Record.Id = ComUtils.RecordUpdate(ref Record.ComObj, fields, values, Record.KeyName);
+                {
+                    Record.Id = -1;
+                    ComWrapper com = null;
 
-                Err.Check(Record.Id, Record.ComObj);
+                    try
+                    {
+                        int result = ComUtils.OpenResultset(
+                                                AccessCode,
+                                                string.Format(Record.Query, Record.Id),
+                                                Record.KeyName,
+                                                TransactionId,
+                                                DefaultTimeOut,
+                                                out com);
+                        Err.Check(result, com);
+
+                        Record.Id = ComUtils.RecordNew(ref com, fields, values, Record.KeyName);
+                        Err.Check(Record.Id, com);
+                    }
+                    finally
+                    {
+                        com.Dispose();
+                    }
+                }
+                else
+                {
+                    Record.Id = ComUtils.RecordUpdate(ref Record.ComObj, fields, values, Record.KeyName);
+                    Err.Check(Record.Id, Record.ComObj);
+                }
             }
             */
         }
@@ -267,12 +313,13 @@ namespace DomConsult.Components
         /// <returns>System.Int32.</returns>
         public override int OnCheckBeforeDelete(out string errorDescription, out bool noDialog)
         {
-            errorDescription = "";
+            errorDescription = string.Empty;
             noDialog = false; //Set true only if there is no errors and You don't want to ask user about continuation
 
             int errorCount = 0;
 
             // check some delete conditions
+
             /*
             if (BDW.FieldExists("IntegerFld"))
             {
@@ -324,7 +371,6 @@ namespace DomConsult.Components
             int result = -1;
             var _params = param as object[];
 
-            methodName = methodName.ToUpper();
             switch (methodName)
             {
                 case ComponentDef.RM_XXXXX:
@@ -338,5 +384,18 @@ namespace DomConsult.Components
 
             return result;
         }
+
+
+        #region Register - ThreadingModel
+        /*
+        /// <summary>
+        /// Set threading model for component while registration. Default is ThreadingModelType.Both
+        /// If change is not needed comment out method.
+        /// If change is needed do not forget about attribute ComRegisterFunction. It's required!
+        /// </summary>
+        //[ComRegisterFunction]
+        //private static void Register(Type registerType) => Register(registerType, ThreadingModelType.STA);
+        */
+        #endregion
     }
 }

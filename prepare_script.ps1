@@ -2,7 +2,8 @@
 # Set-ExecutionPolicy Unrestricted
 
 [CmdletBinding()] Param (
-  [Parameter (Mandatory,HelpMessage='You must enter the new component name (without .dll extension!)')] [string] $componentName
+  [Parameter (Mandatory,HelpMessage='You must enter the new component name (without .dll extension)')] [string] $componentName,
+  [Parameter (Mandatory,HelpMessage='You must enter the package name (with NET suffix)')] [string] $packageName
 )
 
 $BaseDirectory = ".\"
@@ -24,10 +25,11 @@ if (!($Config)) {
   Throw "The Base configuration file is missing!"
 }
 
-$templateName = "_ComNameToReplace_"
+$template = "_ComNameToReplace_"
+$package  = "_PackageNameToReplace_"
 
 $vsPath  = ($Config.Basic.VisualStudioPath)
-$srcPath = $templateName  + ".dll"
+$srcPath = $template  + ".dll"
 $newPath = $componentName + ".dll"
 $message = "Processing files of " + $componentName
 
@@ -68,7 +70,7 @@ foreach ($file in $filenames)
      Set-ItemProperty $file -name IsReadOnly -value $false
 
     (Get-Content $file) |
-        Foreach-object { $_ -replace $templateName , $componentName } |
+        Foreach-object { $_ -replace $template , $componentName } |
         <# Template static GUIDs #>
         Foreach-object { $_ -replace $Config.Internal.SolutionBaseGUID , $guidStr1 } |
         Foreach-object { $_ -replace $Config.Internal.ProjectMainGUID  , $guidStr2 } |
@@ -77,10 +79,16 @@ foreach ($file in $filenames)
         Foreach-object { $_ -replace $Config.Internal.ComponentGUID    , $guidStr5 } |
         Foreach-object { $_ -replace $Config.Internal.TypelibGUID      , $guidStr6 } |
      Set-Content $file
+
+     if($File -Like "*.bat") {
+          (Get-Content $file) |
+              Foreach-object { $_ -replace $package, $packageName } |
+           Set-Content $file
+     }
 }
 
 # final work
-Get-ChildItem -Path "$newPath\*" -Recurse -File -Exclude "Component.snk" | Rename-Item -NewName { $_.Name.replace($templateName, $componentName) }
+Get-ChildItem -Path "$newPath\*" -Recurse -File -Exclude "Component.snk" | Rename-Item -NewName { $_.Name.replace($template, $componentName) }
 
 cls
 
@@ -106,5 +114,5 @@ else {
 }
 
 '*' * 80
-Write-Host "Remember to rename target COM+ application (formerly: COM+ package name) in install.bat and deploy.bat"
 Write-Host "All done!"
+Write-Host "You can move" $componentName".dll folder into" $packageName "package folder."

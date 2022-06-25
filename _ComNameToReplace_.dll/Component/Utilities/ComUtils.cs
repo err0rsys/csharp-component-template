@@ -1374,6 +1374,11 @@ namespace DomConsult.GlobalShared.Utilities
                     FieldValue = comWrapper.InvokeMethod("FieldValue", arguments, new bool[] { false });
                 }
             }
+            else
+            {
+                FieldValue = res;
+            }
+
             return CheckError(FieldValue, -1);
         }
 
@@ -1403,6 +1408,11 @@ namespace DomConsult.GlobalShared.Utilities
                     FieldValue = comWrapper.InvokeMethod("FieldValue", arguments, new bool[] { false });
                 }
             }
+            else
+            {
+                FieldValue = res;
+            }
+
             return CheckError(FieldValue, -1);
         }
 
@@ -1913,7 +1923,6 @@ namespace DomConsult.GlobalShared.Utilities
             string newUrl = url;
             if (Assigned(url))
             {
-                //while ((newUrl = Uri.UnescapeDataString(url)) != url)
                 while ((newUrl = UrlDecode(url)) != url)
                     url = newUrl;
             }
@@ -2043,6 +2052,235 @@ namespace DomConsult.GlobalShared.Utilities
                     myIntegers.Add(currentInt);
             });
             return myIntegers.ToArray();
+        }
+
+        /// <summary>
+        /// A function that allows the value of a given field to be read from a standard DBCom package by name or index.
+        /// return value &lt; 0: error (-1 row index greater than row count, -2 values package is null, -3 exception)
+        /// return value = 0: .EOF or column missing
+        /// return value &gt; 0: 1-based column index 
+        /// </summary>
+        /// <param name="FieldsValues">standard DBCom package or ADO package.</param>
+        /// <param name="NameOrIdx">column name or column index.</param>
+        /// <param name="FieldValue">(row,column) value.</param>
+        /// <param name="Index">row index.</param>
+        /// <returns>System.Int32.</returns>
+        public static int GetPFieldValue(object FieldsValues, object NameOrIdx, ref object FieldValue, int Index = 1)
+        {
+            int result = 0;
+
+            try
+            {
+                int rowCount = -1;
+
+                object[,] NamesPacket = null;
+                object[,] ValuesPacket = null;
+
+                bool isADOpacket = TUniVar.VarIsArray(FieldsValues, 1);
+
+                // extract values/names packet
+
+                if (isADOpacket)
+                {
+                    if (FieldsValues is object[] ADOpacket)
+                    {
+                        NamesPacket = ADOpacket[4] as object[,];
+                        ValuesPacket = ADOpacket[3] as object[,];
+
+                        rowCount = TUniVar.VarToInt(ADOpacket[1]);
+                    }
+                }
+                else
+                {
+                    ValuesPacket = FieldsValues as object[,];
+                }
+
+                if (ValuesPacket != null)
+                {
+                    // check row index correctness
+
+                    if (!isADOpacket)
+                    {
+                        rowCount = ValuesPacket.GetUpperBound(0) - 1;
+                    }
+
+                    if (Index > rowCount)
+                    {
+                        return -1;
+                    }
+
+                    // check column name or column index usage
+
+                    int ColIndex = -1;
+
+                    string strNameOrIdx = TUniVar.VarToStr(NameOrIdx);
+
+                    if (!String.IsNullOrEmpty(strNameOrIdx) && Char.IsDigit(strNameOrIdx[0]))
+                    {
+                        ColIndex = TUniVar.VarToInt(NameOrIdx);
+                    }
+
+                    // search for field value
+
+                    FieldValue = null;
+
+                    if (ColIndex < 0)
+                    {
+                        if (isADOpacket)
+                        {
+                            for (int i = NamesPacket.GetLowerBound(0); i < NamesPacket.GetUpperBound(0) + 1; i++)
+                            {
+                                if (strNameOrIdx.Equals(ValuesPacket[i, 0].ToString(), StringComparison.CurrentCultureIgnoreCase))
+                                {
+                                    FieldValue = ValuesPacket[i, Index - 1];
+                                    return i;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            for (int i = ValuesPacket.GetLowerBound(1); i < ValuesPacket.GetUpperBound(1) + 1; i++)
+                            {
+                                if (strNameOrIdx.Equals(ValuesPacket[0, i].ToString(), StringComparison.CurrentCultureIgnoreCase))
+                                {
+                                    FieldValue = ValuesPacket[Index, i];
+                                    return i;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (isADOpacket)
+                        {
+                            FieldValue = ValuesPacket[ColIndex, Index - 1];
+                        }
+                        else
+                        {
+                            FieldValue = ValuesPacket[Index, ColIndex];
+                        }
+
+                        return ColIndex;
+                    }
+                }
+                else
+                    return -2;                    
+            }
+            catch
+            {
+                return -3;
+            }
+
+            return result;
+        }
+
+        /// <summary>Gets the p field value as variant.</summary>
+        /// <param name="FieldsValues">The fields values.</param>
+        /// <param name="NameOrIdx">Index of the name or.</param>
+        /// <param name="Index">The index.</param>
+        /// <returns>Field value as variant</returns>
+        public static object GetPFieldValueAsVariant(object FieldsValues, object NameOrIdx, int Index = 1)
+        {
+            object result = null;
+            OleCheck(GetPFieldValue(FieldsValues, NameOrIdx, ref result, Index));
+            return result;
+        }
+        /// <summary>Gets the p field value as string.</summary>
+        /// <param name="FieldsValues">The fields values.</param>
+        /// <param name="NameOrIdx">Index of the name or.</param>
+        /// <param name="Index">The index.</param>
+        /// <param name="NullValue">The null value.</param>
+        /// <returns>Field value as string</returns>
+        public static string GetPFieldValueAsString(object FieldsValues, object NameOrIdx, int Index, string NullValue = TUniConstants._STR_NULL)
+        {
+            object result = null;
+            OleCheck(GetPFieldValue(FieldsValues, NameOrIdx, ref result, Index));
+            if (TUniVar.VarIsNullOrEmpty(result))
+            {
+                return NullValue;
+            }
+            else
+            {
+                return TUniVar.VarToStr(result);
+            }
+        }
+        /// <summary>Gets the p field value as integer.</summary>
+        /// <param name="FieldsValues">The fields values.</param>
+        /// <param name="NameOrIdx">Index of the name or.</param>
+        /// <param name="Index">The index.</param>
+        /// <param name="NullValue">The null value.</param>
+        /// <returns>Field value as integer</returns>
+        public static int GetPFieldValueAsInteger(object FieldsValues, object NameOrIdx, int Index, int NullValue = TUniConstants._INT_NULL)
+        {
+            object result = null;
+            OleCheck(GetPFieldValue(FieldsValues, NameOrIdx, ref result, Index));
+            if (TUniVar.VarIsNullOrEmpty(result))
+            {
+                return NullValue;
+            }
+            else
+            {
+                return TUniVar.VarToInt(result);
+            }
+        }
+
+        /// <summary>Gets the p field value as double.</summary>
+        /// <param name="FieldsValues">The fields values.</param>
+        /// <param name="NameOrIdx">Index of the name or.</param>
+        /// <param name="Index">The index.</param>
+        /// <param name="NullValue">The null value.</param>
+        /// <returns>Field value as double (for float values)</returns>
+        public static double GetPFieldValueAsDouble(object FieldsValues, object NameOrIdx, int Index, double NullValue = TUniConstants._DOUBLE_NULL)
+        {
+            object result = null;
+            OleCheck(GetPFieldValue(FieldsValues, NameOrIdx, ref result, Index));
+            if (TUniVar.VarIsNullOrEmpty(result))
+            {
+                return NullValue;
+            }
+            else
+            {
+                return TUniVar.VarToDouble(result);
+            }
+        }
+
+        /// <summary>Gets the p field value as currency.</summary>
+        /// <param name="FieldsValues">The fields values.</param>
+        /// <param name="NameOrIdx">Index of the name or.</param>
+        /// <param name="Index">The index.</param>
+        /// <param name="NullValue">The null value.</param>
+        /// <returns>Field value as decimal (for money)</returns>
+        public static decimal GetPFieldValueAsCurrency(object FieldsValues, object NameOrIdx, int Index, decimal NullValue = TUniConstants._DECIMAL_NULL)
+        {
+            object result = null;
+            OleCheck(GetPFieldValue(FieldsValues, NameOrIdx, ref result, Index));
+            if (TUniVar.VarIsNullOrEmpty(result))
+            {
+                return NullValue;
+            }
+            else
+            {
+                return TUniVar.VarToDecimal(result);
+            }
+        }
+        /// <summary>Gets the p field value as date time.</summary>
+        /// <param name="FieldsValues">The fields values.</param>
+        /// <param name="NameOrIdx">Index of the name or.</param>
+        /// <param name="Index">The index.</param>
+        /// <param name="NullValue">The null value.</param>
+        /// <returns>Field value as datetime (internal as double)</returns>
+        public static DateTime GetPFieldValueAsDateTime(object FieldsValues, object NameOrIdx, int Index, double NullValue = TUniConstants._DATE_NULL)
+        {
+            object result = null;
+            OleCheck(GetPFieldValue(FieldsValues, NameOrIdx, ref result, Index));
+            if (TUniVar.VarIsNullOrEmpty(result))
+            {
+                return DateTime.FromOADate(NullValue);
+            }
+            else
+            {
+                return TUniVar.VarToDateTime(result);
+            }
         }
     }
 

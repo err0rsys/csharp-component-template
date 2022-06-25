@@ -11,20 +11,23 @@ namespace DomConsult.Components
         /// Pe³na nazwa komponentu bran¿owego
         /// </summary>
         public static string ComPlusName = "_ComNameToReplace_.Manager";
+
         /// <summary>
         /// Identyfikator komponentu bran¿owego
         /// </summary>
-        public static int ComPlusID = 0; //TODO: Zarejestruj COM-a w SDC i wpisz identyfikator
+        public static int ComPlusID = 0; //TODO: register component in the SDC and enter here the component id
 
         //Forms selection based on FormType parameter
         /// <summary>
         /// Opis formularza #1
         /// </summary>
-        public static int FRM_EXAMPLE1_ID = -1; //TODO: wstaw g³ówny identyfikator formatki
+        public static int FRM_EXAMPLE1_ID = -1; //TODO: enter here the main form id
+
         /// <summary>
         /// Opis formularza #2
         /// </summary>
         public static int FRM_EXAMPLE2_ID = -1;
+
         /// <summary>
         /// Opis formularza #3
         /// </summary>

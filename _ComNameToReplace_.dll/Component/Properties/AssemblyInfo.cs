@@ -7,7 +7,7 @@ using System.EnterpriseServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("_ComNameToReplace_")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("based on template version 1.0")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("DomConsult Sp. z o.o.")]
 [assembly: AssemblyProduct("")]
@@ -33,7 +33,7 @@ using System.EnterpriseServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("22.0.0.1")] //TODO: Wersja zgodna ze schematem Y.M.D.version_number
+[assembly: AssemblyVersion("22.0.0.1")] //TODO: version according to the Y.M.D.version_number schema
 [assembly: AssemblyFileVersion("22.0.0.1")]
 [assembly: ApplicationAccessControl(
         AccessChecksLevel = AccessChecksLevelOption.ApplicationComponent,

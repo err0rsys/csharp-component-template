@@ -677,6 +677,8 @@ namespace DomConsult.GlobalShared.Utilities
             if (result == null)
                 return res;
 
+            wmk = _arguments[0];
+
             int.TryParse(result.ToString(), out res);
             return res;
         }

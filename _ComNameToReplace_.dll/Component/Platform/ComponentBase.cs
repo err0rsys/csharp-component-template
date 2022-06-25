@@ -1,13 +1,14 @@
-ï»¿//DEVEL: ManagerBaseDef - [MP] Language manager vs. Cache
-//DEVEL: ManagerBaseDef - [MP] FormId, FormCaption, ObjectTypeId, MainObjectId, : czy set-ery tych wÅ‚aÅ›ciwoÅ›ci nie powinny robiÄ‡ BDW.AddModifyOther?
-//                       [AM] mogÄ…, bÄ™dzie trochÄ™ czytelniej
-//DEVEL: ManagerBaseDef - [MP] Trace.TraceXXX - uÅ¼ywanie Trace jest raczej zÅ‚ym pomysÅ‚em. Trzeba przejÅ›Ä‡ na Logger-a i ewentualnie coÅ› co rzuca info na consolÄ™.
-//                       [AM] jakoÅ› nie widzÄ™ w tym nic zÅ‚ego, Logger? Hmmm, to juÅ¼ nie moje klocki.
+//DEVEL: ManagerBaseDef - [MP] Language manager vs. Cache
+//DEVEL: ManagerBaseDef - [MP] FormId, FormCaption, ObjectTypeId, MainObjectId, : czy set-ery tych w³aœciwoœci nie powinny robiæ BDW.AddModifyOther?
+//                        [AM] nie musz¹
+//DEVEL: ManagerBaseDef - [MP] Trace.TraceXXX - u¿ywanie Trace jest raczej z³ym pomys³em. Trzeba przejœæ na Logger-a i ewentualnie coœ co rzuca info na consolê.
+//                        [AM] mo¿na to przerobiæ
 
 using System;
 using System.Diagnostics;
-using DomConsult.Platform.Extensions;
+using System.Runtime.InteropServices;
 using DomConsult.GlobalShared.Utilities;
+using DomConsult.Platform.Extensions;
 
 namespace DomConsult.Platform
 {
@@ -16,7 +17,7 @@ namespace DomConsult.Platform
     /// Programmer implements all OnXXX methods accoording to the buisness logic.
     /// </summary>
     /// <seealso cref="ComponentPlatform" />
-    public abstract class ManagerBase: ComponentPlatform
+    public abstract class ManagerBase : ComponentPlatform
     {
         /// <summary>
         /// Real form state (cfsView, cfsEdit, cfsNew) - without substates.
@@ -31,7 +32,8 @@ namespace DomConsult.Platform
         /// <summary>
         /// The form state that is required by the component.
         /// </summary>
-        public TFormState NewFormState {
+        public TFormState NewFormState
+        {
             get
             {
                 return _newFormState;
@@ -54,7 +56,7 @@ namespace DomConsult.Platform
         /// <summary>
         /// Indicates if form initialization method was already called.
         /// </summary>
-        public bool FormInitialized { get; set; }  = false;
+        public bool FormInitialized { get; set; } = false;
 
         /// <summary>
         /// Gets or sets the form identifier.
@@ -112,7 +114,7 @@ namespace DomConsult.Platform
                     _err = new Err(-1);
                 }
 
-                return _err; 
+                return _err;
             }
         }
 
@@ -228,7 +230,6 @@ namespace DomConsult.Platform
 
                 return 0;
             }
-            //catch (MessageException) { throw; } //throwing messages from this method is impossible
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
@@ -242,7 +243,7 @@ namespace DomConsult.Platform
         /// <exception cref="NotImplementedException"></exception>
         public virtual void OnAssignAccessCode()
         {
-            //throw new NotImplementedException();
+            //throw new NotImplementedException()
         }
 
         /// <summary>
@@ -270,6 +271,17 @@ namespace DomConsult.Platform
 
                 if (BDW.ParamExists("_FormType"))
                     FormType = BDW.Params["_FormType"].AsInt();
+
+                if (BDW.ParamExists("_FormState"))
+                {
+                    int formState = BDW.Params["_FormState"].AsInt();
+                    switch (formState)
+                    {
+                          case  1: { NewFormState = TFormState.cfsNew;  break; }
+                          case  2: { NewFormState = TFormState.cfsEdit; break; }
+                          default: { break; }
+                    }
+                }
 
                 if (BDW.ParamExists("_Silent"))
                     Silent = BDW.Params["_Silent"].AsInt();
@@ -324,7 +336,7 @@ namespace DomConsult.Platform
         /// <exception cref="NotImplementedException"></exception>
         public virtual void OnAssignStartUpParameter()
         {
-            //throw new NotImplementedException();
+            //throw new NotImplementedException()
         }
 
         /// <summary>
@@ -333,7 +345,7 @@ namespace DomConsult.Platform
         /// <exception cref="NotImplementedException"></exception>
         public virtual void OnProcessInputParams()
         {
-            //throw new NotImplementedException();
+            //throw new NotImplementedException()
         }
 
         /// <summary>
@@ -347,7 +359,10 @@ namespace DomConsult.Platform
 
                 FormInitialized = true;
             }
-            catch (MessageException) { throw; }
+            catch (MessageException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
@@ -361,7 +376,7 @@ namespace DomConsult.Platform
         /// <exception cref="NotImplementedException"></exception>
         public virtual void OnInitializeForm()
         {
-            //throw new NotImplementedException();
+            //throw new NotImplementedException()
         }
 
         /// <summary>
@@ -401,7 +416,7 @@ namespace DomConsult.Platform
         /// <exception cref="NotImplementedException"></exception>
         public virtual void OnGetValue(string fieldName, ref object fieldValue)
         {
-            //throw new NotImplementedException();
+            //throw new NotImplementedException()
         }
 
         /// <summary>
@@ -482,15 +497,14 @@ namespace DomConsult.Platform
                     NewFormState = TFormState.cfsNone;
                 }
 
-                if (!BDW.OtherExists(TBDOthers.coCallAgain))
-                {
-                    if (
+                if (!BDW.OtherExists(TBDOthers.coCallAgain) &&
+                   (
                         (fs == TFormState.cfsUpdate) ||
                         (fs == TFormState.cfsCancel) ||
                         (fs == TFormState.cfsDelete))
-                    {
-                        fields = null;
-                    }
+                   )
+                {
+                    fields = null;
                 }
 
                 if ((fs == TFormState.cfsCloseBD) && (Err.ErrCode != 0))
@@ -553,7 +567,7 @@ namespace DomConsult.Platform
 
                 if (BDW.OtherExists(TBDOthers.coActiveControlValue))
                 {
-                    fieldValue = BDW.Others[TBDOthers.coActiveControlValue];
+                    fieldValue = BDW.Others[TBDOthers.coActiveControlValue].AsVar();
                 }
 
                 //There are also events based on TBDOthers different then coActiveControlFieldName & coActiveControlValue
@@ -561,7 +575,10 @@ namespace DomConsult.Platform
 
                 return 0;
             }
-            catch (MessageException) { throw; }
+            catch (MessageException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
@@ -578,7 +595,7 @@ namespace DomConsult.Platform
         /// <exception cref="NotImplementedException"></exception>
         public virtual void OnActualizeControls(string fieldName, object fieldValue)
         {
-            //throw new NotImplementedException();
+            //throw new NotImplementedException()
         }
 
         /// <summary>
@@ -599,7 +616,10 @@ namespace DomConsult.Platform
 
                 return 0;
             }
-            catch (MessageException) { throw; }
+            catch (MessageException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
@@ -615,7 +635,7 @@ namespace DomConsult.Platform
         /// <exception cref="NotImplementedException"></exception>
         public virtual void OnButtonPressed(string fieldName)
         {
-            //throw new NotImplementedException();
+            //throw new NotImplementedException()
         }
 
         /// <summary>
@@ -624,32 +644,16 @@ namespace DomConsult.Platform
         /// <returns>System.Int32.</returns>
         public int NewRecord()
         {
-            //DEVEL: NewRecord - [MP] Co powinno siÄ™ wydarzyÄ‡ jeÅ¼eli tu wystÄ…pi bÅ‚Ä…d?
-            //                   [AM] Chodzi o coÅ› specjalnego?
-
             try
             {
                 int result = 0;
                 Record.Id = -1;
 
-                if (Record.Query.Length > 0)
+                if (ComUtils.Assigned(Record.ComObj))
                 {
-                    if (Record.ComObj != null)
-                    {
-                        ComUtils.RecordClose(Record.ComObj);
-                        Record.ComObj.Dispose();
-                        Record.ComObj = null;
-                    }
-
-                    result = ComUtils.OpenResultset(
-                        AccessCode,
-                        String.Format(Record.Query, Record.Id),
-                        Record.KeyName,
-                        TransactionId,
-                        DefaultTimeOut,
-                        out Record.ComObj);
-
-                    Err.Check(result, Record.ComObj);
+                    ComUtils.RecordClose(Record.ComObj);
+                    Record.ComObj.Dispose();
+                    Record.ComObj = null;
                 }
 
                 OnNewRecord();
@@ -663,7 +667,10 @@ namespace DomConsult.Platform
 
                 return result;
             }
-            catch (MessageException) { throw; }
+            catch (MessageException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
@@ -678,7 +685,7 @@ namespace DomConsult.Platform
         /// <exception cref="NotImplementedException"></exception>
         public virtual void OnNewRecord()
         {
-            //throw new NotImplementedException();
+            //throw new NotImplementedException()
         }
 
         /// <summary>
@@ -718,7 +725,10 @@ namespace DomConsult.Platform
 
                 return 0;
             }
-            catch (MessageException) { throw; }
+            catch (MessageException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
@@ -752,12 +762,12 @@ namespace DomConsult.Platform
             {
                 TransactionStatus = TTransactionStatus.ctsCommitIgnore;
 
-                int result = CheckBeforeDelete();
+                CheckBeforeDelete();
 
-                TConfirmResult decision = (TConfirmResult)BDW.Others[TBDOthers.coConfirmationResult];
+                TConfirmResult decision = (TConfirmResult)BDW.Others[TBDOthers.coConfirmationResult].AsInt();
                 BDW.DeleteOther(TBDOthers.coConfirmationResult);
 
-                bool proceed = decision == TConfirmResult.acrYes;
+                bool proceed = (decision == TConfirmResult.acrYes);
                 TransactionStatus = TTransactionStatus.ctsCommitEnabled;
 
                 OnDeleteRecord(decision, ref proceed);
@@ -767,15 +777,15 @@ namespace DomConsult.Platform
                     TransactionStatus = TTransactionStatus.ctsCommitIgnore;
                     BDW.AddModifyOther(TBDOthers.coModificationsCancelled, 1);
                 }
-                else if (proceed && (Record.Query.Length>0) && (Record.Id != TUniConstants._INT_NULL))
+                else if ((Record.TableName.Length > 0) && (Record.Id != TUniConstants._INT_NULL))
                 {
                     ComWrapper com = null;
 
                     try
                     {
-                        result = ComUtils.OpenResultset(
+                        int result = ComUtils.OpenResultset(
                                                 AccessCode,
-                                                String.Format(Record.Query, Record.Id),
+                                                string.Format(Record.Query, Record.Id),
                                                 Record.KeyName,
                                                 TransactionId,
                                                 DefaultTimeOut,
@@ -794,7 +804,7 @@ namespace DomConsult.Platform
                 Record.Id = -1;
                 Record.Data = null;
 
-                if (Record.ComObj != null)
+                if (ComUtils.Assigned(Record.ComObj))
                 {
                     ComUtils.RecordClose(Record.ComObj);
                     Record.ComObj.Dispose();
@@ -803,7 +813,10 @@ namespace DomConsult.Platform
 
                 return 0;
             }
-            catch (MessageException) { throw; }
+            catch (MessageException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 Record.Id = recordId;
@@ -820,14 +833,14 @@ namespace DomConsult.Platform
         /// <exception cref="NotImplementedException"></exception>
         public virtual void OnDeleteRecord(TConfirmResult decision, ref bool proceed)
         {
-            //throw new NotImplementedException();
+            //throw new NotImplementedException()
         }
 
         /// <summary>
         /// Views the record.
         /// </summary>
         /// <returns>System.Int32.</returns>
-        public int ViewRecord(bool fromEdit = false)
+        public int ViewRecord()
         {
             try
             {
@@ -836,39 +849,29 @@ namespace DomConsult.Platform
                 Record.DataSize = 0;
                 Record.Data = null;
 
-                if (Record.Query.Length > 0)
+                if (Record.ViewName.Length > 0)
                 {
-                    if (Record.ComObj != null)
-                    {
-                        ComUtils.RecordClose(Record.ComObj);
-                        Record.ComObj.Dispose();
-                        Record.ComObj = null;
-                    }
-
-                    result = ComUtils.OpenResultset(
+                    result = ComUtils.GetPacket(
                         AccessCode,
-                        String.Format(Record.Query, Record.Id),
-                        Record.KeyName,
-                        fromEdit ? TransactionId: -1,
-                        DefaultTimeOut,
-                        out Record.ComObj);
-                    Err.Check(result, Record.ComObj);
+                        string.Format(Record.ViewQuery, Record.Id),
+                        -1,
+                        -1,
+                        out Record.Data,
+                        HandleWMK);
 
-                    Record.DataSize = ComUtils.RecordPacket(ref Record.ComObj, out Record.Data);
+                    Err.Check(result);
+
+                    Record.DataSize = result;
                 }
 
                 OnViewRecord();
 
-                if (!fromEdit)
-                {
-                    ComUtils.RecordClose(Record.ComObj);
-                    Record.ComObj.Dispose();
-                    Record.ComObj = null;
-                }
-
                 return result;
             }
-            catch (MessageException) { throw; }
+            catch (MessageException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
@@ -883,7 +886,7 @@ namespace DomConsult.Platform
         /// <exception cref="NotImplementedException"></exception>
         public virtual void OnViewRecord()
         {
-            //throw new NotImplementedException();
+            //throw new NotImplementedException()
         }
 
         /// <summary>
@@ -923,7 +926,10 @@ namespace DomConsult.Platform
 
                 return 0;
             }
-            catch (MessageException) { throw; }
+            catch (MessageException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
@@ -940,7 +946,7 @@ namespace DomConsult.Platform
         /// <returns>System.Int32.</returns>
         public virtual int OnCheckBeforeSave(out string errorDescription, out bool noDialog)
         {
-            errorDescription = "";
+            errorDescription = string.Empty;
             noDialog = false;
             return 0;
         }
@@ -957,8 +963,12 @@ namespace DomConsult.Platform
 
                 CheckBeforeSave();
 
-                TConfirmResult decision = (TConfirmResult)BDW.Others[TBDOthers.coConfirmationResult];
-                BDW.DeleteOther(TBDOthers.coConfirmationResult);
+                TConfirmResult decision = TConfirmResult.acrYes;
+                if (BDW.OtherExists(TBDOthers.coConfirmationResult))
+                {
+                    decision = (TConfirmResult)BDW.Others[TBDOthers.coConfirmationResult].AsInt();
+                    BDW.DeleteOther(TBDOthers.coConfirmationResult);
+                }
 
                 bool proceed = decision == TConfirmResult.acrYes;
                 TransactionStatus = TTransactionStatus.ctsCommitEnabled;
@@ -973,9 +983,19 @@ namespace DomConsult.Platform
                     BDW.AddModifyOther(TBDOthers.coModificationsCancelled, 1);
                 }
 
+                if (ComUtils.Assigned(Record.ComObj))
+                {
+                    ComUtils.RecordClose(Record.ComObj);
+                    Record.ComObj.Dispose();
+                    Record.ComObj = null;
+                }
+
                 return 0;
             }
-            catch (MessageException) { throw; }
+            catch (MessageException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
@@ -992,7 +1012,7 @@ namespace DomConsult.Platform
         /// <exception cref="NotImplementedException"></exception>
         public virtual void OnSaveRecord(TConfirmResult decision, ref bool proceed)
         {
-            //throw new NotImplementedException();
+            //throw new NotImplementedException()
         }
 
         /// <summary>
@@ -1010,7 +1030,7 @@ namespace DomConsult.Platform
 
                 OnCancelRecord();
 
-                if (Record.ComObj != null)
+                if (ComUtils.Assigned(Record.ComObj))
                 {
                     result = ComUtils.RecordCancel(ref Record.ComObj);
                     Err.Check(result, Record.ComObj);
@@ -1021,7 +1041,10 @@ namespace DomConsult.Platform
 
                 return result;
             }
-            catch (MessageException) { throw; }
+            catch (MessageException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
@@ -1036,7 +1059,7 @@ namespace DomConsult.Platform
         /// <exception cref="NotImplementedException"></exception>
         public virtual void OnCancelRecord()
         {
-            //throw new NotImplementedException();
+            //throw new NotImplementedException()
         }
 
         /// <summary>
@@ -1047,12 +1070,15 @@ namespace DomConsult.Platform
         {
             try
             {
-                ViewRecord(true);
+                ViewRecord();
                 LockRecord();
                 OnEditRecord();
                 return 0;
             }
-            catch (MessageException) { throw; }
+            catch (MessageException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
@@ -1069,11 +1095,27 @@ namespace DomConsult.Platform
         {
             try
             {
-                if (Record.Query.Length > 0)
+                if (Record.TableName.Length > 0)
                 {
+                    if (ComUtils.Assigned(Record.ComObj))
+                    {
+                        ComUtils.RecordClose(Record.ComObj);
+                        Record.ComObj.Dispose();
+                        Record.ComObj = null;
+                    }
+
+                    int result = ComUtils.OpenResultset(
+                        AccessCode,
+                        string.Format(Record.Query, Record.Id),
+                        Record.KeyName,
+                        TransactionId,
+                        DefaultTimeOut,
+                        out Record.ComObj);
+                    Err.Check(result, Record.ComObj);
+
                     int lockerId = -1;
 
-                    int result = ComUtils.RecordEdit(ref Record.ComObj, out lockerId);
+                    result = ComUtils.RecordEdit(ref Record.ComObj, out lockerId);
 
                     if (lockerId > 0)
                     {
@@ -1085,7 +1127,10 @@ namespace DomConsult.Platform
                     }
                 }
             }
-            catch (MessageException) { throw; }
+            catch (MessageException)
+            {
+                throw;
+            }
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
@@ -1098,7 +1143,7 @@ namespace DomConsult.Platform
         /// </summary>
         public virtual void OnEditRecord()
         {
-            //throw new NotImplementedException();
+            //throw new NotImplementedException()
         }
 
         /// <summary>
@@ -1114,9 +1159,10 @@ namespace DomConsult.Platform
 
             try
             {
-                result = OnSupportSQL(TUniVar.VarToStr(methodName), param, ref sqlArray);
+                string method = TUniVar.VarToStr(methodName);
+
+                result = OnSupportSQL(method.ToUpper(), param, ref sqlArray);
             }
-            //catch (MessageException) { throw; } //throwing messages from this method is impossible
             catch (Exception ex)
             {
                 Trace.TraceError(ex.Message);
@@ -1127,7 +1173,10 @@ namespace DomConsult.Platform
             {
                 CheckTransactionState(result);
             }
-            catch { }
+            catch
+            {
+                // not important
+            }
 
             return result;
         }
@@ -1179,7 +1228,9 @@ namespace DomConsult.Platform
             int result;
             try
             {
-                return OnRunMethod(TUniVar.VarToStr(methodName), ref param);
+                string method = TUniVar.VarToStr(methodName);
+
+                return OnRunMethod(method.ToUpper(), ref param);
             }
             catch (MessageException mex)
             {
@@ -1206,7 +1257,10 @@ namespace DomConsult.Platform
             {
                 CheckTransactionState(result);
             }
-            catch { }
+            catch
+            {
+                // not important
+            }
 
             return result;
         }
@@ -1228,10 +1282,10 @@ namespace DomConsult.Platform
         /// <param name="result">The result to check.</param>
         private void CheckTransactionState(int result)
         {
-            //DEVEL: CheckTransactionState - [MP] Na podstawie czego ta metoda powinna dziaÅ‚aÄ‡: Result czy TransactionStatus?
-            //                              [AM] Na podstawie jednego i drugiego
-            //DEVEL: CheckTransactionState - [MP] Gdzie i jak ta metoda powinna byÄ‡ woÅ‚ana uwzglÄ™dniajÄ…c konwersacje z uÅ¼ytkownikiem?
-            //                              [AM] SupportSQL, RunMethod
+            //DEVEL: CheckTransactionState - [MP] Na podstawie czego ta metoda powinna dzia³aæ: Result czy TransactionStatus?
+            //                               [AM] Na podstawie jednego i drugiego
+            //DEVEL: CheckTransactionState - [MP] Gdzie i jak ta metoda powinna byæ wo³ana uwzglêdniaj¹c konwersacje z u¿ytkownikiem?
+            //                               [AM] SupportSQL, RunMethod
 
             if (ExTransactionId > 0) // external transaction
             {
@@ -1261,11 +1315,13 @@ namespace DomConsult.Platform
         }
 
         /// <summary>
-        /// Konstruktor
+        /// Constructor
         /// </summary>
         protected ManagerBase() : base()
         {
+            #pragma warning disable S1699 // Constructors should only call non-overridable methods
             OnInitialize();
+            #pragma warning restore S1699 // Constructors should only call non-overridable methods
         }
 
         /// <summary>
@@ -1273,7 +1329,7 @@ namespace DomConsult.Platform
         /// </summary>
         protected virtual void OnInitialize()
         {
-            //throw new NotImplementedException();
+            //throw new NotImplementedException()
         }
 
         /// <summary>
@@ -1300,12 +1356,37 @@ namespace DomConsult.Platform
                 try
                 {
                     OnDeinitialize(disposing);
+
+                    //Mo¿na tego w ogóle nie robiæ i poczekaæ na GC
+                    //Mo¿na te¿ zaimplementowaæ w klasie BDWrapper IDisposable i wywo³aæ _bdw.Dispose;
+                    //Wtedy ca³y proces czyszczenia bêdzie w klasie BDWrapper
+                    if (ComUtils.Assigned(_bdw))
+                    {
+                        _bdw.ClearFields();
+                        _bdw.ClearOthers();
+                        _bdw.ClearParams();
+                    }
                 }
-                catch { }
+                catch
+                {
+                    // not important
+                }
 
                 if (disposing)
                 {
-                    Language.Dispose();
+                    if (ComUtils.Assigned(Record.ComObj))
+                    {
+                        ComUtils.RecordClose(Record.ComObj);
+                        Record.ComObj.Dispose();
+                        Record.ComObj = null;
+                    }
+
+                    if (ComUtils.Assigned(_language))
+                    {
+
+                        _language.Dispose();
+                        _language = null;
+                    }
                 }
 
                 // INFO: free unmanaged resources (unmanaged objects) and override finalizer
@@ -1322,7 +1403,7 @@ namespace DomConsult.Platform
         /// <param name="disposing"></param>
         protected virtual void OnDeinitialize(bool disposing)
         {
-            //throw new NotImplementedException();
+            //throw new NotImplementedException()
         }
 
         /// <summary>
@@ -1331,7 +1412,7 @@ namespace DomConsult.Platform
         /// <param name="wmk"></param>
         public virtual void HandleWMK(object wmk)
         {
-            if (Err != null)
+            if (ComUtils.Assigned(Err))
             {
                 var _wmk = Err.ErrMsgStack;
                 TWMK.AddMessages(ref _wmk, wmk);

@@ -109,7 +109,7 @@
         </member>
         <member name="T:DomConsult.Components.Manager">
             <summary>
-            Opis komponentu branżowego
+            Component description
             </summary>
             <seealso cref="T:DomConsult.Platform.ManagerBase" />
         </member>
@@ -173,7 +173,7 @@
             <summary>
             Buttons pressed (method body).
             </summary>
-            <param name="buttonName">Name of the field.</param>
+            <param name="fieldName">Name of the field.</param>
         </member>
         <member name="M:DomConsult.Components.Manager.OnNewRecord">
             <summary>
@@ -241,6 +241,19 @@
             <param name="methodName">Name of the method.</param>
             <param name="param">The parameter.</param>
             <returns>System.Int32.</returns>
+        </member>
+        <member name="T:DomConsult.Components.Extensions.ComponentExtensions">
+            <summary>
+            Klasa zawierająca funkcje rozszerzające
+            </summary>
+        </member>
+        <member name="M:DomConsult.Components.Extensions.ComponentExtensions.GetParam(System.String,System.String)">
+            <summary>
+            Extension that allows get value from complex string parameter
+            </summary>
+            <param name="value"></param>
+            <param name="paramName"></param>
+            <returns>System.Object.</returns>
         </member>
         <member name="T:DomConsult.Components.Interfaces.IManager">
             <summary>
@@ -585,7 +598,7 @@
             </summary>
             <exception cref="T:System.NotImplementedException"></exception>
         </member>
-        <member name="M:DomConsult.Platform.ManagerBase.ViewRecord(System.Boolean)">
+        <member name="M:DomConsult.Platform.ManagerBase.ViewRecord">
             <summary>
             Views the record.
             </summary>
@@ -710,7 +723,7 @@
         </member>
         <member name="M:DomConsult.Platform.ManagerBase.#ctor">
             <summary>
-            Konstruktor
+            Constructor
             </summary>
         </member>
         <member name="M:DomConsult.Platform.ManagerBase.OnInitialize">
@@ -848,6 +861,26 @@
             Rollback of the current transaction is required
             </summary>
         </member>
+        <member name="T:DomConsult.Platform.ThreadingModelType">
+            <summary>
+            Component Threading model
+            </summary>
+        </member>
+        <member name="F:DomConsult.Platform.ThreadingModelType.Both">
+            <summary>
+            Both (STA or MTA)
+            </summary>
+        </member>
+        <member name="F:DomConsult.Platform.ThreadingModelType.STA">
+            <summary>
+            Single-Threaded Apartment
+            </summary>
+        </member>
+        <member name="F:DomConsult.Platform.ThreadingModelType.MTA">
+            <summary>
+            Multi-Threaded Apartment
+            </summary>
+        </member>
         <member name="T:DomConsult.Platform.ComponentPlatform">
             <summary>
             Class ComponentPlatform responsible for transaction management.
@@ -922,24 +955,43 @@
             </summary>
             <param name="disposing"></param>
         </member>
+        <member name="M:DomConsult.Platform.ComponentPlatform.Register(System.Type,DomConsult.Platform.ThreadingModelType)">
+            <summary>
+             Set threading model for component while registration
+            </summary>
+            <param name="registerType"></param>
+            <param name="threadingModel"></param>
+        </member>
+        <member name="M:DomConsult.Platform.ComponentPlatform.CanBePooled">
+            <summary>
+            Method connected with COM+ Context - only for debug purposes
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DomConsult.Platform.ComponentPlatform.Activate">
+            <summary>
+            Method connected with COM+ Context - only for debug purposes
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DomConsult.Platform.ComponentPlatform.Deactivate">
+            <summary>
+            Method connected with COM+ Context - only for debug purposes
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:DomConsult.Platform.Extensions.PlatformExtenstions">
             <summary>
             Klasa platformowa zawierająca funkcje rozszerzające
             </summary>
         </member>
-        <member name="M:DomConsult.Platform.Extensions.PlatformExtenstions.AsInt(System.Object)">
+        <member name="M:DomConsult.Platform.Extensions.PlatformExtenstions.ToDBNull(System.Object,System.Object)">
             <summary>
-            Rozszerzenie typu object pozwalające na bezpośrednią konwersję typu object do int
+            Extension that allows direct conversion of an object type to a dbnullable object
             </summary>
             <param name="value"></param>
-            <returns></returns>
-        </member>
-        <member name="M:DomConsult.Platform.Extensions.PlatformExtenstions.AsString(System.Object)">
-            <summary>
-            Rozszerzenie typu object pozwalające na bezpośrednią konwersję typu object do string
-            </summary>
-            <param name="value"></param>
-            <returns></returns>
+            <param name="var_null"></param>
+            <returns>System.Object.</returns>
         </member>
         <member name="T:DomConsult.Platform.Interfaces.IDCPlatform">
             <summary>
@@ -976,29 +1028,39 @@
             Class Record. This class cannot be inherited.
             </summary>
         </member>
-        <member name="F:DomConsult.Platform.Record.Id">
+        <member name="P:DomConsult.Platform.Record.Id">
             <summary>
             The main identifier
             </summary>
         </member>
-        <member name="F:DomConsult.Platform.Record.ObjectId">
+        <member name="P:DomConsult.Platform.Record.ObjectId">
             <summary>
             The object identifier
             </summary>
         </member>
-        <member name="F:DomConsult.Platform.Record.KeyName">
+        <member name="P:DomConsult.Platform.Record.TableName">
+            <summary>
+            The table name for saving
+            </summary>
+        </member>
+        <member name="P:DomConsult.Platform.Record.ViewName">
+            <summary>
+            The view/table name for reading
+            </summary>
+        </member>
+        <member name="P:DomConsult.Platform.Record.KeyName">
             <summary>
             The primary key name
             </summary>
         </member>
-        <member name="F:DomConsult.Platform.Record.TableName">
+        <member name="P:DomConsult.Platform.Record.Query">
             <summary>
-            The table name
+            The query eg: SELECT * FROM table WHERE tableId = {0}
             </summary>
         </member>
-        <member name="F:DomConsult.Platform.Record.Query">
+        <member name="P:DomConsult.Platform.Record.ViewQuery">
             <summary>
-            The query
+            The query for reading
             </summary>
         </member>
         <member name="F:DomConsult.Platform.Record.ComObj">
@@ -1011,7 +1073,7 @@
             QueryData
             </summary>
         </member>
-        <member name="F:DomConsult.Platform.Record.DataSize">
+        <member name="P:DomConsult.Platform.Record.DataSize">
             <summary>
             Data array size
             </summary>
@@ -1086,164 +1148,456 @@
             Enum TBDFieldProps
             </summary>
         </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cCellHint">
-            <summary>
-            The c cell hint
-            </summary>
-        </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cCellReadOnly">
-            <summary>
-            The c cell read only
-            </summary>
-        </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cCellValue">
-            <summary>
-            The c cell value
-            </summary>
-        </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cColorEditable">
-            <summary>
-            The c color editable
-            </summary>
-        </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cColorReadOnly">
-            <summary>
-            The c color read only
-            </summary>
-        </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cColumnsInfo">
-            <summary>
-            The c columns information
-            </summary>
-        </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cDataType">
-            <summary>
-            The c data type
-            </summary>
-        </member>
         <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cDummy">
             <summary>
-            The c dummy
-            </summary>
-        </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cDummy2">
-            <summary>
-            The c dummy2
-            </summary>
-        </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cDummy3">
-            <summary>
-            The c dummy3
-            </summary>
-        </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cDummy4">
-            <summary>
-            The c dummy4
-            </summary>
-        </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cDummy5">
-            <summary>
-            The c dummy5
-            </summary>
-        </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cEnabled">
-            <summary>
-            The c enabled
-            </summary>
-        </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cFontColor">
-            <summary>
-            The c font color
-            </summary>
-        </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cFontName">
-            <summary>
-            The c font name
-            </summary>
-        </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cFontSize">
-            <summary>
-            The c font size
-            </summary>
-        </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cFontStyle">
-            <summary>
-            The c font style
-            </summary>
-        </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cGridColumn">
-            <summary>
-            The c grid column
-            </summary>
-        </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cGridRow">
-            <summary>
-            The c grid row
-            </summary>
-        </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cHint">
-            <summary>
-            The c hint
-            </summary>
-        </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cHintMap">
-            <summary>
-            The c hint map
-            </summary>
-        </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cInputStatus">
-            <summary>
-            The c input status
-            </summary>
-        </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cMaxLength">
-            <summary>
-            The c maximum length
+            dummy
             </summary>
         </member>
         <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cModifyStatus">
             <summary>
-            The c modify status
+            The modify status
             </summary>
         </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cMultiSelection">
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cInputStatus">
             <summary>
-            The c multi selection
+            The input status
             </summary>
         </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cObjectTypeId">
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cDummy2">
             <summary>
-            The c object type identifier
+            dummy
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cFontName">
+            <summary>
+            The font name
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cFontSize">
+            <summary>
+            The font size
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cFontColor">
+            <summary>
+            The font color
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cFontStyle">
+            <summary>
+            The font style
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cColorEditable">
+            <summary>
+            The editable color
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cColorReadOnly">
+            <summary>
+            The readonly color
             </summary>
         </member>
         <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cPasswordChar">
             <summary>
-            The c password character
+            The password character
             </summary>
         </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cReadOnlyMap">
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cDummy3">
             <summary>
-            The c read only map
+            dummy
             </summary>
         </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cSQL">
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cObjectTypeId">
             <summary>
-            The c SQL
-            </summary>
-        </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cSQLSortBy">
-            <summary>
-            The c SQL sort by
+            The object type
             </summary>
         </member>
         <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cToolId">
             <summary>
-            The c tool identifier
+            The tool identifier
             </summary>
         </member>
         <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cVisible">
             <summary>
-            The c visible
+            The field visible
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cMaxLength">
+            <summary>
+            The field maximal length
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cDataType">
+            <summary>
+            The field data type
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cEnabled">
+            <summary>
+            The field enabled
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cHint">
+            <summary>
+            The field hint
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cMultiSelection">
+            <summary>
+            The multiple selection
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cColumnsInfo">
+            <summary>
+            The info for column
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cSQL">
+            <summary>
+            The SQL
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cSQLSortBy">
+            <summary>
+            The SQL sorting
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cGridRow">
+            <summary>
+            The grid row
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cGridColumn">
+            <summary>
+            The grid column
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cCaption">
+            <summary>
+            The caption
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cCellValue">
+            <summary>
+            The cell value
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cCellReadOnly">
+            <summary>
+            The cell readonly
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cRadioItems">
+            <summary>
+            The radio items
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cReadOnlyMap">
+            <summary>
+            The readonly map
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cHintMap">
+            <summary>
+            The hint map
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cCellHint">
+            <summary>
+            The cell hint
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cCellValueIncorrect">
+            <summary>
+            The cell value incorrect
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cQuickFilters">
+            <summary>
+            The quick filters
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cDDButtonToClick">
+            <summary>
+            The DDButton to click
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cColumnsVisibility">
+            <summary>
+            The columns visibility
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cColumnsInfoVersion">
+            <summary>
+            The columns info version
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cActualization">
+            <summary>
+            The actualization
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cToolExtraColumn">
+            <summary>
+            The tool extra column
+            Dla pól dynamicznych. Wartość to jest to samo, co się wpisuje do ToolExtraColumnName podczas projektowania formularza
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cGridLastRow">
+            <summary>
+            The grid last row - readonly
+            W niektórych przypadkach DDGrid ustawia te własności, gdy przechodzi się kursorem z jednej komórki na drugą.Wtedy te
+            dwie własności określają z jakiej komórki został przemieszczony kursor, a PROP_GRIDROW(23) i PROP_GRIDCOLUMN(24)
+            określają w jakiej komórce kursor się znajduje obecnie.
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cGridLastColumn">
+            <summary>
+            The grid last column - readonly
+            W niektórych przypadkach DDGrid ustawia te własności, gdy przechodzi się kursorem z jednej komórki na drugą.Wtedy te
+            dwie własności określają z jakiej komórki został przemieszczony kursor, a PROP_GRIDROW(23) i PROP_GRIDCOLUMN(24)
+            określają w jakiej komórce kursor się znajduje obecnie.
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cValueNotSet">
+            <summary>
+            The value not set - readonly
+            DDList ustawia tą własność podczas programowego przechodzenia po rekordach (za pomocą OTHERa 61) w przypadku,
+            gdy nie uda się przejść do poprzedniego/następnego rekordu (z pierwszego na poprzedni, z ostatniego na następny).
+            Na razie tylko DDList używa tej własności.
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cCommand">
+            <summary>
+            The command
+            Umożliwia wysłanie do danej kontrolki pojedynczego polecenia w formacie wektora olevariantowego:
+            Value[0] - polecenie
+            Value[1] - argumenty polecenia
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cHighlighter">
+            <summary>
+            The highlighter
+            Typ podświetlania składni dla kontrolki DDMemoEx (spNone, spUser, spHtml, spSql)
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cFileName">
+            <summary>
+            The file name
+            44 i 45 są dla DDButtona typu btFileOpenDialog.Są własnościami, które wysyła aplikacja do komponentu,
+            a których nie interpretuje, gdy ustawia je komponent.
+            W tych własnościach są przekazywane komponentowi, odpowiednio:
+            nazwa wskazanego/wczytanego pliku oraz, jeśli jest dostępna, miniatura tego pliku.
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cThumbnail">
+            <summary>
+            The thumbnail
+            44 i 45 są dla DDButtona typu btFileOpenDialog.Są własnościami, które wysyła aplikacja do komponentu,
+            a których nie interpretuje, gdy ustawia je komponent.
+            W tych własnościach są przekazywane komponentowi, odpowiednio:
+            nazwa wskazanego/wczytanego pliku oraz, jeśli jest dostępna, miniatura tego pliku.
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cCustomControlProps">
+             <summary>
+             The custom control properties
+             Za pomocą tej własności można sterować dowolnymi własnościami kontrolek.
+             Własności te muszą się znajdować w sekcji "published" danej kontrolki, czyli w uproszczeniu
+             są to te własności, które są zapisywane w pliku .dfm
+             Wartością cCustomControlProps jest tablica olevariantowa o postaci:
+             
+             +------------------+-------------------+
+             | nazwa własności  | wartość własności |
+             +------------------+-------------------+
+             | nazwa własności  | wartość własności |
+             +------------------+-------------------+
+             | ...              | ...               |
+             +------------------+-------------------+
+            
+             Przykładowo:
+             +------------------+-------------------+
+             | Top  | 10 |
+             +------------------+-------------------+
+             | Left | 16 |
+             +------------------+-------------------+
+            
+             Uwaga: od wersji granitxp 7.3.1.425 nazwa własności może być złożona, np. Font.Name
+             (poprzednia wersja aplikacji klienckiej po prostu pomija takie własności).
+             </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cNodeTextChanged">
+            <summary>
+            The node text changed
+            This property is for DDTreeView.It carries the new value of the node text, when changed.
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.__dummy48">
+            <summary>
+            The actualization
+            (not used)
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cCellColorMap">
+            <summary>
+            The cell color map
+            These two properties are for TDDGrid - you can use them to change color of individual cells
+            (excluding the cells belonging to fixed rows and fixed columns).
+            The data format for these properties is similar to that of cHintMap and cCellHint, respectively.
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cCellColor">
+            <summary>
+            The cell color map
+            These two properties are for TDDGrid - you can use them to change color of individual cells
+            (excluding the cells belonging to fixed rows and fixed columns).
+            The data format for these properties is similar to that of cHintMap and cCellHint, respectively.
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cEnterPressed">
+            <summary>
+            The enter pressed
+            Presence of this property indicates, that Enter key was pressed in the control
+            (this actually works only for DDGrid and DDEdit controls, depending on their properties)
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cControlText">
+            <summary>
+            The control text
+            This property holds the control text(which may be different from FieldValue). Itis added for DDEdit,
+            DDLookupComboBox and DDCheckBox controls.
+            For DDCheckBox this property holds the control caption, and is added only when the control is checked.
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cFilterDefinition">
+            <summary>
+            The filter definition - readonly
+            Ta własność zawiera definicję bieżącego filtra(dla kontrolki DDList).
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cCellComboItems">
+            <summary>
+            The cell combo items
+            (dla kontrolki DDGrid) Dzięki tej własności można definiować inny zestaw pozycji
+            dla każdego pola combo na gridzie.
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.__dummy55">
+            <summary>
+            reserved
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cDeleteRowRequest">
+            <summary>
+            The delete row request
+            (obie własności są dla kontrolki DDGrid). Wystąpienie którejś z nich oznacza, że użytkownik
+            formularza wcisnął kombinację klawiszy odpowiadającą za usunięcie lub dodanie wiersza(tylko w trybie gomGrid).
+            Aplikacja sama nie usuwa ani nie dodaje wiersza, tylko wysyła odpowiednią informację do komponentu branżowego.
+            Wartością każdej z tych własności jest numer wiersza, który użytkownik chce usunąć lub dodać.
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cInsertRowRequest">
+            <summary>
+            The insert row request
+            (obie własności są dla kontrolki DDGrid). Wystąpienie którejś z nich oznacza, że użytkownik
+            formularza wcisnął kombinację klawiszy odpowiadającą za usunięcie lub dodanie wiersza(tylko w trybie gomGrid).
+            Aplikacja sama nie usuwa ani nie dodaje wiersza, tylko wysyła odpowiednią informację do komponentu branżowego.
+            Wartością każdej z tych własności jest numer wiersza, który użytkownik chce usunąć lub dodać.
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cSchedulerEventSQL">
+            <summary>
+            reserved
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cSchedulerEventResourcesSQL">
+            <summary>
+            The scheduler event resources SQL
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cSchedulerResourcesList">
+            <summary>
+            The scheduler resources list
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cSchedulerEventTypesList">
+            <summary>
+            The scheduler event types list
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.__dummy62">
+            <summary>
+            reserved
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.__dummy63">
+            <summary>
+            reserved
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cEnableRemoveRowMap">
+            <summary>
+            The enable remove row map
+            (dla kontrolki DDGrid) dzięki tej własności można zdefiniować mapę wierszy,
+            które nie mogą być usunięte przyciskiem "usuń" znajdującym się na kontrolce
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cAutoFill">
+            <summary>
+            The auto fill
+            Gdy kontrolka DDList ma wskazanie na automatyczne wypełnienie danymi pewnego pola,
+            to w momencie takiego automatycznego wypełnienia pole to otrzyma tę własność
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDFieldProps.cAutoFillRecord">
+            <summary>
+            The auto fill record
+            Gdy kontrolka DDList ma wskazanie na automatyczne wypełnienie danymi pewnego pola,
+            to w momencie takiego automatycznego wypełnienia kontrolka DDList otrzyma tę własność,
+            która zawiera bieżący rekord tak jak jest widoczny, z czego w kolumnie[0] jest ObjectId danego rekordu.
+            Własność ta zawiera tablicę wariantową, gdzie wiersz[0] to nazwy kolumn,
+            wiersz[1] to wartości, a wiersz[2] to flagi typów danych
+            </summary>
+        </member>
+        <member name="T:DomConsult.GlobalShared.Utilities.TBDModifyFlags">
+            <summary>
+            Enum TBDModifyFlags
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDModifyFlags.cPropModifyEditable">
+            <summary>
+            Modify status - editable
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDModifyFlags.cPropModifyReadOnly">
+            <summary>
+            Modify status - readonly
+            </summary>
+        </member>
+        <member name="T:DomConsult.GlobalShared.Utilities.TBDInputFlags">
+            <summary>
+            Enum TBDModifyFlags
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDInputFlags.cPropInputRequired">
+            <summary>
+            Input obligatory
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDInputFlags.cPropInputOptional">
+            <summary>
+            Input optional
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDInputFlags.cPropInputViewOnly">
+            <summary>
+            Input disabled
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TBDInputFlags.cPropInputOriginal">
+            <summary>
+            Input original 
             </summary>
         </member>
         <member name="T:DomConsult.GlobalShared.Utilities.TBDOthers">
@@ -1885,14 +2239,19 @@
             Properties of the field
             </summary>
         </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.BDField.FieldName">
+        <member name="P:DomConsult.GlobalShared.Utilities.BDField.FieldName">
             <summary>
             The field name
             </summary>
         </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.BDField.FieldValue">
+        <member name="P:DomConsult.GlobalShared.Utilities.BDField.FieldValue">
             <summary>
             The field value
+            </summary>
+        </member>
+        <member name="P:DomConsult.GlobalShared.Utilities.BDField.DefaultValue">
+            <summary>
+            Default field value
             </summary>
         </member>
         <member name="M:DomConsult.GlobalShared.Utilities.BDField.GetProperties">
@@ -1901,41 +2260,168 @@
             </summary>
             <returns>System.Object.</returns>
         </member>
-        <member name="F:DomConsult.GlobalShared.Utilities.BDField.Dictionary">
+        <member name="P:DomConsult.GlobalShared.Utilities.BDField.Dictionary">
             <summary>
             The dictionary
             </summary>
         </member>
-        <member name="P:DomConsult.GlobalShared.Utilities.BDField.AsString">
+        <member name="M:DomConsult.GlobalShared.Utilities.BDField.AsString(System.String)">
             <summary>
             Gets as string.
             </summary>
             <value>As string.</value>
         </member>
-        <member name="P:DomConsult.GlobalShared.Utilities.BDField.AsInt">
+        <member name="M:DomConsult.GlobalShared.Utilities.BDField.AsInt(System.Int32)">
             <summary>
             Gets as int.
             </summary>
             <value>As int.</value>
         </member>
-        <member name="P:DomConsult.GlobalShared.Utilities.BDField.AsDateTime">
+        <member name="M:DomConsult.GlobalShared.Utilities.BDField.AsDateTime(System.Nullable{System.Double})">
             <summary>
             Gets as datetime.
             </summary>
             <value>As datetime.</value>
         </member>
-        <member name="P:DomConsult.GlobalShared.Utilities.BDField.AsVar">
+        <member name="M:DomConsult.GlobalShared.Utilities.BDField.AsVar">
             <summary>
             Gets as variable.
             </summary>
             <value>As variable.</value>
         </member>
-        <member name="M:DomConsult.GlobalShared.Utilities.BDField.AddModifyProperty(System.Int32,System.Object)">
+        <member name="M:DomConsult.GlobalShared.Utilities.BDField.AddModifyProperty(DomConsult.GlobalShared.Utilities.TBDFieldProps,System.Object)">
             <summary>
             Adds the property.
             </summary>
             <param name="id">The property identifier.</param>
             <param name="PropValue">The property value.</param>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.BDField.SetInputDisabled">
+            <summary>
+            Set form field to disabled input state
+            </summary>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.BDField.SetInputOriginal">
+            <summary>
+            Set form field to original input state
+            </summary>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.BDField.SetInputOptional">
+            <summary>
+            Set form field to optional input state
+            </summary>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.BDField.SetInputObligatory">
+            <summary>
+            Set form field to obligatory input state
+            </summary>
+        </member>
+        <member name="T:DomConsult.GlobalShared.Utilities.BDOther">
+            <summary>
+            Class BDOther.
+            </summary>
+        </member>
+        <member name="P:DomConsult.GlobalShared.Utilities.BDOther.OtherId">
+            <summary>
+            The field name
+            </summary>
+        </member>
+        <member name="P:DomConsult.GlobalShared.Utilities.BDOther.OtherValue">
+            <summary>
+            The field value
+            </summary>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.BDOther.AsString(System.String)">
+            <summary>
+            Gets as string.
+            </summary>
+            <value>As string.</value>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.BDOther.AsInt(System.Int32)">
+            <summary>
+            Gets as int.
+            </summary>
+            <value>As int.</value>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.BDOther.AsDateTime(System.Double)">
+            <summary>
+            Gets as datetime.
+            </summary>
+            <value>As datetime.</value>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.BDOther.AsVar">
+            <summary>
+            Gets as variable.
+            </summary>
+            <value>As variable.</value>
+        </member>
+        <member name="T:DomConsult.GlobalShared.Utilities.BDParam">
+            <summary>
+            Class BDParam.
+            </summary>
+        </member>
+        <member name="P:DomConsult.GlobalShared.Utilities.BDParam.ParamName">
+            <summary>
+            The field name
+            </summary>
+        </member>
+        <member name="P:DomConsult.GlobalShared.Utilities.BDParam.ParamValue">
+            <summary>
+            The field value
+            </summary>
+        </member>
+        <member name="P:DomConsult.GlobalShared.Utilities.BDParam.Tag">
+            <summary>
+            The tag value
+            </summary>
+        </member>
+        <member name="P:DomConsult.GlobalShared.Utilities.BDParam.IsNullEmpty">
+            <summary>
+            Check value is empty or null.
+            </summary>
+            <value>Bool.</value>        
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.BDParam.IsTableOrVector">
+            <summary>
+            Check value is an array.
+            </summary>
+            <value>Bool.</value> 
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.BDParam.IsVector">
+            <summary>
+            Check value is a vector.
+            </summary>
+            <value>Bool.</value> 
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.BDParam.IsTable(System.Int32)">
+            <summary>
+            Check value is a table.
+            </summary>
+            <value>Bool.</value> 
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.BDParam.AsString(System.String)">
+            <summary>
+            Gets as string.
+            </summary>
+            <value>As string.</value>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.BDParam.AsInt(System.Int32)">
+            <summary>
+            Gets as int.
+            </summary>
+            <value>As int.</value>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.BDParam.AsDateTime(System.Double)">
+            <summary>
+            Gets as datetime.
+            </summary>
+            <value>As datetime.</value>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.BDParam.AsVar">
+            <summary>
+            Gets as variable.
+            </summary>
+            <value>As variable.</value>
         </member>
         <member name="T:DomConsult.GlobalShared.Utilities.BDWrapper">
             <summary>
@@ -1952,14 +2438,29 @@
             The field list
             </summary>
         </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.BDWrapper.FieldsDef(System.String,System.Object)">
+            <summary>
+            Combination of Fields[] and AddModifyField()
+            </summary>
+        </member>
         <member name="P:DomConsult.GlobalShared.Utilities.BDWrapper.Others">
             <summary>
             The other list
             </summary>
         </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.BDWrapper.OthersDef(DomConsult.GlobalShared.Utilities.TBDOthers,System.Object)">
+            <summary>
+            Combination of Others[] and AddModifyOther()
+            </summary>
+        </member>
         <member name="P:DomConsult.GlobalShared.Utilities.BDWrapper.Params">
             <summary>
             The parameter list
+            </summary>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.BDWrapper.ParamsDef(System.String,System.Object)">
+            <summary>
+            Combination of Params[] and AddModifyParam()
             </summary>
         </member>
         <member name="P:DomConsult.GlobalShared.Utilities.BDWrapper.MultiInOneParams">
@@ -1988,15 +2489,16 @@
             <summary>
             Adds the modify other.
             </summary>
-            <param name="id">The other identifier.</param>
-            <param name="value">The other value.</param>
+            <param name="otherId">The other identifier.</param>
+            <param name="otherValue">The other value.</param>
+            <returns>BDOther.</returns>
         </member>
         <member name="M:DomConsult.GlobalShared.Utilities.BDWrapper.AddModifyParam(System.String,System.Object)">
             <summary>
             Adds the modify parameter.
             </summary>
-            <param name="name">Name of the parameter.</param>
-            <param name="value">The parameter value.</param>
+            <param name="paramName">Name of the parameter.</param>
+            <param name="paramValue">The parameter value.</param>
         </member>
         <member name="M:DomConsult.GlobalShared.Utilities.BDWrapper.OtherExists(DomConsult.GlobalShared.Utilities.TBDOthers)">
             <summary>
@@ -2062,12 +2564,13 @@
             Clears the params.
             </summary>
         </member>
-        <member name="M:DomConsult.GlobalShared.Utilities.BDWrapper.LoadFields(System.Object,System.Boolean)">
+        <member name="M:DomConsult.GlobalShared.Utilities.BDWrapper.LoadFields(System.Object,System.Boolean,System.Boolean)">
             <summary>
             Loads the fields.
             </summary>
             <param name="fields">The fields.</param>
             <param name="clear">if set to <c>true</c> [clear].</param>
+            <param name="asDefaults">Load fields as defaults.</param>
         </member>
         <member name="M:DomConsult.GlobalShared.Utilities.BDWrapper.LoadOthers(System.Object,System.Boolean)">
             <summary>
@@ -2089,10 +2592,36 @@
             <param name="params">The parameters string.</param>
             <param name="clear">Determines if current parameters list should be cleared before loading new parameters.</param>
         </member>
-        <member name="M:DomConsult.GlobalShared.Utilities.BDWrapper.GetFields">
+        <member name="T:DomConsult.GlobalShared.Utilities.BDWrapper.GetFieldsOptions">
+            <summary>
+            GetFields method options
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.BDWrapper.GetFieldsOptions.None">
+            <summary>
+            Without options
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.BDWrapper.GetFieldsOptions.gfoValuesOnly">
+            <summary>
+            Only values
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.BDWrapper.GetFieldsOptions.gfoNotEmpty">
+            <summary>
+            Without empty values
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.BDWrapper.GetFieldsOptions.gfoWithDefault">
+            <summary>
+            With default values
+            </summary>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.BDWrapper.GetFields(DomConsult.GlobalShared.Utilities.BDWrapper.GetFieldsOptions)">
             <summary>
             Gets the fields.
             </summary>
+            <param name="options">method options.</param>
             <returns>System.Object.</returns>
         </member>
         <member name="M:DomConsult.GlobalShared.Utilities.BDWrapper.GetOthers">
@@ -2223,10 +2752,25 @@
             </summary>
             <param name="ex">The ex.</param>
         </member>
-        <member name="M:DomConsult.GlobalShared.Utilities.ComLogger.SaveLog">
+        <member name="M:DomConsult.GlobalShared.Utilities.ComLogger.AddParamsArray(System.Object,System.Boolean)">
+            <summary>
+            Add the specified params array to log
+            </summary>
+            <param name="params"></param>
+            <param name="printPasswords"></param>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.ComLogger.AddDictionary(System.Collections.Generic.Dictionary{System.String,System.Object},System.Boolean)">
+            <summary>
+            Add the specified dictionary to log
+            </summary>
+            <param name="dict"></param>
+            <param name="printPasswords"></param>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.ComLogger.SaveLog(System.Boolean)">
             <summary>
             Saves the log.
             </summary>
+            <param name="force"></param>
         </member>
         <member name="T:DomConsult.GlobalShared.Utilities.ComUtils">
             <summary>
@@ -3121,6 +3665,66 @@
             <param name="myNumbers">My numbers.</param>
             <returns>System.Int32[].</returns>
         </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.ComUtils.GetPFieldValue(System.Object,System.Object,System.Object@,System.Int32)">
+            <summary>
+            A function that allows the value of a given field to be read from a standard DBCom package by name or index.
+            return value &lt; 0: error (-1 row index greater than row count, -2 values package is null, -3 exception)
+            return value = 0: .EOF or column missing
+            return value &gt; 0: 1-based column index 
+            </summary>
+            <param name="FieldsValues">standard DBCom package or ADO package.</param>
+            <param name="NameOrIdx">column name or column index.</param>
+            <param name="FieldValue">(row,column) value.</param>
+            <param name="Index">row index.</param>
+            <returns>System.Int32.</returns>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.ComUtils.GetPFieldValueAsVariant(System.Object,System.Object,System.Int32)">
+            <summary>Gets the p field value as variant.</summary>
+            <param name="FieldsValues">The fields values.</param>
+            <param name="NameOrIdx">Index of the name or.</param>
+            <param name="Index">The index.</param>
+            <returns>Field value as variant</returns>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.ComUtils.GetPFieldValueAsString(System.Object,System.Object,System.Int32,System.String)">
+            <summary>Gets the p field value as string.</summary>
+            <param name="FieldsValues">The fields values.</param>
+            <param name="NameOrIdx">Index of the name or.</param>
+            <param name="Index">The index.</param>
+            <param name="NullValue">The null value.</param>
+            <returns>Field value as string</returns>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.ComUtils.GetPFieldValueAsInteger(System.Object,System.Object,System.Int32,System.Int32)">
+            <summary>Gets the p field value as integer.</summary>
+            <param name="FieldsValues">The fields values.</param>
+            <param name="NameOrIdx">Index of the name or.</param>
+            <param name="Index">The index.</param>
+            <param name="NullValue">The null value.</param>
+            <returns>Field value as integer</returns>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.ComUtils.GetPFieldValueAsDouble(System.Object,System.Object,System.Int32,System.Double)">
+            <summary>Gets the p field value as double.</summary>
+            <param name="FieldsValues">The fields values.</param>
+            <param name="NameOrIdx">Index of the name or.</param>
+            <param name="Index">The index.</param>
+            <param name="NullValue">The null value.</param>
+            <returns>Field value as double (for float values)</returns>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.ComUtils.GetPFieldValueAsCurrency(System.Object,System.Object,System.Int32,System.Decimal)">
+            <summary>Gets the p field value as currency.</summary>
+            <param name="FieldsValues">The fields values.</param>
+            <param name="NameOrIdx">Index of the name or.</param>
+            <param name="Index">The index.</param>
+            <param name="NullValue">The null value.</param>
+            <returns>Field value as decimal (for money)</returns>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.ComUtils.GetPFieldValueAsDateTime(System.Object,System.Object,System.Int32,System.Double)">
+            <summary>Gets the p field value as date time.</summary>
+            <param name="FieldsValues">The fields values.</param>
+            <param name="NameOrIdx">Index of the name or.</param>
+            <param name="Index">The index.</param>
+            <param name="NullValue">The null value.</param>
+            <returns>Field value as datetime (internal as double)</returns>
+        </member>
         <member name="T:DomConsult.GlobalShared.Utilities.Extensions">
             <summary>
             Class that offers helping methods for common purposes
@@ -3775,6 +4379,106 @@
             <exception cref="T:System.Exception">Error RC = { res }</exception>
             <exception cref="T:System.Exception">COM not exists, message could not be retrived. RC = { res }</exception>
         </member>
+        <member name="T:DomConsult.GlobalShared.Utilities.Interfaces.IComLogger">
+            <summary>
+            Logger interface
+            </summary>
+        </member>
+        <member name="P:DomConsult.GlobalShared.Utilities.Interfaces.IComLogger.LogFilePrefix">
+            <summary>
+            Gets or sets the log file prefix.
+            </summary>
+            <value>The log file prefix.</value>
+        </member>
+        <member name="P:DomConsult.GlobalShared.Utilities.Interfaces.IComLogger.AllowDebug">
+            <summary>
+            Gets or sets a value indicating whether [allow debug].
+            </summary>
+            <value><c>true</c> if [allow debug]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="P:DomConsult.GlobalShared.Utilities.Interfaces.IComLogger.LogDir">
+            <summary>
+            Gets or sets the log dir.
+            </summary>
+            <value>The log dir.</value>
+        </member>
+        <member name="P:DomConsult.GlobalShared.Utilities.Interfaces.IComLogger.LogFileName">
+            <summary>
+            Gets or sets the name of the log file.
+            </summary>
+            <value>The name of the log file.</value>
+        </member>
+        <member name="P:DomConsult.GlobalShared.Utilities.Interfaces.IComLogger.AddDateToLog">
+            <summary>
+            Gets or sets a value indicating whether [add date to log].
+            </summary>
+            <value><c>true</c> if [add date to log]; otherwise, <c>false</c>.</value>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.Interfaces.IComLogger.ResetTimer">
+            <summary>
+            Resets the timer.
+            </summary>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.Interfaces.IComLogger.PrintDebug">
+            <summary>
+            Prints the debug.
+            </summary>
+            <returns>System.String.</returns>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.Interfaces.IComLogger.Add(System.String,System.Boolean)">
+            <summary>
+            Adds the specified message.
+            </summary>
+            <param name="message">The message.</param>
+            <param name="addElapsedTime">if set to <c>true</c> [add elapsed time].</param>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.Interfaces.IComLogger.Add(System.String,System.Object[])">
+            <summary>
+            Adds the specified message.
+            </summary>
+            <param name="message">The message.</param>
+            <param name="args">The arguments.</param>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.Interfaces.IComLogger.AddFormat(System.String,System.Object[])">
+            <summary>
+            Adds the format.
+            </summary>
+            <param name="message">The message.</param>
+            <param name="args">The arguments.</param>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.Interfaces.IComLogger.Add(System.String,System.Exception)">
+            <summary>
+            Adds the specified message.
+            </summary>
+            <param name="message">The message.</param>
+            <param name="ex">The ex.</param>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.Interfaces.IComLogger.Add(System.Exception)">
+            <summary>
+            Adds the specified ex.
+            </summary>
+            <param name="ex">The ex.</param>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.Interfaces.IComLogger.AddParamsArray(System.Object,System.Boolean)">
+            <summary>
+            Add the specified params array to log
+            </summary>
+            <param name="params"></param>
+            <param name="printPasswords"></param>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.Interfaces.IComLogger.AddDictionary(System.Collections.Generic.Dictionary{System.String,System.Object},System.Boolean)">
+            <summary>
+            Add the specified dictionary to log
+            </summary>
+            <param name="dict"></param>
+            <param name="printPasswords"></param>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.Interfaces.IComLogger.SaveLog(System.Boolean)">
+            <summary>
+            Saves the log.
+            </summary>
+            <param name="force"></param>
+        </member>
         <member name="T:DomConsult.GlobalShared.Utilities.Language">
             <summary>
             Class Language.
@@ -3782,7 +4486,7 @@
         </member>
         <member name="F:DomConsult.GlobalShared.Utilities.Language.ComId">
             <summary>
-            The MTS COM identifier
+            The COM identifier
             </summary>
         </member>
         <member name="F:DomConsult.GlobalShared.Utilities.Language.LangId">
@@ -3794,7 +4498,7 @@
             <summary>
             Initializes a new instance of the <see cref="T:DomConsult.GlobalShared.Utilities.Language"/> class.
             </summary>
-            <param name="mtsComId">The MTS COM identifier.</param>
+            <param name="comId">The COM identifier.</param>
             <param name="accessCode">The access code.</param>
         </member>
         <member name="M:DomConsult.GlobalShared.Utilities.Language.Dispose">
@@ -3830,6 +4534,16 @@
             <summary>
             The date null
             Use DateTime.FromOADate(TUniConstants._DATE_NULL) to convert
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TUniConstants._DECIMAL_NULL">
+            <summary>
+            The decimal null (Delphi: Currency)
+            </summary>
+        </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TUniConstants._DOUBLE_NULL">
+            <summary>
+            The double null (Delphi: Float)
             </summary>
         </member>
         <member name="F:DomConsult.GlobalShared.Utilities.TUniConstants.rcOK">
@@ -4425,6 +5139,13 @@
             <param name="accessCode">The access code.</param>
             <returns>System.Int32.</returns>
         </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.TUserSession.GetCurrentUserName(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="acc"></param>
+            <returns></returns>
+        </member>
         <member name="M:DomConsult.GlobalShared.Utilities.TUserSession.GetCurrentSessionId(System.String)">
             <summary>
             Gets the current session identifier.
@@ -4757,6 +5478,22 @@
             <param name="value">The value.</param>
             <returns></returns>
         </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.TUniVar.VarToDouble(System.Object,System.Double)">
+            <summary>
+            Converts object to Double with optional default value assignment
+            </summary>
+            <param name="value">The value.</param>
+            <param name="var_null">The default value.</param>
+            <returns></returns>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.TUniVar.VarToDecimal(System.Object,System.Decimal)">
+            <summary>
+            Converts object to Decimal with optional default value assignment
+            </summary>
+            <param name="value">The value.</param>
+            <param name="var_null">The default value.</param>
+            <returns></returns>
+        </member>
         <member name="M:DomConsult.GlobalShared.Utilities.TUniVar.UnseparatedDate(System.String)">
             <summary>
             Converts unseparated string date to DateTime
@@ -4792,6 +5529,13 @@
             <param name="result_">Result to check</param>
             <param name="include_csWMK">Optional switch to check WMK</param>
             <returns></returns>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.TUniTools.GetIdFromLookup(System.Object)">
+            <summary>
+            Gets identifier from lookup control
+            </summary>
+            <param name="FieldValue">Packet from lookup</param>
+            <returns>System.Int32.</returns>
         </member>
         <member name="T:DomConsult.GlobalShared.Utilities.TuniDebug">
             <summary>

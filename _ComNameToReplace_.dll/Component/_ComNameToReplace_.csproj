@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\EWSoftware.SHFB.2021.11.7\build\EWSoftware.SHFB.props" Condition="Exists('..\packages\EWSoftware.SHFB.2021.11.7\build\EWSoftware.SHFB.props')" />
+  <Import Project="..\packages\EWSoftware.SHFB.2022.1.22\build\EWSoftware.SHFB.props" Condition="Exists('..\packages\EWSoftware.SHFB.2022.1.22\build\EWSoftware.SHFB.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -17,6 +17,10 @@
     <TargetFrameworkProfile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Test|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -56,6 +60,9 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>Component.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>ComponentIcon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
@@ -68,7 +75,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ComponentDef.cs" />
+    <Compile Include="ComponentRM.cs" />
     <Compile Include="ComponentTools.cs" />
+    <Compile Include="Extensions\ComponentExtensions.cs" />
     <Compile Include="Platform\ComponentBase.cs" />
     <Compile Include="ComponentMain.cs" />
     <Compile Include="Platform\ComponentBaseDef.cs" />
@@ -93,25 +102,41 @@
     <Compile Include="Utilities\ComUtils.cs" />
     <Compile Include="Utilities\ComWrapper.cs" />
     <Compile Include="Utilities\ErrUtils.cs" />
+    <Compile Include="Utilities\Interfaces\IComLogger.cs" />
     <Compile Include="Utilities\Language.cs" />
     <Compile Include="Platform\ComponentRecord.cs" />
     <Compile Include="Utilities\UniUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\.editorconfig">
+      <Link>.editorconfig</Link>
+    </None>
     <None Include="Component.snk" />
     <None Include="install.bat">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <None Include="uninstall.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="_ComNameToReplace_.ini" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="ComponentIcon.ico" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if $(ConfigurationName) == Release (
     call "$(DevEnvDir)..\Tools\VsDevCmd.bat"
     tlbexp.exe $(TargetDir)$(TargetFileName)
     "$(SolutionDir)Deployment\deploy.bat" "$(TargetDir)" "$(ProjectDir)" "$(ProjectName)"
-)</PostBuildEvent>
+)
+if $(ConfigurationName) == Debug (
+    copy "$(ProjectDir)_ComNameToReplace_.ini" "$(TargetDir)_ComNameToReplace_.ini"
+)
+    </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <ComponentPath Condition="'$(ComponentPath)' == ''">$(SolutionDir)\packages\</ComponentPath>
@@ -123,7 +148,7 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\EWSoftware.SHFB.2021.11.7\build\EWSoftware.SHFB.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EWSoftware.SHFB.2021.11.7\build\EWSoftware.SHFB.props'))" />
+    <Error Condition="!Exists('..\packages\EWSoftware.SHFB.2022.1.22\build\EWSoftware.SHFB.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EWSoftware.SHFB.2022.1.22\build\EWSoftware.SHFB.props'))" />
   </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -14,7 +14,6 @@ namespace DomConsult.ComponentTest
     {
         private DevelSecret Secret { get; set; }
         private string UseAC { get; set; }  = "AC_GRANIT_MASTER_TEST";
-
         private bool TestByComObject { get; set; } = false;
         private bool TestByDynObject { get; set; } = false;
         private bool TestByComClass { get; set; } = true;

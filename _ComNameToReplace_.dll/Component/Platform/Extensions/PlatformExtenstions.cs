@@ -1,31 +1,29 @@
-﻿using System;
+using System;
 using DomConsult.GlobalShared.Utilities;
 
 namespace DomConsult.Platform.Extensions
 {
     /// <summary>
-    /// Klasa platformowa zawierająca funkcje rozszerzające
+    /// Klasa platformowa zawieraj�ca funkcje rozszerzaj�ce
     /// </summary>
     public static class PlatformExtenstions
     {
         /// <summary>
-        /// Rozszerzenie typu object pozwalające na bezpośrednią konwersję typu object do int
+        /// Extension that allows direct conversion of an object type to a dbnullable object
         /// </summary>
         /// <param name="value"></param>
-        /// <returns></returns>
-        public static int AsInt(this object value)
+        /// <param name="var_null"></param>
+        /// <returns>System.Object.</returns>
+        public static object ToDBNull(this object value, object var_null)
         {
-            return TUniVar.VarToInt(value);
-        }
-
-        /// <summary>
-        /// Rozszerzenie typu object pozwalające na bezpośrednią konwersję typu object do string
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static string AsString(this object value)
-        {
-            return TUniVar.VarToStr(value);
+            if (value != null)
+            {
+                return value.Equals(var_null) ? DBNull.Value : value;
+            }
+            else
+            {
+                return value;
+            }
         }
     }
 }

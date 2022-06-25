@@ -1,8 +1,9 @@
-﻿using System;
-using System.Diagnostics;
+using System;
 using System.EnterpriseServices;
 using System.Runtime.InteropServices;
 using DomConsult.GlobalShared.Utilities;
+using DomConsult.GlobalShared.Utilities.Interfaces;
+using Microsoft.Win32;
 
 namespace DomConsult.Platform
 {
@@ -14,11 +15,12 @@ namespace DomConsult.Platform
         /// <summary>
         /// Error number indicating missing transaction id.
         /// </summary>
-        public static int ERR_MISSING_TRANSACTION = -3;
+        public const int ERR_MISSING_TRANSACTION = -3;
+
         /// <summary>
         /// Error number indicating missing transaction manager
         /// </summary>
-        public static int ERR_MISSING_TRANSMANAGER = -4;
+        public const int ERR_MISSING_TRANSMANAGER = -4;
     }
 
     /// <summary>
@@ -30,14 +32,37 @@ namespace DomConsult.Platform
         /// Commit of the current transaction is needed
         /// </summary>
         ctsCommitEnabled = 0,
+
         /// <summary>
         /// Commit of the current transaction should be ignored
         /// </summary>
         ctsCommitIgnore = 1,
+
         /// <summary>
         /// Rollback of the current transaction is required
         /// </summary>
         ctsRollbackRequired = 2
+    }
+
+    /// <summary>
+    /// Component Threading model
+    /// </summary>
+    public enum ThreadingModelType
+    {
+        /// <summary>
+        /// Both (STA or MTA)
+        /// </summary>
+        Both = 0,
+
+        /// <summary>
+        /// Single-Threaded Apartment
+        /// </summary>
+        STA = 1,
+
+        /// <summary>
+        /// Multi-Threaded Apartment
+        /// </summary>
+        MTA = 2
     }
 
     /// <summary>
@@ -58,7 +83,7 @@ namespace DomConsult.Platform
         /// <summary>
         /// Logger object
         /// </summary>
-        public ComLogger Logger { get; internal set; } = new ComLogger(false);
+        public IComLogger Logger { get; set; } = new ComLogger(false);
 
         /// <summary>
         /// Unique ID of component instance.
@@ -122,7 +147,7 @@ namespace DomConsult.Platform
                     return ExTransactionId;
                 }
 
-                if (_TransactionManager == null)
+                if (!ComUtils.Assigned(_TransactionManager))
                 {
                     Type DbcTransType = Type.GetTypeFromProgID("DBC.Trans", true);
                     _TransactionManager = Activator.CreateInstance(DbcTransType);
@@ -132,7 +157,9 @@ namespace DomConsult.Platform
                     {
                         _TransactionManager.AppName("COM:" + MtsComName);
                     }
-                    catch { }
+                    catch {
+                        // not important
+                    }
                 }
 
                 if (_TransactionId < 0)
@@ -163,7 +190,9 @@ namespace DomConsult.Platform
                 this.AccessCode = TUniVar.VarToStr(accessCode);
                 res = 0;
             }
-            catch { }
+            catch {
+                // not important
+            }
 
             return res;
         }
@@ -186,7 +215,7 @@ namespace DomConsult.Platform
         {
             int res = ComponentPlatformDef.ERR_MISSING_TRANSMANAGER;
 
-            if (_TransactionManager != null)
+            if (ComUtils.Assigned(_TransactionManager))
             {
                 if (TransactionStatus == TTransactionStatus.ctsCommitEnabled)
                 {
@@ -194,7 +223,9 @@ namespace DomConsult.Platform
                     {
                         _TransactionManager.AppName("COMD:" + MtsComName);
                     }
-                    catch { }
+                    catch {
+                        // not important
+                    }
 
                     _ = _TransactionManager.CommitTransaction;
                 }
@@ -218,7 +249,7 @@ namespace DomConsult.Platform
         {
             int res = ComponentPlatformDef.ERR_MISSING_TRANSMANAGER;
 
-            if (_TransactionManager != null)
+            if (ComUtils.Assigned(_TransactionManager))
             {
                 _ = _TransactionManager.RollBackTransaction;
                 _ = _TransactionManager.CloseTransaction;
@@ -233,6 +264,10 @@ namespace DomConsult.Platform
             return res;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="disposing"></param>
 #if TEST
         protected virtual void Dispose(bool disposing)
         {
@@ -241,7 +276,7 @@ namespace DomConsult.Platform
                 if (disposing)
                 {
                     // TODO: dispose managed state (managed objects)
-                    if (_TransactionManager != null)
+                    if (ComUtils.Assigned(_TransactionManager))
                     {
                         Marshal.FinalReleaseComObject(_TransactionManager);
                         _TransactionManager = null;
@@ -268,10 +303,6 @@ namespace DomConsult.Platform
             GC.SuppressFinalize(this);
         }
 #else
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             if (!_disposed)
@@ -279,11 +310,13 @@ namespace DomConsult.Platform
                 if (disposing)
                 {
                     // INFO: dispose managed state (managed objects)
-                    if (_TransactionManager != null)
+                    if (ComUtils.Assigned(_TransactionManager))
                     {
                         Marshal.FinalReleaseComObject(_TransactionManager);
                         _TransactionManager = null;
                     }
+
+                    Logger = null;
                 }
 
                 // INFO: free unmanaged resources (unmanaged objects) and override finalizer
@@ -292,6 +325,78 @@ namespace DomConsult.Platform
             }
 
             base.Dispose(disposing);
+        }
+
+        /// <summary>
+        ///  Set threading model for component while registration
+        /// </summary>
+        /// <param name="registerType"></param>
+        /// <param name="threadingModel"></param>
+        protected static void Register(Type registerType, ThreadingModelType threadingModel)
+        {
+            if (ComUtils.Assigned(registerType))
+            {
+                string model;
+
+                if (threadingModel == ThreadingModelType.Both)
+                {
+                    model = "Both";
+                }
+                else
+                {
+                    if (threadingModel == ThreadingModelType.STA)
+                    {
+                        model = "Apartment";
+                    }
+                    else
+                    {
+                        model = "Free";
+                    }
+                }
+
+                //Default is Both
+                if (threadingModel != ThreadingModelType.Both)
+                {
+                    using (RegistryKey clsidKey = Registry.ClassesRoot.OpenSubKey("CLSID"))
+                    {
+                        using (RegistryKey guidKey = clsidKey.OpenSubKey(registerType.GUID.ToString("B"), true))
+                        {
+                            using (RegistryKey inproc = guidKey.OpenSubKey("InprocServer32", true))
+                            {
+                                inproc.SetValue("ThreadingModel", model, RegistryValueKind.String);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Method connected with COM+ Context - only for debug purposes
+        /// </summary>
+        /// <returns></returns>
+        protected override bool CanBePooled()
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Method connected with COM+ Context - only for debug purposes
+        /// </summary>
+        /// <returns></returns>
+        protected override void Activate()
+        {
+            base.Activate();
+        }
+
+        /// <summary>
+        /// Method connected with COM+ Context - only for debug purposes
+        /// </summary>
+        /// <returns></returns>
+        protected override void Deactivate()
+        {
+            base.Deactivate();
         }
 #endif
     }

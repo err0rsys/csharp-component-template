@@ -10,7 +10,7 @@ namespace DomConsult.GlobalShared.Utilities
     public class Language: IDisposable
     {
         /// <summary>
-        /// The MTS COM identifier
+        /// The COM identifier
         /// </summary>
         private readonly int ComId;
         /// <summary>
@@ -28,11 +28,11 @@ namespace DomConsult.GlobalShared.Utilities
         /// <summary>
         /// Initializes a new instance of the <see cref="Language"/> class.
         /// </summary>
-        /// <param name="mtsComId">The MTS COM identifier.</param>
+        /// <param name="comId">The COM identifier.</param>
         /// <param name="accessCode">The access code.</param>
-        public Language(int mtsComId, object accessCode)
+        public Language(int comId, object accessCode)
         {
-            ComId = mtsComId;
+            ComId = comId;
 
             //Type LangComType = Type.GetTypeFromProgID("Language.Manager", true);
             //LangManager = Activator.CreateInstance(LangComType);
@@ -41,7 +41,7 @@ namespace DomConsult.GlobalShared.Utilities
             Par.LoadParams(accessCode.ToString());
             LangId = Par.Params["L"].AsInt();
 
-            //LangManager.SetCom(mtsComId);
+            //LangManager.SetCom(ComId);
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace DomConsult.GlobalShared.Utilities
         public string GetText(int textId, int comId = -1, int langId = -1)
         {
             return TuniGlobalCache.GetMLText(comId > 0 ? comId : ComId, langId > 0 ? langId : LangId, textId);
-            //return LangManager.GetText(MTSComId, LangId, textId);
+            //return LangManager.GetText(ComId, LangId, textId);
         }
     }
 }

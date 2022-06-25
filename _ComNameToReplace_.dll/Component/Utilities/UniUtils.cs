@@ -26,7 +26,15 @@ namespace DomConsult.GlobalShared.Utilities
         /// The date null
         /// Use DateTime.FromOADate(TUniConstants._DATE_NULL) to convert
         /// </summary>
-        public const int _DATE_NULL = -53689; // = 31-12-1752
+        public const double _DATE_NULL = -53689; // = 31-12-1752
+        /// <summary>
+        /// The decimal null (Delphi: Currency)
+        /// </summary>
+        public const decimal _DECIMAL_NULL = 0.0m;
+        /// <summary>
+        /// The double null (Delphi: Float)
+        /// </summary>
+        public const double _DOUBLE_NULL = 0.0;
         /// <summary>
         /// The rc ok
         /// </summary>
@@ -712,6 +720,26 @@ namespace DomConsult.GlobalShared.Utilities
         public static int GetCurrentUserId(string accessCode)
         {
             return TStrParams.GetParamAsInteger(accessCode, "UID=");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="acc"></param>
+        /// <returns></returns>
+        public static string GetCurrentUserName(string acc)
+        {
+            string userName = "";
+
+            string sql = "select Imie_Nazwisko from OpisUzytkownika where UprUzytkownikId = {0}";
+            sql = string.Format(sql, GetCurrentUserId(acc));
+            int res = ComUtils.GetPacket(acc, sql, -1, -1, out object[,] data);
+            if (res > 0)
+            {
+                userName = TUniVar.VarToStr(data[1, 0]);
+            }
+
+            return userName;
         }
 
         /// <summary>
@@ -1722,6 +1750,42 @@ namespace DomConsult.GlobalShared.Utilities
         }
 
         /// <summary>
+        /// Converts object to Double with optional default value assignment
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="var_null">The default value.</param>
+        /// <returns></returns>
+        public static double VarToDouble(object value, double var_null = TUniConstants._DOUBLE_NULL)
+        {
+            if (VarIsNullOrEmpty(value))
+            {
+                return var_null;
+            }
+            else
+            {
+                return (double)value;
+            }
+        }
+
+        /// <summary>
+        /// Converts object to Decimal with optional default value assignment
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <param name="var_null">The default value.</param>
+        /// <returns></returns>
+        public static decimal VarToDecimal(object value, decimal var_null = TUniConstants._DECIMAL_NULL)
+        {
+            if (VarIsNullOrEmpty(value))
+            {
+                return var_null;
+            }
+            else
+            {
+                return (decimal)value;
+            }
+        }
+
+        /// <summary>
         /// Converts unseparated string date to DateTime
         /// </summary>
         /// <param name="value">The value.</param>
@@ -1822,6 +1886,29 @@ namespace DomConsult.GlobalShared.Utilities
         public static bool ErrorDetected(int result_, bool include_csWMK = false)
         {
             return (result_ < 0) || (result_ == (int)TCSWMK.csWMK_Error) || ((result_ == (int)TCSWMK.csWMK) && include_csWMK);
+        }
+
+        /// <summary>
+        /// Gets identifier from lookup control
+        /// </summary>
+        /// <param name="FieldValue">Packet from lookup</param>
+        /// <returns>System.Int32.</returns>
+        public static int GetIdFromLookup(object FieldValue)
+        {
+            if (TUniVar.VarIsArray(FieldValue, 2))
+            {
+                object packetFieldValue = null;
+
+                if (FieldValue is object[,] value)
+                {
+                    ComUtils.GetPFieldValue(FieldValue, value[0, 0], ref packetFieldValue);
+                }
+                return TUniVar.VarToInt(packetFieldValue);
+            }
+            else // lookup compatibility mode
+            {
+                return TUniVar.VarToInt(FieldValue);
+            }
         }
     }
 

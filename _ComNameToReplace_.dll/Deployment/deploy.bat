@@ -9,7 +9,7 @@ REM call set prj=%%prj:Net=%%
 
 @echo off
 SET _deployBat=%~dp0
-SET _destDir="%_deployBat%components.net\_ComNameToReplace_NET\_ComNameToReplace_.dll\"
+SET _destDir="%_deployBat%components.net\_PackageNameToReplace_\_ComNameToReplace_.dll\"
 SET _binDir=%1
 SET _srcDir=%2
 SET _confName="%prj%.dll.config"

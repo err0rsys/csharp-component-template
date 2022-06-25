@@ -18,7 +18,6 @@ echo.
 set current_dir=%cd%
 
 %windir%\Microsoft.NET\Framework\v4.0.30319\RegSvcs.exe /appname:%package% /u %current_dir%\%dllfile%
-%windir%\Microsoft.NET\Framework\v4.0.30319\RegSvcs.exe /appdir:%current_dir% /appname:%package% %current_dir%\%dllfile%
 
 echo.
 pause
