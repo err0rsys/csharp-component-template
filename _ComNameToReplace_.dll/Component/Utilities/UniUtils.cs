@@ -450,7 +450,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// </summary>
         public const string KEY_GetSysRegParam = "SYSREG.INI/{0}";
         /// <summary>
-        /// {0}=DBID,{1}=ParamName 
+        /// {0}=DBID,{1}=ParamName
         /// </summary>
         public const string KEY_GetUniParam = "UNIPARAM/D={0}/{1}";
         /// <summary>
@@ -493,7 +493,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// <returns>System.Object.</returns>
         public static object GetSysRegParam(string acc, string key, string defaultValue = "", bool cacheIfDefault = false)
         {
-            string keyC = string.Format(KEY_GetSysRegParam, key).ToUpper();           
+            string keyC = string.Format(KEY_GetSysRegParam, key).ToUpper();
 
             if (Cache.TryGetValue(keyC, out object value))
                 value = TUniVar.VarToStr(value, defaultValue);
@@ -606,7 +606,7 @@ namespace DomConsult.GlobalShared.Utilities
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="comId"></param>
         /// <param name="langId"></param>
@@ -627,9 +627,9 @@ namespace DomConsult.GlobalShared.Utilities
 
             return TUniVar.VarToStr(value, defaultValue);
         }
-    
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="acc"></param>
         /// <param name="comFunctionId"></param>
@@ -656,7 +656,7 @@ namespace DomConsult.GlobalShared.Utilities
                     Cache.TryAdd(keyC, result);
                 }
             }
-            
+
             return result;
         }
 
@@ -681,7 +681,7 @@ namespace DomConsult.GlobalShared.Utilities
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="data"></param>
@@ -692,7 +692,7 @@ namespace DomConsult.GlobalShared.Utilities
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -728,7 +728,7 @@ namespace DomConsult.GlobalShared.Utilities
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="acc"></param>
         /// <returns></returns>
@@ -799,7 +799,7 @@ namespace DomConsult.GlobalShared.Utilities
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="acc"></param>
         /// <param name="comFunctions"> comFunctionId or vector with many comFunctionIds</param>
@@ -832,9 +832,9 @@ namespace DomConsult.GlobalShared.Utilities
 
             return isArray ? result > 0 : result >= 0;
         }
-    
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="acc"></param>
         /// <returns></returns>
@@ -854,7 +854,7 @@ namespace DomConsult.GlobalShared.Utilities
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="acc"></param>
         /// <param name="fullTempPath"></param>
@@ -946,23 +946,15 @@ namespace DomConsult.GlobalShared.Utilities
                 {
                     j0 = tmpParamStr.IndexOf(paramName, j, ls - j);
                     j += j0;
-                    if (j == 0) //jesli znaleziono ciag na poczatku
+                    if ((j == 0) || //jesli znaleziono ciag na poczatku
+                        beginWithDelim ||
+                        delims.ContainsKey(tmpParamStr[j - 1]))
                     {
                         paramFound = true;
                         break;
                     }
                     else if ((j0 == -1) || (j == -1)) //jesli ciagu nie znaleziono
                     {
-                        break;
-                    }
-                    else if (beginWithDelim)
-                    {
-                        paramFound = true;
-                        break;
-                    }
-                    else if (delims.ContainsKey(tmpParamStr[j - 1]))
-                    {
-                        paramFound = true;
                         break;
                     }
                 }
@@ -1027,10 +1019,10 @@ namespace DomConsult.GlobalShared.Utilities
         {
             string lstr = "";
 
-            if (GetParam(ref paramStr, paramName, ref lstr, delimiters, ignoreCase, true) == TUniConstants.rcOK)
+            if (GetParam(ref paramStr, paramName, ref lstr, delimiters, ignoreCase, true) == TUniConstants.rcOK &&
+                int.TryParse(lstr, out int _result))
             {
-                if (int.TryParse(lstr, out int _result))
-                    return _result;
+                return _result;
             }
 
             return nullValue;
@@ -1408,7 +1400,7 @@ namespace DomConsult.GlobalShared.Utilities
         /// <returns>System.Int32.</returns>
         public static int GetMessagesCount(object Messages)
         {
-            if ((Messages as object[,]) == null)
+            if (!(Messages is object[,]))
             {
                 return 0;
             }
@@ -1915,10 +1907,30 @@ namespace DomConsult.GlobalShared.Utilities
                 return TUniVar.VarToInt(FieldValue);
             }
         }
+
+        /// <summary>
+        /// Gets current process identifier
+        /// </summary>
+        /// <returns>System.Int32.</returns>
+        public static int ProcessId
+        {
+            get
+            {
+                if (_processId == null)
+                {
+                    using (var thisProcess = System.Diagnostics.Process.GetCurrentProcess())
+                    {
+                        _processId = thisProcess.Id;
+                    }
+                }
+                return _processId.Value;
+            }
+        }
+        private static int? _processId;
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public static class TuniDebug
     {
@@ -1947,6 +1959,74 @@ namespace DomConsult.GlobalShared.Utilities
         public static string OV2HTML()
         {
             return "";
+        }
+
+        /// <summary>
+        /// Logging to table
+        /// </summary>
+        /// <returns></returns>
+        public static int UpdateSysLog(string AccessCode, int ComPlusID, int TransId, int UserId, string TableName,
+            string ComPlusName, string MethodName, string Description, int MandantId = 0, int LogTypeId = 0, int ModulId = 0)
+        {
+            if (TableName.Length > 0)
+            {
+                ComWrapper comObj = null;
+                try
+                {
+                    string pk = $"{TableName}Id";
+                    string sql = $"SELECT * FROM {TableName} WHERE {pk} = -1";
+
+                    int result = ComUtils.OpenResultset(AccessCode, sql, pk, -1, -1, out comObj);
+                    if (result < 0)
+                        return result;
+
+                    object[] fields = new object[]
+                    {
+                    "ModulId",
+                    "ComName",
+                    "MethodName",
+                    "MTSComId",
+                    "AccessCode",
+                    "TransactionId",
+                    "ProcessId",
+                    "ThreadId",
+                    "Description",
+                    "UserId",
+                    "mulMandantId",
+                    "logTypeId"
+                    };
+
+                    object[] values = new object[]
+                    {
+                    ModulId,
+                    ComPlusName,
+                    MethodName,
+                    ComPlusID,
+                    AccessCode,
+                    TransId,
+                    TUniTools.ProcessId,
+                    #pragma warning disable CS0618 // Type or member is obsolete
+                    AppDomain.GetCurrentThreadId(),
+                    #pragma warning restore CS0618 // Type or member is obsolete
+                    Description,
+                    UserId,
+                    MandantId,
+                    LogTypeId
+                    };
+
+                    return ComUtils.RecordNew(ref comObj, fields, values, pk);
+                }
+                catch
+                {
+                    return TUniConstants.DBC_errOther;
+                }
+                finally
+                {
+                    comObj?.Disconnect();
+                }
+            }
+            else
+                return 0;
         }
     }
 }

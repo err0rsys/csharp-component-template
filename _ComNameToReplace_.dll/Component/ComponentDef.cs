@@ -42,6 +42,7 @@ namespace DomConsult.Components
         //RunMethods
         /// <summary>
         /// Krótki opis metody RM_XXXXX
+        /// Uwaga! "XXXXX" zawsze du¿ymi
         /// </summary>
         public const string RM_XXXXX = "XXXXX";
 

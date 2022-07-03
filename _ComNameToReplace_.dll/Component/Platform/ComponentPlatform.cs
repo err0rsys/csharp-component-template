@@ -77,8 +77,9 @@ namespace DomConsult.Platform
         private dynamic _TransactionManager = null;
         private int _TransactionId = ComponentPlatformDef.ERR_MISSING_TRANSACTION;
         private bool _disposed = false;
-        private string _mtsComName = "";
-        private string _accessCode = "";
+        private string _mtsComName = string.Empty;
+        private string _methodName = string.Empty;
+        private string _accessCode = string.Empty;
 
         /// <summary>
         /// Logger object
@@ -89,6 +90,11 @@ namespace DomConsult.Platform
         /// Unique ID of component instance.
         /// </summary>
         public Guid InstanceID { get; internal set; } = Guid.NewGuid();
+
+        /// <summary>
+        /// RunMethod helper flag
+        /// </summary>
+        public bool RunOnce { get; set; } = false;
 
         /// <summary>
         /// Gets or sets the access code.
@@ -121,6 +127,28 @@ namespace DomConsult.Platform
             {
                 _mtsComName = value;
                 Logger.LogFilePrefix = _mtsComName.Contains(".") ? _mtsComName.Substring(1, _mtsComName.IndexOf(".")) : _mtsComName;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets method name (RunMethod/SupportSQL)
+        /// </summary>
+        public string MethodName
+        {
+            get
+            {
+                return _methodName;
+            }
+            set
+            {
+                string v = value.ToUpper();
+                
+                if (v != _methodName)
+                {
+                    RunOnce = true;
+                }
+
+                _methodName = value.ToUpper();
             }
         }
 

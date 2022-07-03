@@ -45,6 +45,11 @@ namespace DomConsult.Platform
         }
 
         /// <summary>
+        /// The log table name for protocolling
+        /// </summary>
+        public string LogTableName { get; set; } = TUniConstants._STR_NULL;
+
+        /// <summary>
         /// The primary key name
         /// </summary>
         public string KeyName {

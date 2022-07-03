@@ -45,6 +45,7 @@
         <member name="F:DomConsult.Components.ComponentDef.RM_XXXXX">
             <summary>
             Krótki opis metody RM_XXXXX
+            Uwaga! "XXXXX" zawsze dużymi
             </summary>
         </member>
         <member name="F:DomConsult.Components.ComponentDef.CF_XXXXX">
@@ -225,6 +226,13 @@
             <param name="decision">User confirmation if any</param>
             <param name="proceed">Set True to continue Delete process or False to break it.</param>
         </member>
+        <member name="M:DomConsult.Components.Manager.OnInitSupportSQL(System.String,System.Object)">
+            <summary>
+            Initialize supporting the SQL (run only once for the method).
+            </summary>
+            <param name="methodName">Name of the method.</param>
+            <param name="param">The parameter.</param>
+        </member>
         <member name="M:DomConsult.Components.Manager.OnSupportSQL(System.String,System.Object,System.Object@)">
             <summary>
             Supports the SQL (method body).
@@ -233,6 +241,13 @@
             <param name="param">The parameter.</param>
             <param name="sqlArray">The SQL array.</param>
             <returns>System.Int32.</returns>
+        </member>
+        <member name="M:DomConsult.Components.Manager.OnInitRunMethod(System.String,System.Object@)">
+            <summary>
+            Initialize running the method (run only once for the method).
+            </summary>
+            <param name="methodName">Name of the method.</param>
+            <param name="param">The parameter.</param>
         </member>
         <member name="M:DomConsult.Components.Manager.OnRunMethod(System.String,System.Object@)">
             <summary>
@@ -676,6 +691,13 @@
             <param name="sqlArray">The SQL array.</param>
             <returns>System.Int32.</returns>
         </member>
+        <member name="M:DomConsult.Platform.ManagerBase.OnInitSupportSQL(System.String,System.Object)">
+            <summary>
+            Initialize supporting the SQL.
+            </summary>
+            <param name="methodName">Name of the method.</param>
+            <param name="param">The parameter.</param>
+        </member>
         <member name="M:DomConsult.Platform.ManagerBase.OnSupportSQL(System.String,System.Object,System.Object@)">
             <summary>
             Supports the SQL (method body).
@@ -706,6 +728,13 @@
             <param name="methodName">Name of the method.</param>
             <param name="param">The parameter.</param>
             <returns>System.Int32.</returns>
+        </member>
+        <member name="M:DomConsult.Platform.ManagerBase.OnInitRunMethod(System.String,System.Object@)">
+            <summary>
+            Initialize running the method.
+            </summary>
+            <param name="methodName">Name of the method.</param>
+            <param name="param">The parameter.</param>
         </member>
         <member name="M:DomConsult.Platform.ManagerBase.OnRunMethod(System.String,System.Object@)">
             <summary>
@@ -896,6 +925,11 @@
             Unique ID of component instance.
             </summary>
         </member>
+        <member name="P:DomConsult.Platform.ComponentPlatform.RunOnce">
+            <summary>
+            RunMethod helper flag
+            </summary>
+        </member>
         <member name="P:DomConsult.Platform.ComponentPlatform.AccessCode">
             <summary>
             Gets or sets the access code.
@@ -905,6 +939,11 @@
         <member name="P:DomConsult.Platform.ComponentPlatform.MtsComName">
             <summary>
             Gets or sets AppID of current component
+            </summary>
+        </member>
+        <member name="P:DomConsult.Platform.ComponentPlatform.MethodName">
+            <summary>
+            Gets or sets method name (RunMethod/SupportSQL)
             </summary>
         </member>
         <member name="P:DomConsult.Platform.ComponentPlatform.TransactionStatus">
@@ -993,6 +1032,13 @@
             <param name="var_null"></param>
             <returns>System.Object.</returns>
         </member>
+        <member name="M:DomConsult.Platform.Extensions.PlatformExtenstions.ToPrettyString``2(System.Collections.Generic.IDictionary{``0,``1})">
+            <summary>
+            Extension that allows direct conversion of a dictionary to text: key1 = value1, key2 = value2, ...
+            </summary>
+            <param name="dict"></param>
+            <returns>System.String.</returns>
+        </member>
         <member name="T:DomConsult.Platform.Interfaces.IDCPlatform">
             <summary>
             Interface IDCPlatform used by application to manage transactions
@@ -1046,6 +1092,11 @@
         <member name="P:DomConsult.Platform.Record.ViewName">
             <summary>
             The view/table name for reading
+            </summary>
+        </member>
+        <member name="P:DomConsult.Platform.Record.LogTableName">
+            <summary>
+            The log table name for protocolling
             </summary>
         </member>
         <member name="P:DomConsult.Platform.Record.KeyName">
@@ -4561,6 +4612,11 @@
             The sysreg path
             </summary>
         </member>
+        <member name="F:DomConsult.GlobalShared.Utilities.TUniConstants.CS_NO_COUNT">
+            <summary>
+            Obligatory for executing SQL multipart script
+            </summary>
+        </member>
         <member name="F:DomConsult.GlobalShared.Utilities.TUniConstants.csWMK">
             <summary>
             The cs WMK
@@ -5008,7 +5064,7 @@
         </member>
         <member name="F:DomConsult.GlobalShared.Utilities.TuniGlobalCache.KEY_GetUniParam">
             <summary>
-            {0}=DBID,{1}=ParamName 
+            {0}=DBID,{1}=ParamName
             </summary>
         </member>
         <member name="F:DomConsult.GlobalShared.Utilities.TuniGlobalCache.KEY_GetSQLData">
@@ -5079,22 +5135,22 @@
             <exception cref="T:System.Exception">AccessCode required!</exception>
         </member>
         <member name="M:DomConsult.GlobalShared.Utilities.TuniGlobalCache.GetMLText(System.Int32,System.Int32,System.Int32,System.String)">
-            <summary>
+             <summary>
             
-            </summary>
-            <param name="comId"></param>
-            <param name="langId"></param>
-            <param name="textId"></param>
-            <param name="defaultValue"></param>
-            <returns></returns>
+             </summary>
+             <param name="comId"></param>
+             <param name="langId"></param>
+             <param name="textId"></param>
+             <param name="defaultValue"></param>
+             <returns></returns>
         </member>
         <member name="M:DomConsult.GlobalShared.Utilities.TuniGlobalCache.CanRunComFunction(System.String,System.Int32)">
-            <summary>
+             <summary>
             
-            </summary>
-            <param name="acc"></param>
-            <param name="comFunctionId"></param>
-            <returns></returns>
+             </summary>
+             <param name="acc"></param>
+             <param name="comFunctionId"></param>
+             <returns></returns>
         </member>
         <member name="M:DomConsult.GlobalShared.Utilities.TuniGlobalCache.GetCustomData(System.String,System.Func{System.Object},System.Boolean)">
             <summary>
@@ -5106,19 +5162,19 @@
             <returns></returns>
         </member>
         <member name="M:DomConsult.GlobalShared.Utilities.TuniGlobalCache.DeleteData(System.String,System.Object@)">
-            <summary>
+             <summary>
             
-            </summary>
-            <param name="key"></param>
-            <param name="data"></param>
-            <returns></returns>
+             </summary>
+             <param name="key"></param>
+             <param name="data"></param>
+             <returns></returns>
         </member>
         <member name="M:DomConsult.GlobalShared.Utilities.TuniGlobalCache.CheckData(System.String)">
-            <summary>
+             <summary>
             
-            </summary>
-            <param name="key"></param>
-            <returns></returns>
+             </summary>
+             <param name="key"></param>
+             <returns></returns>
         </member>
         <member name="T:DomConsult.GlobalShared.Utilities.TUserSession">
             <summary>
@@ -5140,11 +5196,11 @@
             <returns>System.Int32.</returns>
         </member>
         <member name="M:DomConsult.GlobalShared.Utilities.TUserSession.GetCurrentUserName(System.String)">
-            <summary>
+             <summary>
             
-            </summary>
-            <param name="acc"></param>
-            <returns></returns>
+             </summary>
+             <param name="acc"></param>
+             <returns></returns>
         </member>
         <member name="M:DomConsult.GlobalShared.Utilities.TUserSession.GetCurrentSessionId(System.String)">
             <summary>
@@ -5175,33 +5231,33 @@
             <returns>System.String.</returns>
         </member>
         <member name="M:DomConsult.GlobalShared.Utilities.TUserSession.CanRunComFunction(System.String,System.Object@,System.Int32)">
-            <summary>
+             <summary>
             
-            </summary>
-            <param name="acc"></param>
-            <param name="comFunctions"> comFunctionId or vector with many comFunctionIds</param>
-            <param name="mulMandantId"></param>
-            <returns>
-            For vector returns True if user has rights to any of given ids.
-            Id in vector is OVERRITEN to 0 if user has not rights to this Id.
-            For single id (not vetor with single id) returns true if user has rights to this comFunction.
-            </returns>
+             </summary>
+             <param name="acc"></param>
+             <param name="comFunctions"> comFunctionId or vector with many comFunctionIds</param>
+             <param name="mulMandantId"></param>
+             <returns>
+             For vector returns True if user has rights to any of given ids.
+             Id in vector is OVERRITEN to 0 if user has not rights to this Id.
+             For single id (not vetor with single id) returns true if user has rights to this comFunction.
+             </returns>
         </member>
         <member name="M:DomConsult.GlobalShared.Utilities.TUserSession.GetCurrentUserWinLogin(System.String)">
-            <summary>
+             <summary>
             
-            </summary>
-            <param name="acc"></param>
-            <returns></returns>
+             </summary>
+             <param name="acc"></param>
+             <returns></returns>
         </member>
         <member name="M:DomConsult.GlobalShared.Utilities.TUserSession.GetExportTempFolder(System.String,System.String@,System.String@,System.String)">
-            <summary>
+             <summary>
             
-            </summary>
-            <param name="acc"></param>
-            <param name="fullTempPath"></param>
-            <param name="relativeTempPath"></param>
-            <param name="winLogin"></param>
+             </summary>
+             <param name="acc"></param>
+             <param name="fullTempPath"></param>
+             <param name="relativeTempPath"></param>
+             <param name="winLogin"></param>
         </member>
         <member name="T:DomConsult.GlobalShared.Utilities.TStrParams">
             <summary>
@@ -5537,10 +5593,16 @@
             <param name="FieldValue">Packet from lookup</param>
             <returns>System.Int32.</returns>
         </member>
-        <member name="T:DomConsult.GlobalShared.Utilities.TuniDebug">
+        <member name="P:DomConsult.GlobalShared.Utilities.TUniTools.ProcessId">
             <summary>
-            
+            Gets current process identifier
             </summary>
+            <returns>System.Int32.</returns>
+        </member>
+        <member name="T:DomConsult.GlobalShared.Utilities.TuniDebug">
+             <summary>
+            
+             </summary>
         </member>
         <member name="M:DomConsult.GlobalShared.Utilities.TuniDebug.LogEventA">
             <summary>
@@ -5557,6 +5619,12 @@
         <member name="M:DomConsult.GlobalShared.Utilities.TuniDebug.OV2HTML">
             <summary>
             Not implemented!!!
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:DomConsult.GlobalShared.Utilities.TuniDebug.UpdateSysLog(System.String,System.Int32,System.Int32,System.Int32,System.String,System.String,System.String,System.String,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Logging to table
             </summary>
             <returns></returns>
         </member>

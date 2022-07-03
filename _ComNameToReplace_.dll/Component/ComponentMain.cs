@@ -10,6 +10,7 @@ using System.IO;
 using System.Xml;
 using System.Collections.Generic;
 using DomConsult.CIPHER;
+using System.Linq;
 
 /****************************************************************************************************
  *
@@ -109,6 +110,8 @@ namespace DomConsult.Components
             //Record.Query     = $"SELECT * FROM {Record.TableName} WHERE {Record.KeyName} = {{0}}"
             //Record.ViewQuery = $"SELECT StringFld, IntegerFld, ... FROM {Record.ViewName} WHERE {Record.KeyName} = {{0}}"
 
+            //Record.LogTableName = "uniSystemLog"
+
             BDW.AddModifyOther(TBDOthers.coDisabledFunction, 0);
             BDW.AddModifyOther(TBDOthers.coAddAllFieldValuesToArray, 1);
         }
@@ -118,14 +121,17 @@ namespace DomConsult.Components
         /// </summary>
         public override void OnProcessInputParams()
         {
-            // set up input parameters
-            //if (BDW.ParamExists("ParamId"))
-            //    Record.Id = BDW.Params["ParamId"].AsInt();
+            // set up own input parameters
+            //if (BDW.ParamExists(Record.KeyName))
+            //    Record.Id = BDW.Params[Record.KeyName].AsInt();
 
             if (Record.Id < 0)
             {
                 NewFormState = TFormState.cfsNew;
             }
+
+            TuniDebug.UpdateSysLog(AccessCode, MtsComId, TransactionId, TUserSession.GetCurrentUserId(AccessCode),
+                Record.LogTableName, MtsComName, "OnAssignStartUpParameter", $"Params: {BDW.Params.ToPrettyString()}");
         }
 
         /// <summary>
@@ -348,6 +354,26 @@ namespace DomConsult.Components
         }
 
         /// <summary>
+        /// Initialize supporting the SQL (run only once for the method).
+        /// </summary>
+        /// <param name="methodName">Name of the method.</param>
+        /// <param name="param">The parameter.</param>
+        public override void OnInitSupportSQL(string methodName, object param)
+        {
+            if (RunOnce)
+            {
+                // do something
+
+                var _params = param as object[];
+
+                TuniDebug.UpdateSysLog(AccessCode, MtsComId, TransactionId, TUserSession.GetCurrentUserId(AccessCode),
+                    Record.LogTableName, MtsComName, "OnInitSupportSQL", $"Params: {_params[0]}");
+
+                RunOnce = false;
+            }
+        }
+
+        /// <summary>
         /// Supports the SQL (method body).
         /// </summary>
         /// <param name="methodName">Name of the method.</param>
@@ -357,6 +383,26 @@ namespace DomConsult.Components
         public override int OnSupportSQL(string methodName, object param, ref object sqlArray)
         {
             return -1;
+        }
+
+        /// <summary>
+        /// Initialize running the method (run only once for the method).
+        /// </summary>
+        /// <param name="methodName">Name of the method.</param>
+        /// <param name="param">The parameter.</param>
+        public override void OnInitRunMethod(string methodName, ref object param)
+        {
+            if (RunOnce)
+            {
+                // do something
+
+                var _params = param as object[];
+
+                TuniDebug.UpdateSysLog(AccessCode, MtsComId, TransactionId, TUserSession.GetCurrentUserId(AccessCode),
+                    Record.LogTableName, MtsComName, "OnInitRunMethod", $"Params: {_params[0]}");
+
+                RunOnce = false;
+            }
         }
 
         /// <summary>

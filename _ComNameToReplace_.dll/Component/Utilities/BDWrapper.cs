@@ -2008,7 +2008,6 @@ namespace DomConsult.GlobalShared.Utilities
             {
                 MultiInOneParams.Add(item);
             }
-
         }
     }
 }

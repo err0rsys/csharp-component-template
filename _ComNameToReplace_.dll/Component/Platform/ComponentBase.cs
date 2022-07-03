@@ -289,7 +289,7 @@ namespace DomConsult.Platform
                 if (BDW.ParamExists("_TransactionId"))
                     ExTransactionId = BDW.Params["_TransactionId"].AsInt();
 
-                OnProcessInputParams();
+                OnAssignStartUpParameter();
 
                 if (!BDW.OtherExists(TBDOthers.coObjectTypeId))
                     BDW.AddModifyOther(TBDOthers.coObjectTypeId, ObjectTypeId);
@@ -297,7 +297,7 @@ namespace DomConsult.Platform
                 if (!TUniVar.VarIsNullOrEmpty(FormCaption))
                     BDW.AddModifyOther(TBDOthers.coFormCaption, FormCaption);
 
-                OnAssignStartUpParameter();
+                OnProcessInputParams();
             }
             catch (MessageException mex)
             {
@@ -1159,9 +1159,11 @@ namespace DomConsult.Platform
 
             try
             {
-                string method = TUniVar.VarToStr(methodName);
+                MethodName = TUniVar.VarToStr(methodName);
 
-                result = OnSupportSQL(method.ToUpper(), param, ref sqlArray);
+                OnInitSupportSQL(MethodName, param);
+
+                result = OnSupportSQL(MethodName, param, ref sqlArray);
             }
             catch (Exception ex)
             {
@@ -1179,6 +1181,16 @@ namespace DomConsult.Platform
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Initialize supporting the SQL.
+        /// </summary>
+        /// <param name="methodName">Name of the method.</param>
+        /// <param name="param">The parameter.</param>
+        public virtual void OnInitSupportSQL(string methodName, object param)
+        {
+            //throw new NotImplementedException()
         }
 
         /// <summary>
@@ -1228,9 +1240,11 @@ namespace DomConsult.Platform
             int result;
             try
             {
-                string method = TUniVar.VarToStr(methodName);
+                MethodName = TUniVar.VarToStr(methodName);
 
-                return OnRunMethod(method.ToUpper(), ref param);
+                OnInitRunMethod(MethodName, ref param);
+
+                return OnRunMethod(MethodName, ref param);
             }
             catch (MessageException mex)
             {
@@ -1263,6 +1277,16 @@ namespace DomConsult.Platform
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Initialize running the method.
+        /// </summary>
+        /// <param name="methodName">Name of the method.</param>
+        /// <param name="param">The parameter.</param>
+        public virtual void OnInitRunMethod(string methodName, ref object param)
+        {
+            //throw new NotImplementedException()
         }
 
         /// <summary>
