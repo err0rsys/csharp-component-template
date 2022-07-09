@@ -6,6 +6,8 @@ using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Text;
+using System.Diagnostics;
 
 namespace DomConsult.GlobalShared.Utilities
 {
@@ -436,6 +438,42 @@ namespace DomConsult.GlobalShared.Utilities
         /// </summary>
         acrCancel = 3
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public enum VarType
+    {
+        varEmpty = 0x0000,
+        varNull     = 0x0001,
+        varSmallint = 0x0002,
+        varInteger = 0x0003,
+        varSingle = 0x0004,
+        varDouble = 0x0005,
+        varCurrency = 0x0006,
+        varDate = 0x0007,
+        varOleStr = 0x0008,
+        varDispatch = 0x0009,
+        varError = 0x000A,
+        varBoolean = 0x000B,
+        varVariant = 0x000C,
+        varUnknown = 0x000D,
+        varDecimal  = 0x000E,
+        varUndef0F  = 0x000F,
+        varShortInt = 0x0010,
+        varByte = 0x0011,
+        varWord = 0x0012,
+        varLongWord = 0x0013,
+        varInt64 = 0x0014,
+        varWord64   = 0x0015,
+
+        varStrArg = 0x0048,
+        varString = 0x0100,
+        varAny = 0x0101,
+        varTypeMask = 0x0FFF,
+        varArray = 0x2000,
+        varByRef = 0x4000
+}
 
     /// <summary>
     /// Class TuniGlobalCache.
@@ -1934,6 +1972,19 @@ namespace DomConsult.GlobalShared.Utilities
     /// </summary>
     public static class TuniDebug
     {
+        private static readonly string DDTempSubFolder = "$ddtemp";
+        private static readonly string DDTempSubFolderPath = "";
+
+        static TuniDebug()
+        {
+            DDTempSubFolderPath = Path.Combine(Path.GetTempPath(), DDTempSubFolder);
+        }
+
+        public static string DDTEMP()
+        {
+            return DDTempSubFolderPath;
+        }
+
         /// <summary>
         /// Not implemented!!!
         /// </summary>
@@ -1956,9 +2007,478 @@ namespace DomConsult.GlobalShared.Utilities
         /// Not implemented!!!
         /// </summary>
         /// <returns></returns>
-        public static string OV2HTML()
+        public static string OV2HTML(object data, bool createFile, string fileSuffix, string fileName)
         {
-            return "";
+            StringBuilder sl = new StringBuilder();
+            sl.AppendLine("<!DOCTYPE HTML PUBLIC \" -//W3C//DTD HTML 4.0 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">");
+            sl.AppendLine("<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">");
+            sl.AppendLine("<script type=\"text/javascript\">");
+            sl.AppendLine("function bypassInternetExplorer(){");
+            sl.AppendLine("  t = document.getElementsByTagName(\"table\")");
+            sl.AppendLine("  for (i=0; i<t.length; i++)");
+            sl.AppendLine("    if (t[i].className == \"d2\")");
+            sl.AppendLine("      t[i].style.display = \"none\"");
+            sl.AppendLine("}");
+            sl.AppendLine("function sw(o){");
+            sl.AppendLine("  isCollapsed = o.className == \"plus\"");
+            sl.AppendLine("  o.className = isCollapsed ? \"minus\" : \"plus\"");
+            sl.AppendLine("  s = o.id.replace(\"i_\", \"t_\")");
+            sl.AppendLine("  t = document.getElementById(s)");
+            sl.AppendLine("  t.style.display = isCollapsed ? \"table\" : \"none\"");
+            sl.AppendLine("}");
+            sl.AppendLine("function ecall(){");
+            sl.AppendLine("  o = document.getElementById(\"plusminus\")");
+            sl.AppendLine("  var doexp = o.getAttribute(\"doexp\") == \"1\"");
+            sl.AppendLine("  o.setAttribute(\"doexp\", doexp ? \"0\" : \"1\")");
+            sl.AppendLine("  o.innerHTML = doexp ? \"[-all]\" : \"[+all]\"");
+            sl.AppendLine("  o.style.color = doexp ? \"red\" : \"yellow\"");
+            sl.AppendLine("  t = document.getElementsByTagName(\"table\")");
+            sl.AppendLine("  for (i=0; i<t.length; i++)");
+            sl.AppendLine("    if ((t[i].className == \"d1\") || (t[i].className == \"d2\"))");
+            sl.AppendLine("      t[i].style.display = doexp ? \"table\" : \"none\"");
+            sl.AppendLine("  t = document.getElementsByTagName(\"img\")");
+            sl.AppendLine("  for (i=0; i<t.length; i++)");
+            sl.AppendLine("    t[i].className = doexp ? \"minus\" : \"plus\"");
+            sl.AppendLine("}");
+            sl.AppendLine("function sh(ev){");
+            sl.AppendLine("  if (ev.target)");
+            sl.AppendLine("    el = ev.target");
+            sl.AppendLine("  else");
+            sl.AppendLine("    el = ev.srcElement");
+            sl.AppendLine("  var tb");
+            sl.AppendLine("  hd = document.getElementById(\"hintdiv\")");
+            sl.AppendLine("  hd.style.position = \"absolute\"");
+            sl.AppendLine("  if(el.id == \"plusminus\"){");
+            sl.AppendLine("  } else {");
+            sl.AppendLine("    var descr");
+            sl.AppendLine("    var tip");
+            sl.AppendLine("    var withCoords = false");
+            sl.AppendLine("    var cx = \"\"");
+            sl.AppendLine("    var cy = \"\"");
+            sl.AppendLine("    var cd = \"/\"");
+            sl.AppendLine("    var t = \"\"");
+            sl.AppendLine("    var null_warn_level = 0");
+            sl.AppendLine("    ht = document.getElementById(\"hint\")");
+            sl.AppendLine("    pm = document.getElementById(\"plusminus\")");
+            sl.AppendLine("    if(ev.ctrlKey){");
+            sl.AppendLine("      pm.style.display = \"inline\"");
+            sl.AppendLine("      pm.style.left = window.pageXOffset + 4");
+            sl.AppendLine("      pm.style.top = window.pageYOffset + 4");
+            sl.AppendLine("    } else");
+            sl.AppendLine("      pm.style.display = \"none\"");
+            sl.AppendLine("    switch(el.tagName){");
+            sl.AppendLine("      case \"IMG\": {");
+            sl.AppendLine("          tb = document.getElementById(el.id.replace(\"i_\", \"t_\"))");
+            sl.AppendLine("          tx = document.getElementById(el.id.replace(\"i_\", \"tx_\"))");
+            sl.AppendLine("          if (tx) descr = tx.getAttribute(\"descr\")");
+            sl.AppendLine("          ht.style.color = \"white\"");
+            sl.AppendLine("          break");
+            sl.AppendLine("        }");
+            sl.AppendLine("      case \"TD\": {");
+            sl.AppendLine("          descr = el.getAttribute(\"descr\")");
+            sl.AppendLine("          tip = el.getAttribute(\"tip\")");
+            sl.AppendLine("          withCoords = true");
+            sl.AppendLine("          t = el.className");
+            sl.AppendLine("          cx = el.cellIndex");
+            sl.AppendLine("          cy = el.parentNode.rowIndex");
+            sl.AppendLine("        }");
+            sl.AppendLine("      case \"TR\":");
+            sl.AppendLine("      case \"TBODY\":");
+            sl.AppendLine("      case \"TABLE\":");
+            sl.AppendLine("        if (ev.shiftKey || t == \"dtstr0\"){");
+            sl.AppendLine("          if (t == \"dtstr0\") {");
+            sl.AppendLine("            t = \"dtstr\"");
+            sl.AppendLine("            null_warn_level = ev.shiftKey ? 1 : 2");
+            sl.AppendLine("          }");
+            sl.AppendLine("          while (el.tagName != \"TABLE\") el = el.parentNode;");
+            sl.AppendLine("          ht.style.color = \"lightgray\"");
+            sl.AppendLine("          tb = el");
+            sl.AppendLine("        }");
+            sl.AppendLine("    }");
+            sl.AppendLine("  }");
+            sl.AppendLine("  var s=\"\"");
+            sl.AppendLine("  var wx = ev.pageX + 16");
+            sl.AppendLine("  var wy = ev.pageY + 16");
+            sl.AppendLine("  if(tb){");
+            sl.AppendLine("    var d=\"\"");
+            sl.AppendLine("    var d0=\"\"");
+            sl.AppendLine("    if(descr){");
+            sl.AppendLine("      s = descr");
+            sl.AppendLine("      withCoords = false");
+            sl.AppendLine("    } else switch(tb.className){");
+            sl.AppendLine("      case \"d1\":");
+            sl.AppendLine("      case \"d1m\": {");
+            sl.AppendLine("          s = \"vector\"");
+            sl.AppendLine("          d = tb.rows[0].cells.length; cd = \"\"; cy = \"\";");
+            sl.AppendLine("          break;");
+            sl.AppendLine("        }");
+            sl.AppendLine("      case \"d2\":");
+            sl.AppendLine("      case \"d2m\": {");
+            sl.AppendLine("          s = \"array\"");
+            sl.AppendLine("          d = tb.rows.length * tb.rows[0].cells.length");
+            sl.AppendLine("          d0 = \" <b style =\\\"color:steelblue;\\\">\" + tb.rows.length + \" <i style=\\\"font-weight:normal;\\\">x</i> \" + tb.rows[0].cells.length + \"</b> \"; ");
+            sl.AppendLine("        }");
+            sl.AppendLine("    }");
+            sl.AppendLine("  }");
+            sl.AppendLine("  if(s!=\"\"){");
+            sl.AppendLine("    var c = \"\"");
+            sl.AppendLine("    if(withCoords)");
+            sl.AppendLine("      c = \" <hr> current cell: <b style =\\\"color:limegreen;\\\">\" + cy + cd + cx + \"</b>\"");
+          
+            sl.AppendLine("    if(d!=\"\"){");
+            sl.AppendLine("      d = \" of <b style =\\\"color:royalblue;\\\">\" + d + \"</b> elements\"");
+          
+            sl.AppendLine("    }");
+            sl.AppendLine("    if(t!=\"\"){");
+            sl.AppendLine("      t = \"(type: \" + t + (tip?\"[\" + tip + \"]\":\"\") + \")\"");
+            sl.AppendLine("    }");
+            sl.AppendLine("    var nwl = \"\"");
+            sl.AppendLine("    switch (null_warn_level) {");
+            sl.AppendLine("      case 1: nwl = \" <hr> \"");
+            sl.AppendLine("      case 2: nwl += \" <span style =\\\"color:darkorange;\\\">This string contains embedded #0 characters.<br>They have been substituted with spaces.</span>\"");
+          
+            sl.AppendLine("    }");
+            sl.AppendLine("    s0 = tb.getAttribute(\"et\")");
+            sl.AppendLine("    ht.innerHTML = (null_warn_level == 2) ? nwl : d0 + (s0 ? s0 + \" \" : \"\") + s + d + c + t + nwl");
+            sl.AppendLine("    hd.style.display = \"inline\"");
+            sl.AppendLine("    hd.style.left = 0");
+            sl.AppendLine("    hd.style.width = null");
+            sl.AppendLine("    var hdw = hd.offsetWidth");
+            sl.AppendLine("    hd.style.width = hdw");
+            sl.AppendLine("    hd.style.left = wx + \"px\"");
+            sl.AppendLine("    hd.style.top = wy + \"px\"");
+            sl.AppendLine("    var ff = (window.innerWidth ? 1 : 0)");
+            sl.AppendLine("    var t");
+            sl.AppendLine("    t = (ff ? document.body.clientWidth : document.documentElement.clientWidth)");
+            sl.AppendLine("    if((wx + hdw) > t)");
+            sl.AppendLine("      hd.style.left = t - hdw + \"px\"");
+            sl.AppendLine("    t = (ff ? document.body.clientHeight : document.documentElement.clientHeight)");
+            sl.AppendLine("    if((wy + hd.offsetHeight) > t)");
+            sl.AppendLine("      hd.style.top = t - hd.offsetHeight + \"px\"");
+            sl.AppendLine("  } else");
+            sl.AppendLine("    hd.style.display = \"none\"");
+            sl.AppendLine("}");
+            sl.AppendLine("</script>");
+            sl.AppendLine("<style type=\"text/css\">");
+            sl.AppendLine("<!--");
+            sl.AppendLine(".plus {width:9px; height:9px; cursor:pointer;");
+            sl.AppendLine("  background-image:url(\"data: image/png; base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAQAAABKmM6bAAAAXUlEQVR4Xm3OPQ6CMACA0Vdl0qt4W07j5CXcXJywBgygW/mpiV008Rvf9IWTc/bVIajzb3WuWARszUiomABJMhZa7cEOF2xYDB64u5oK9aIGUedVqHXTOH7oiT9fb1vrMMdtZ9M3AAAAAElFTkSuQmCC\");");
+            sl.AppendLine("}");
+            sl.AppendLine(".minus {width:9px; height:9px; cursor:pointer;");
+            sl.AppendLine("  background-image:url(\"data: image/png; base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAQAAABKmM6bAAAAW0lEQVR4Xm2OQQqAMAwEp+jNr/jbPshPePMJHlQEhZY2LqQHBSfsEuYQEiZm48UYiPYlWg + FgMCABEhlHJM4XFUGGiyuCrtSNTeXq01rxjB1cbVyktq1Dvj56wGuyjDz0PweWAAAAABJRU5ErkJggg == \");");
+            sl.AppendLine("}");
+            sl.AppendLine("#plusminus {cursor:pointer; background-color:black; padding:2px; color:yellow; position:absolute; display:none;}");
+            sl.AppendLine("table {border-width:2px;}");
+            sl.AppendLine("table.d1 {border-style:dashed; border-spacing:1px; border-collapse:collapse;}");
+            sl.AppendLine("table.d1m {border-style:dashed;}");
+            sl.AppendLine("table.d2 {border-style:solid; border-spacing:0px; border-collapse:collapse;}");
+            sl.AppendLine("table.d2m {border-style:solid;}");
+            sl.AppendLine("");
+            sl.AppendLine("td, textarea {font-size:8pt; background-color:#ffffff;");
+            if (TUniVar.VarIsArray(data))
+                sl.AppendLine("  font-family:\"Lucida Console\";");
+            else
+                sl.AppendLine("  font-family:\"Tahoma\";");
+            sl.AppendLine("}");
+            sl.AppendLine("td:hover {border-style:solid; border-color:red; background-color:#bef0fe; color:#000099;}");
+            sl.AppendLine(".dtstr {white-space: break-spaces;}");
+            sl.AppendLine(".dtstr:hover {border-style:solid; border-color:red; background-color:#bef0fe; color:#000099;}");
+            sl.AppendLine(".dtstr0 {border-style:solid; border-color:crimson; border-left-width:9px; white-space:break-spaces;}");
+            sl.AppendLine(".dtstr0:hover {border-style:solid; border-color:red; border-left-width:9px; background-color:#bef0fe; color:#000099;}");
+            sl.AppendLine(".dtnone {background-color:#e0e0e0;}");
+            sl.AppendLine(".dtnone:hover {background-color:#b2b2b2;}");
+            sl.AppendLine(".dtnull {background-color:#a0a0a0;}");
+            sl.AppendLine(".dtnull:hover {background-color:#808080;}");
+            sl.AppendLine(".dtemptyparam {background-color:#2d2d86;color:lightgray;}");
+            sl.AppendLine(".dtemptyparam:hover {background-color:#4040bf;color:white;}");
+            sl.AppendLine(".dtint {background-color:#ffffc1;}");
+            sl.AppendLine(".dtint:hover {background-color:#dfdf73;}");
+            sl.AppendLine(".dtfpoint {background-color:#dbdbff;}");
+            sl.AppendLine(".dtfpoint:hover {background-color:#c1c1e1;}");
+            sl.AppendLine(".dtbool {background-color:#ffd6d6;}");
+            sl.AppendLine(".dtbool:hover {background-color:#e0aaaa;}");
+            sl.AppendLine(".dtdate {background-color:#bcffbc;}");
+            sl.AppendLine(".dtdate:hover {background-color:#a5e0a5;}");
+            sl.AppendLine(".dtidisp {background-color:#ffcc00;}");
+            sl.AppendLine(".dtidisp:hover {background-color:#ff9933;}");
+            sl.AppendLine("div#hintdiv {display:none; position:absolute;}");
+            sl.AppendLine("td#hint {border: 3px solid black; border-radius: 5px; background-color:black; font-family:\"Lucida Console\",\"Courier New\"; color:white; font-size:9pt; padding:2px;}");
+            sl.AppendLine("-->");
+            sl.AppendLine("</style>");
+            sl.AppendLine("</head><body onload=\"bypassInternetExplorer(); \" onmousemove=\"sh(event)\">");
+            sl.AppendLine("<div id=\"hintdiv\"><table cellpadding=0 cellspacing=0 border=0><tr><td id=\"hint\"></td></tr></table></div>");
+            sl.AppendLine("<noscript>");
+            sl.AppendLine("<style type=\"text/css\">");
+            sl.AppendLine("<!--");
+            sl.AppendLine(".plus {display:none;}");
+            sl.AppendLine(".minus {display:none;}");
+            sl.AppendLine("-->");
+            sl.AppendLine("</style>");
+            sl.AppendLine("</noscript>");
+            sl.AppendLine("<tt id=\"plusminus\" doexp=\"1\" onclick=\"ecall()\">[+ all]</tt>");
+            if (!TUniVar.VarIsArray(data))
+                sl.AppendLine("<table cellpadding=0 cellspacing=0 style=\"display:table;\"><tr>");
+
+            OV2HTMLinternal(sl, data, true);
+
+            if (!TUniVar.VarIsArray(data))
+                sl.AppendLine("</tr></table>");
+            sl.AppendLine("</body></html>");
+
+            if (createFile)
+            {
+                if (fileName.Length == 0)
+                {
+                    fileName = Path.Combine(DDTEMP(), string.Concat("ov2html_", Stopwatch.GetTimestamp().ToString("X"), fileSuffix, ".html"));
+                }
+
+                try
+                {
+                    File.WriteAllText(fileName, sl.ToString());
+                    return fileName; //Path
+                }
+                catch
+                {
+                    return ""; //Path
+                }
+            }
+            else
+                return sl.ToString(); //Body
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        private static void OV2HTMLinternal(StringBuilder sl, object data, bool topLevel=false)
+        {
+            //Local function
+            string UnHTMLEx(string input, ref bool nulls)
+            {
+                string txt = input.Replace("&", "&amp;").Replace("<", "&lt;");
+
+                nulls = txt.IndexOf((char)0x0) > 0;
+                if (nulls)
+                {
+                    txt = txt.Replace((char)0x0, ' '); //2020-03-25 [PP] to remove those damn #0 from string so they display somehow correctly...
+                }
+
+                return txt;
+            }
+            //Local function
+            VarType Type2VarType(Type type)
+            {
+                if (type.Equals(typeof(int)))
+                    return VarType.varInteger;
+                if (type.Equals(typeof(short)))
+                    return VarType.varShortInt;
+                else if (type.Equals(typeof(long)))
+                    return VarType.varInt64;
+                else if (type.Equals(typeof(byte)))
+                    return VarType.varByte;
+                else if (type.Equals(typeof(DateTime)))
+                    return VarType.varDate;
+                else if (type.Equals(typeof(float)))
+                    return VarType.varDouble;
+                else if (type.Equals(typeof(double)))
+                    return VarType.varDouble;
+                else if (type.Equals(typeof(decimal)))
+                    return VarType.varDouble;
+                else if (type.Equals(typeof(bool)))
+                    return VarType.varBoolean;
+                else if (type.Equals(typeof(char)))
+                    return VarType.varString;
+                else if (type.Equals(typeof(string)))
+                    return VarType.varString;
+                else if (type.IsInterface || type.IsCOMObject)
+                    return VarType.varDispatch;
+
+                return VarType.varUnknown;
+            }
+            //Local function
+            string ByteArrayToHexString(byte[] ba)
+            {
+                StringBuilder hex = new StringBuilder(ba.Length * 2);
+                hex.Append("0x");
+                foreach (byte b in ba)
+                    hex.AppendFormat("{0:x2}", b);
+                return hex.ToString();
+            }
+
+            string s;
+            string sclass = "";
+            string img = "";
+            string et = "";
+            bool _nulls=false;
+            int _itemId = 0;
+
+            Type _type = TUniVar.VarIsNullOrEmpty(data) ? null : data.GetType();
+            VarType _vtype = _type == null ? VarType.varUnknown : Type2VarType(_type);
+
+            switch (TUniVar.VarIsArray(data) ? ((Array)data).Rank : 0)
+            {
+                case 0: //simple
+                    if (data == null)
+                    {
+                        sclass = " class=\"dtemptyparam\"";
+                        s = "&nbsp;";
+                    }
+                    else if (data is DBNull)
+                    {
+                        sclass = " class=\"dtnull\"";
+                        s = "&nbsp;";
+                    }
+                    /*
+                    else if VarIsMissing(ovx) then
+                        s := '<td class="dtemptyparam" tip="0x0A">&nbsp;empty&nbsp;'
+                    */
+                    else if (_vtype == VarType.varUnknown)
+                    {
+                        sclass = " class=\"dtunknown\"";
+                        s = _type.FullName;
+                    }
+                    else
+                    {
+                        s = UnHTMLEx(TUniVar.VarToStr(data), ref _nulls);
+                        if (s.Length == 0)
+                            s = "&nbsp;";
+
+                        if (_type.IsInterface || _type.IsCOMObject)
+                        {
+                            sclass = " class=\"dtidisp\"";
+                            s = "IDispatch";
+                        }
+                        else if (_type.Equals(typeof(int)) || _type.Equals(typeof(long)) ||
+                                 _type.Equals(typeof(short)) || _type.Equals(typeof(byte)))
+                        {
+                            sclass = " class=\"dtint\"";
+                        }
+                        else if (_type.Equals(typeof(float)) || _type.Equals(typeof(double)) ||
+                                 _type.Equals(typeof(decimal)))
+                        {
+                            sclass = " class=\"dtfpoint\"";
+                        }
+                        else if (_type.Equals(typeof(bool)))
+                        {
+                            sclass = " class=\"dtbool\"";
+                        }
+                        else if (_type.Equals(typeof(DateTime)))
+                        {
+                            sclass = " class=\"dtdate\"";
+                            s = TUniVar.VarToDateTime(data).ToString();
+                        }
+                        else if (_nulls)
+                        {
+                            sclass = " class=\"dtstr0\"";
+                        }
+                        else
+                        {
+                            sclass = " class=\"dtstr\"";
+                        }
+                    }
+
+                    s = string.Concat("<td", sclass, " tip=\"0x", _vtype.ToString("X"), "\">", s, "</td>");
+
+                    sl.AppendLine(s);
+                    break;
+                case 1: //vector
+                    _itemId++;
+
+                    var v1data = (object[])data;
+
+                    if (_vtype == VarType.varUnknown)
+                    {
+                        _type = v1data[0].GetType();
+                        _vtype = Type2VarType(_type);
+                    }
+
+                    if (topLevel)
+                        s = "d1m";
+                    else
+                    {
+                        s = "d1";
+                        img = string.Concat("<img class=\"minus\" id=\"i_", _itemId.ToString(), "\" onclick=\"sw(this)\">");
+                    }
+
+                    if (_vtype != VarType.varByte)
+                        et = "et=\"" + Enum.GetName(typeof(VarType), _vtype).Substring(3).ToLower() + "\" ";
+
+                    sl.AppendLine(string.Concat(img, "<table class=\"", s, "\" id=\"t_", _itemId.ToString(), "\" ", et, "border=1 cellpadding=3><tr>"));
+
+                    if (_vtype == VarType.varByte)
+                    {
+                        sl.AppendLine(string.Concat("\"<td id=\"tx_", _itemId.ToString(), "\" descr=\"byte array (", (v1data.GetUpperBound(0)-v1data.GetLowerBound(0)+1).ToString(), " bytes)\">"));
+                        s = ByteArrayToHexString((byte[])data);
+                        if (s.Length > 80)
+                        {
+                            var i = s.Length / 80;
+                            if ((i * 80) < s.Length)
+                                i++;
+                            s = string.Concat("\"<textarea style=\"overflow: auto;\" readonly=\"readonly\" rows=\"", i.ToString(), "\" cols=\"80\">", s, "\"</textarea>");
+                        }
+
+                        sl.AppendLine(s);
+                        sl.AppendLine("</td>");
+                    }
+                    else
+                    {
+                        for (var x = v1data.GetLowerBound(0); x <= v1data.GetUpperBound(0); x++)
+                        {
+                            var ov = v1data[x];
+
+                            if (TUniVar.VarIsArray(ov))
+                            {
+                                sl.AppendLine("<td>");
+                                OV2HTMLinternal(sl, ov);
+                                sl.AppendLine("</td>");
+                            }
+                            else
+                                OV2HTMLinternal(sl, ov);
+                        }
+                    }
+
+                    sl.AppendLine("\"</tr></table>");
+
+                    break;
+                case 2: //Table
+                    _itemId++;
+
+                    var v2data = (object[,])data;
+
+                    if (topLevel)
+                        s = "d2m";
+                    else
+                    {
+                        s = "d2";
+                        img = string.Concat("<img class=\"plus\" id=\"i_", _itemId.ToString(), "\" onclick=\"sw(this)\">");
+                    }
+
+                    et = string.Concat("et=\"", Enum.GetName(typeof(VarType), _vtype).Substring(3).ToLower(), "\" ");
+                    sl.AppendLine(string.Concat(img, "<table class=\"", s, "\" id=\"t_", _itemId.ToString(), "\" ", et, "border=1 cellpadding=3>"));
+
+                    for (var x=v2data.GetLowerBound(0); x<=v2data.GetUpperBound(0); x++)
+                    {
+                        sl.AppendLine("<tr>");
+                        for (var y=v2data.GetLowerBound(1); y<=v2data.GetUpperBound(1); y++)
+                        {
+                            var ov = v2data[x, y];
+                            if (TUniVar.VarIsArray(ov))
+                            {
+                                sl.AppendLine("<td>");
+                                OV2HTMLinternal(sl,ov);
+                                sl.AppendLine("</td>");
+                            }
+                            else
+                                OV2HTMLinternal(sl,ov);
+                        }
+                        sl.AppendLine("</tr>");
+                    }
+                    sl.AppendLine("</table>");
+
+                    break;
+                default:
+                    break;
+            }
         }
 
         /// <summary>
